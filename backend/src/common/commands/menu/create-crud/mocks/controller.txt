@@ -1,0 +1,43 @@
+import { UserIsAuthenticated } from '@src/common/decorators/userIsAuthenticated.decorator';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ::PROVIDER_NAME::Service } from './::PROVIDER_FILENAME::.service';
+import { Create::DTO_NAME::Dto } from './dto/create-::DTO_NAME::.dto';
+import { Update::DTO_NAME::Dto } from './dto/update-::DTO_NAME::.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+
+@Controller('::PROVIDER_FILENAME::')
+@ApiTags('::PROVIDER_NAME::')
+export class ::PROVIDER_NAME::Controller {
+  constructor(private readonly ::LOWER_PROVIDER_NAME::Service: ::PROVIDER_NAME::Service) {}
+
+  @Post()
+  @UserIsAuthenticated()
+  create(@Body() create::PROVIDER_NAME::Dto: Create::PROVIDER_NAME::Dto) {
+    return this.::LOWER_PROVIDER_NAME::Service.create(create::PROVIDER_NAME::Dto);
+  }
+
+  @Get()
+  @UserIsAuthenticated()
+  findAll() {
+    return this.::LOWER_PROVIDER_NAME::Service.findAll();
+  }
+
+  @Get(':id')
+  @UserIsAuthenticated()
+  findOne(@Param('id') id: string) {
+    return this.::LOWER_PROVIDER_NAME::Service.findOne(+id);
+  }
+
+  @Patch(':id')
+  @UserIsAuthenticated()
+  update(@Param('id') id: string, @Body() update::PROVIDER_NAME::Dto: Update::PROVIDER_NAME::Dto) {
+    return this.::LOWER_PROVIDER_NAME::Service.update(+id, update::PROVIDER_NAME::Dto);
+  }
+
+  @Delete(':id')
+  @UserIsAuthenticated()
+  remove(@Param('id') id: string) {
+    return this.::LOWER_PROVIDER_NAME::Service.remove(+id);
+  }
+}

@@ -1,0 +1,76 @@
+import { HttpException, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Create::DTO_NAME::Dto } from './dto/create-::DTO_FILENAME::.dto';
+import { Update::DTO_NAME::Dto } from './dto/update-::DTO_FILENAME::.dto';
+import { ::DTO_NAME::Entity } from './entities/::DTO_FILENAME::.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+
+@Injectable()
+export class ::PROVIDER_NAME::Service {
+  constructor(
+    @InjectRepository(::DTO_NAME::Entity)
+    protected readonly repository: Repository<::DTO_NAME::Entity>) {}
+
+  create(create::DTO_NAME::Dto: Create::DTO_NAME::Dto, user_id: string) {
+    return this.repository.save({
+      ...create::DTO_NAME::Dto,
+      user_id,
+    });
+  }
+
+  findAll(user_id: string) {
+    return this.repository.find({
+      where: {
+        user_id,
+      },
+    });
+  }
+
+  findOne(id: string, user_id: string) {
+    return this.repository.findOne({
+      where: {
+        id,
+        user_id,
+      },
+    });
+  }
+
+  update(id: string, update::DTO_NAME::Dto: Update::DTO_NAME::Dto, user_id: string) {
+    const finded = this.repository.findOne({
+      where: {
+        id,
+        user_id,
+      },
+    });
+
+    if (!finded) {
+      throw new HttpException('::TITLE:: não encontrado', 404);
+    }
+
+    return this.repository.update(
+      {
+        id,
+        user_id,
+      },
+      update::DTO_NAME::Dto,
+    );
+  }
+
+  remove(id: number, user_id: string) {
+    const finded = this.repository.findOne({
+      where: {
+        id,
+        user_id,
+      },
+    });
+
+    if (!finded) {
+      throw new HttpException('::TITLE:: não encontrado', 404);
+    }
+
+    return this.repository.delete({
+      id,
+      user_id,
+    });
+  }
+}

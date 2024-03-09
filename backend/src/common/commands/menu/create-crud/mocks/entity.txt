@@ -1,0 +1,8 @@
+import { Column, Entity } from 'typeorm';
+import DefaultEntity from '@src/common/defaults/base.entity';
+
+@Entity('::LOWER_DTO_NAME::')
+export class ::DTO_NAME::Entity extends DefaultEntity {
+  @Column()
+  example: string;
+}

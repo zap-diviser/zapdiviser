@@ -1,0 +1,17 @@
+{
+  "name": "zapdiviser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "[ \"$DISABLE_HUSKY\" = true ] && exit 0; husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "typescript": "^5.4.2"
+  }
+}
