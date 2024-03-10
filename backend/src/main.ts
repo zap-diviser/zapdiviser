@@ -4,12 +4,9 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/HttpExceptionFilter';
 import { ValidationPipe } from './common/pipes/validation.pipe';
 import cors from 'cors';
-import { config } from 'dotenv';
 import configSwagger from './common/config/swagger';
 import './common/commands/create-database';
 import configBullBoard from './common/config/bull-board';
-
-config();
 
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +25,6 @@ export async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT || 8000, '0.0.0.0');
+  await app.listen(8000, '0.0.0.0');
 }
 bootstrap();

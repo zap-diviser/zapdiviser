@@ -24,12 +24,6 @@ export class WhatsappEntity extends DefaultEntity {
   @ApiProperty({ type: String, nullable: true })
   phone: string | null;
 
-  @Column({
-    unique: true,
-  })
-  @ApiProperty()
-  instanceId: string;
-
   @Column({ type: String, nullable: true })
   profileUrl: string | null;
 

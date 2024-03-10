@@ -13,6 +13,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ProductModule } from './modules/product/product.module';
 import { BullManagerModule } from './modules/bull/bull.module';
 import { AdminJsModule } from './modules/admin/adminjs.module';
+import configuration from './config';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AdminJsModule } from './modules/admin/adminjs.module';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
+      load: [configuration],
     }),
     BullManagerModule,
     RedisModule.forRootAsync({

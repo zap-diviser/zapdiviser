@@ -1,4 +1,5 @@
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
+import { ConfigService } from '@nestjs/config';
 import Queue, { Job, Queue as IQueue } from 'bull';
 
 interface IFlowEvent {
@@ -15,6 +16,7 @@ export class FlowEventConsumer {
   constructor(
     @InjectQueue('flow-event-queue')
     private readonly reservaCotaQueue: IQueue<IFlowEvent>,
+    private readonly configService: ConfigService,
   ) {}
 
   @Process('data-event-process')
@@ -24,7 +26,7 @@ export class FlowEventConsumer {
     const firstEvent = data.events[0];
 
     const queue = new Queue(`MessagesSender:${data.instanceId}`, {
-      redis: process.env.REDIS_URL!,
+      redis: this.configService.get<string>('REDIS_URL'),
     });
 
     const restQueue = data.events.slice(1);
