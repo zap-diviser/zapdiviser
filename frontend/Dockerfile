@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml /app/
 
-RUN NODE_ENV=development pnpm install --frozen-lockfile
+RUN NODE_ENV=development pnpm install
 
 COPY . /app
 

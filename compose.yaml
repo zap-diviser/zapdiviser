@@ -26,6 +26,15 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  migrate:
+    build:
+      context: ./backend
+    depends_on:
+      - db
+    command: ["sh", "-c", "node ./node_modules/typeorm/cli -d ./dist/ormconfig.js migration:run"]
+    env_file:
+      - .env
+
   redis:
     image: redis:alpine
     command: redis-server --requirepass "${REDIS_PASSWORD}"
@@ -35,26 +44,53 @@ services:
       - redis:/data
 
   registry:
-    image: registry:2
+    image: registry
     ports:
-    - "5000:5000"
+      - "5000:5000"
+    networks:
+      - caddy
     environment:
       REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
     volumes:
       - registry:/data
+    labels:
+      caddy: "registry.zapdiviser.localhost"
+      caddy.tls: "internal"
+      caddy.reverse_proxy: "{{upstreams 5000}}"
+    deploy:
+      labels:
+        caddy: "registry.zapdiviser.localhost"
+        caddy.tls: "internal"
+        caddy.reverse_proxy: "{{upstreams 5000}}"
+
+  setup-whatsapp-node-image:
+    image: docker:dind
+    depends_on:
+      - registry
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./whatsapp-node:/app
+    command: [
+      "sh",
+      "-c",
+      "docker build -t registry.zapdiviser.localhost/whatsapp /app && docker push registry.zapdiviser.localhost/whatsapp"
+    ]
 
   minio:
-    image: bitnami/minio:2024
+    image: minio/minio
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
       - "minio:/data"
     environment:
-      - MINIO_ROOT_USER=${MINIO_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     networks:
+      - local
       - caddy
+    command: server /data --console-address :9001
+    restart: unless-stopped
     labels:
       caddy_0: minio-api.${HOST}
       caddy_0.reverse_proxy: "{{upstreams 9000}}"
@@ -67,26 +103,33 @@ services:
         caddy_1: minio.${HOST}
         caddy_1.reverse_proxy: "{{upstreams 9001}}"
 
-  createMinioBuckets:
+  setup-minio:
     image: minio/mc
     depends_on:
       - minio
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD};
-      /usr/bin/mc admin user add myminio ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY};
-      /usr/bin/mc admin policy attach myminio public --user ${MINIO_ACCESS_KEY};
-      /usr/bin/mc mb myminio/zapdiviser;
-      /usr/bin/mc anonymous set download myminio/zapdiviser;
-      exit 0;
-      "
+    networks:
+      - local
+    entrypoint:
+      - sh
+      - -c
+      - |
+        until mc ls minio > /dev/null 2>&1; do
+          sleep 0.5
+        done
+
+        mc alias set minio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD}
+        mc admin user add minio ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}
+        mc admin policy attach minio readwrite --user ${MINIO_ACCESS_KEY}
+        mc mb minio/zapdiviser
 
 networks:
   caddy:
     external: true
+  local:
 
 volumes:
   caddy_data:
+  portainer:
   redis:
   postgres:
   registry:

@@ -1,11 +1,17 @@
 import { parse } from 'dotenv';
 import { expand } from 'dotenv-expand';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
 const configuration = () => {
-  const config = parse(readFileSync('../.env'));
+  let config: any;
 
-  expand(config);
+  if (existsSync('../.env')) {
+    config = parse(readFileSync('../.env'));
+  } else {
+    config = { ...process.env };
+  }
+
+  expand({ processEnv: config, parsed: config });
 
   return config;
 };

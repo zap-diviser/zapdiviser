@@ -49,6 +49,22 @@ export class FlowEventConsumer {
         });
         break;
       }
+      case 'file': {
+        await queue.add('send-file', {
+          to: data.phone,
+          file: firstEvent.metadata.file,
+          type: firstEvent.metadata.file_type,
+        });
+
+        if (restQueue.length === 0) return;
+
+        this.reservaCotaQueue.add('data-event-process', {
+          ...data,
+          events: restQueue,
+          created_at: new Date(),
+        });
+        break;
+      }
       case 'delay': {
         const delay = firstEvent.metadata.delay;
         console.log('delay de ', delay, 'segundos');

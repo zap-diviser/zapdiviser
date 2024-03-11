@@ -9,18 +9,18 @@ export default ({ mode }) => {
   const serverConfig: ServerOptions = {
     proxy: {
       '/api': {
-        target: env.API_URL,
+        target: "http://localhost:8000/api",
         secure: false,
         changeOrigin: true,
       },
       '/socket.io': {
-        target: env.API_URL,
+        target: "http://localhost:8000/api",
         ws: true,
         secure: false,
         changeOrigin: true,
       },
       '/webhook': {
-        target: `${env.API_URL}/api/product`,
+        target: "http://localhost:8000/api/product",
         secure: false,
         changeOrigin: true,
       }
