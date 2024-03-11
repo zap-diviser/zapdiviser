@@ -1,23 +1,24 @@
-FROM node:20-slim as base
+FROM node:20-alpine as base
 
-ARG API_URL
-
-ENV API_URL=${API_URL}
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV DISABLE_HUSKY="true"
 RUN corepack enable
 
+COPY . /app
 WORKDIR /app
 
-COPY package.json /app/
+FROM base AS prod-deps
+RUN pnpm install --prod
 
+FROM base AS build
 RUN NODE_ENV=development pnpm install
-
-COPY . /app
-
 RUN pnpm run build
 
-EXPOSE 8000
+FROM base
+
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
+
+EXPOSE 8080
 
 CMD ["pnpm", "start"]
