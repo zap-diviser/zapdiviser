@@ -18,6 +18,9 @@ services:
       labels:
         caddy: ${HOST}
         caddy.reverse_proxy: "{{upstreams 3000}}"
+        caddy_2: ${HOST}
+        caddy_2.handle_path: /webhook/*
+        caddy_2.reverse_proxy: "{{upstreams 8000}}"
 
   backend:
     build:
