@@ -1,12 +1,40 @@
 services:
-  portainer:
-    image: portainer/portainer-ce:latest
-    ports:
-      - 9443:9443
-    volumes:
-      - portainer:/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+  frontend:
+    build:
+      context: ./frontend
+    expose:
+      - 8080:8080
+    networks:
+      - caddy
+    depends_on:
+      - backend
+    env_file:
+      - .env
+    labels:
+      caddy: ${HOST}
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+    deploy:
+      labels:
+        caddy: ${HOST}
+        caddy.reverse_proxy: "{{upstreams 8080}}"
 
-volumes:
-  portainer:
+  backend:
+    build:
+      context: ./backend
+    expose:
+      - 8000:8000
+    networks:
+      - caddy
+    depends_on:
+      - db
+      - redis
+      - minio
+    env_file:
+      - .env
+    labels:
+      caddy: backend.${HOST}
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+    deploy:
+      labels:
+        caddy: backend.${HOST}
+        caddy.reverse_proxy: "{{upstreams 8000}}"
