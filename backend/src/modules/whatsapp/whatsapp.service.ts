@@ -56,9 +56,6 @@ export class WhatsappService {
     const container = await docker.createContainer({
       Image: 'registry.zapdiviser.localhost/whatsapp',
       name: `zapdiviser-node-${id}`,
-      HostConfig: {
-        NetworkMode: 'local',
-      },
       Env: [
         `INSTANCE_ID=${id}`,
         `REDIS_URL=${this.configService.get('REDIS_URL')}`,
