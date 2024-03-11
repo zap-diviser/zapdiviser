@@ -1,7 +1,7 @@
 import { ZapdiviserContext } from './zapdiviserContext';
 
 // @ts-ignore
-const baseUrl = 'https://zapdiviser.com';
+const baseUrl = import.meta.env.VITE_BACKEND_URL || 'https://backend.zapdiviser.com';
 
 export type ErrorWrapper<TError> = TError | { status: 'unknown'; payload: string };
 
