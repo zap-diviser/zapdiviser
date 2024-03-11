@@ -8,8 +8,8 @@ services:
       - caddy
     depends_on:
       - backend
-    env_file:
-      - .env
+    environment:
+      - BACKEND_URL=backend.${HOST}
     labels:
       caddy: ${HOST}
       caddy.reverse_proxy: "{{upstreams 8080}}"
