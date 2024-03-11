@@ -10,7 +10,7 @@ RUN corepack enable
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml /app/
+COPY package.json /app/
 
 RUN NODE_ENV=development pnpm install
 
