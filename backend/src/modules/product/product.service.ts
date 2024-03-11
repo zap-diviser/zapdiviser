@@ -63,8 +63,8 @@ export class ProductService {
         404,
       );
 
-    const instanceId =
-      whatsapps[Math.floor(Math.random() * whatsapps.length)].instanceId;
+    const whatsappId =
+      whatsapps[Math.floor(Math.random() * whatsapps.length)].id;
 
     const lastInstanceOccurrence = await this.eventsHistoryRepository.findOne({
       where: {
@@ -78,7 +78,7 @@ export class ProductService {
 
     const flowData = {
       product_id,
-      instanceId: lastInstanceOccurrence?.instanceId || instanceId,
+      instanceId: lastInstanceOccurrence?.instanceId || whatsappId,
       events: productFlowEvents.events,
       phone: data.phone,
       name: data.name,
