@@ -24,6 +24,7 @@ services:
     expose:
       - 8000:8000
     networks:
+      - local
       - caddy
     depends_on:
       - db
