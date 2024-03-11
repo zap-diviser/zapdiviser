@@ -18,13 +18,6 @@ export default () => {
 
   return defineConfig({
     plugins: [tsconfigPaths(), react()],
-    define: {
-      'process': {
-        env: {
-          BACKEND_URL: process.env.BACKEND_URL
-        }
-      }
-    },
     server: serverConfig,
     preview: serverConfig,
     build: {
