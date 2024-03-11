@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const axiosServices = axios.create({ baseURL: '/api' });
+// @ts-ignore
+const axiosServices = axios.create({ baseURL: `${process.env.BACKEND_URL}/api` });
 
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
 

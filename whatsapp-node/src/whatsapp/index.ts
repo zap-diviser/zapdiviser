@@ -14,8 +14,8 @@ import makeWASocket, {
 import MAIN_LOGGER from "@whiskeysockets/baileys/lib/Utils/logger"
 import { useRedisAuthState } from "./auth"
 import EventEmitter from "node:events"
-import { fileTypeFromBuffer } from "file-type"
-import Minio from "minio"
+// import { fileTypeFromBuffer } from "file-type"
+import { Client } from "minio"
 import { Readable } from "stream"
 
 function streamToBuffer(stream: Readable): Promise<Buffer> {
@@ -31,8 +31,8 @@ function streamToBuffer(stream: Readable): Promise<Buffer> {
   })
 }
 
-const minio = new Minio.Client({
-  endPoint: "minio",
+const minio = new Client({
+  endPoint: "localhost",
   port: 9000,
   useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY!,
@@ -226,14 +226,14 @@ class Whatsapp {
       }
 
       const buffer = await streamToBuffer(stream)
-      const data = await fileTypeFromBuffer(buffer)
+      // const data = await fileTypeFromBuffer(buffer)
 
-      if (data) {
+      // if (data) {
         await this.sock.sendMessage(
           jid,
-          { audio: buffer, mimetype: data.mime, ptt: true }
+          { audio: buffer, mimetype: 'audio/mp3', ptt: true } // data.mime, ptt: true }
         )
-      }
+      // }
     })
   }
 

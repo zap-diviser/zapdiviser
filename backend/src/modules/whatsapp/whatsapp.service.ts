@@ -53,9 +53,12 @@ export class WhatsappService {
 
     const id = whatsapp.id;
 
-    await docker.createContainer({
+    const container = await docker.createContainer({
       Image: 'registry.zapdiviser.localhost/whatsapp',
       name: `zapdiviser-node-${id}`,
+      HostConfig: {
+        NetworkMode: 'host',
+      },
       Env: [
         `INSTANCE_ID=${id}`,
         `REDIS_URL=${this.configService.get('REDIS_URL')}`,
@@ -63,6 +66,8 @@ export class WhatsappService {
         `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
       ],
     });
+
+    await container.start();
 
     return whatsapp;
   }
@@ -95,11 +100,14 @@ export class WhatsappService {
 
     if (!whatsapp) throw new HttpException('Whatsapp não encontrado', 404);
 
-    const containers = await docker.listContainers({
-      filters: `name=zapdiviser-node-${whatsapp.id}`,
-    });
-    const container = docker.getContainer(containers[0].Id);
-    await container.stop();
+    const containers = await docker.listContainers();
+    const containerId = containers.find((container) =>
+      container.Names.includes(`/zapdiviser-node-${id}`),
+    )?.Id;
+    if (containerId) {
+      const container = docker.getContainer(containerId);
+      await container.stop();
+    }
 
     await this.repository.delete({
       id: whatsapp.id,

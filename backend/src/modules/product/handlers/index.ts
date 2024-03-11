@@ -34,7 +34,6 @@ const handlers: Handler[] = [
   {
     name: 'perfectpay',
     detect: (data) => {
-      console.log('data', data);
       return _.has(data, 'customer.phone_number');
     },
     phonePath: 'customer.phone_formated_ddi',

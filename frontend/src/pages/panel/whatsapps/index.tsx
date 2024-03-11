@@ -151,7 +151,7 @@ const Whatsapp = () => {
       <DeleteWhatsapp
         open={deleteProduct.isOpen}
         handleClose={() => {
-          setDeleteProduct({ isOpen: false, data: null });
+          setDeleteProduct({ isOpen: false, data: deleteProduct.data! });
         }}
         title={deleteProduct.data?.name}
         id={deleteProduct.data?.id}

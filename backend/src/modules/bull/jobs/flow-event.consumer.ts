@@ -25,6 +25,8 @@ export class FlowEventConsumer {
 
     const firstEvent = data.events[0];
 
+    console.log(data.instanceId);
+
     const queue = new Queue(`MessagesSender:${data.instanceId}`, {
       redis: this.configService.get<string>('REDIS_URL'),
     });
@@ -49,11 +51,11 @@ export class FlowEventConsumer {
         });
         break;
       }
-      case 'file': {
+      case 'audio': {
         await queue.add('send-file', {
           to: data.phone,
-          file: firstEvent.metadata.file,
-          type: firstEvent.metadata.file_type,
+          file: firstEvent.metadata.audio,
+          file_type: 'audio',
         });
 
         if (restQueue.length === 0) return;
