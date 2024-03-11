@@ -33,7 +33,8 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
   const { mutateAsync } = useWhatsappControllerCreate({});
 
   useEffect(() => {
-    const socket = io(process.env.BACKEND_URL as string);
+    // @ts-ignore
+    const socket = io(import.meta.env.VITE_VITE_BACKEND_URL as string);
 
     (async () => {
       if (data?.id) {

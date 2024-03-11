@@ -9,7 +9,7 @@ services:
     depends_on:
       - backend
     environment:
-      - BACKEND_URL=backend.${HOST}
+      - VITE_BACKEND_URL=backend.${HOST}
     labels:
       caddy: ${HOST}
       caddy.reverse_proxy: "{{upstreams 8080}}"
