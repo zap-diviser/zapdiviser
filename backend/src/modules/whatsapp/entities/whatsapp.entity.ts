@@ -11,7 +11,7 @@ import {
   Relation,
 } from 'typeorm';
 
-enum Status {
+export enum Status {
   AVAILABLE,
   CONNECTED,
   PENDING,
