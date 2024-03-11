@@ -34,7 +34,7 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
 
   useEffect(() => {
     // @ts-ignore
-    const socket = io('%VITE_BACKEND_URL%' !== 'undefined' ? '%VITE_BACKEND_URL%' : 'https://zapdiviser.com');
+    const socket = io(import.meta.env.VITE_BACKEND_URL);
 
     (async () => {
       if (data?.id) {
