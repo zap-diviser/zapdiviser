@@ -4,7 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { join } from 'path';
 
 export default ({ mode }) => {
-  const env = loadEnv(mode, join(process.cwd(), '../'), '');
+  const env = loadEnv(mode, join(process.cwd(), '../'));
   process.env = { ...process.env, ...env };
 
   const serverConfig: ServerOptions = {
