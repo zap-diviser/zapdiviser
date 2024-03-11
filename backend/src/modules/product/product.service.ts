@@ -15,6 +15,7 @@ import { EventsHistoryEntity } from './entities/events-history.entity';
 import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
 import { ConfigService } from '@nestjs/config';
+import { Status } from '../whatsapp/entities/whatsapp.entity';
 
 @Injectable()
 export class ProductService {
@@ -306,7 +307,9 @@ export class ProductService {
 
     if (!product) throw new HttpException('Produto não encontrado', 404);
 
-    return product.whatsapps;
+    return product.whatsapps.filter(
+      (whatsapp) => whatsapp.status === Status.CONNECTED,
+    );
   }
 
   async updateProduct(id: string, body: CreateProductDto, user_id: string) {
