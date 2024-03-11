@@ -13,17 +13,15 @@ services:
       VITE_BACKEND_URL: backend.${HOST}
     labels:
       caddy: ${HOST}
-      caddy.handle_path: /webhook/*
-      caddy.reverse_proxy: "{{upstreams 8000}}"
+      caddy.reverse_proxy: "/webhook {{upstreams 8000}}"
       caddy_2: ${HOST}
-      caddy_2.reverse_proxy: "{{upstreams 3000}}"
+      caddy_2.reverse_proxy: "* {{upstreams 3000}}"
     deploy:
       labels:
         caddy: ${HOST}
-        caddy.handle_path: /webhook/*
-        caddy.reverse_proxy: "{{upstreams 8000}}"
+        caddy.reverse_proxy: "/webhook {{upstreams 8000}}"
         caddy_2: ${HOST}
-        caddy_2.reverse_proxy: "{{upstreams 3000}}"
+        caddy_2.reverse_proxy: "* {{upstreams 3000}}"
 
   backend:
     build:
