@@ -4,8 +4,8 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { join } from 'path';
 
 export default ({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   const env = loadEnv(mode, join(process.cwd(), '../'), '');
+  process.env = { ...process.env, ...env };
 
   const serverConfig: ServerOptions = {
     proxy: {
@@ -23,7 +23,7 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [tsconfigPaths(), react()],
     define: {
-      'process.env': env
+      'process.env': process.env
     },
     server: serverConfig,
     preview: serverConfig,
