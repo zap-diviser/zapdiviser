@@ -1,12 +1,8 @@
-import { ServerOptions, defineConfig, loadEnv } from 'vite';
+import { ServerOptions, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import { join } from 'path';
 
-export default ({ mode }) => {
-  const env = loadEnv(mode, join(process.cwd(), '../'));
-  process.env = { ...env, ...process.env };
-
+export default () => {
   const serverConfig: ServerOptions = {
     proxy: {
       '/webhook': {
@@ -23,7 +19,9 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [tsconfigPaths(), react()],
     define: {
-      'process.env': process.env
+      'process.env': {
+        BACKEND_URL: process.env.BACKEND_URL
+      }
     },
     server: serverConfig,
     preview: serverConfig,
