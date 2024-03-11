@@ -5,6 +5,7 @@ services:
     expose:
       - 3000:3000
     networks:
+      - local
       - caddy
     depends_on:
       - backend

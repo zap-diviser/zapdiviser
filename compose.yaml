@@ -130,6 +130,7 @@ networks:
   caddy:
     external: true
   local:
+    external: true
 
 volumes:
   caddy_data:

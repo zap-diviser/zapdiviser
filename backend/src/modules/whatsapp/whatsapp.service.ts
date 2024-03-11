@@ -57,7 +57,7 @@ export class WhatsappService {
       Image: 'registry.zapdiviser.localhost/whatsapp',
       name: `zapdiviser-node-${id}`,
       HostConfig: {
-        NetworkMode: 'host',
+        NetworkMode: 'local',
       },
       Env: [
         `INSTANCE_ID=${id}`,
