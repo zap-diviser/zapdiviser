@@ -2,15 +2,16 @@ import { createBullBoard } from '@bull-board/api';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 import Queue from 'bull';
-import { config } from 'dotenv';
-config();
+import configuration from '../../config';
+
+const config = configuration();
 
 export default function configBullBoard(app: any) {
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath('/queues');
 
   const queue = new Queue('flow-event-queue', {
-    redis: process.env.REDIS_URL,
+    redis: config.REDIS_URL,
   });
   //add login and password
 

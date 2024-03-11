@@ -14,6 +14,30 @@ import makeWASocket, {
 import MAIN_LOGGER from "@whiskeysockets/baileys/lib/Utils/logger"
 import { useRedisAuthState } from "./auth"
 import EventEmitter from "node:events"
+import { fileTypeFromBuffer } from "file-type"
+import Minio from "minio"
+import { Readable } from "stream"
+
+function streamToBuffer(stream: Readable): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: any[] = []
+    stream.on("data", (chunk) => {
+      chunks.push(chunk)
+    })
+    stream.on("end", () => {
+      resolve(Buffer.concat(chunks))
+    })
+    stream.on("error", reject)
+  })
+}
+
+const minio = new Minio.Client({
+  endPoint: "minio",
+  port: 9000,
+  useSSL: false,
+  accessKey: process.env.MINIO_ACCESS_KEY!,
+  secretKey: process.env.MINIO_SECRET_KEY!,
+})
 
 class Whatsapp {
   instanceId: string
@@ -167,7 +191,7 @@ class Whatsapp {
     return "+" + this.sock.user?.id?.split(":")[0]
   }
 
-  async sendMessageWTyping(msg: AnyMessageContent, phone: string) {
+  async sendMessageTyping(msg: AnyMessageContent, phone: string) {
     const result = await this.sock.onWhatsApp(phone).catch(() => null)
 
     if (result === null || result.length === 0 || !result[0].jid) {
@@ -185,6 +209,32 @@ class Whatsapp {
     await this.sock.sendPresenceUpdate("paused", jid)
 
     await this.sock.sendMessage(jid, msg)
+  }
+
+  async sendAudio(url: string, phone: string) {
+    const result = await this.sock.onWhatsApp(phone).catch(() => null)
+
+    if (result === null || result.length === 0 || !result[0].jid) {
+      return
+    }
+
+    const jid = result[0].jid
+
+    minio.getObject("zapdiviser", url, async (err, stream) => {
+      if (err) {
+        return console.log(err)
+      }
+
+      const buffer = await streamToBuffer(stream)
+      const data = await fileTypeFromBuffer(buffer)
+
+      if (data) {
+        await this.sock.sendMessage(
+          jid,
+          { audio: buffer, mimetype: data.mime, ptt: true }
+        )
+      }
+    })
   }
 
   async getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {

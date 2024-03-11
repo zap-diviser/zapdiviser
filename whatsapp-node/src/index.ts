@@ -4,11 +4,21 @@ import { Worker, Queue } from "bullmq"
 
 const instanceId = process.env.INSTANCE_ID!
 
-interface Message {
-  from: string
+type MessageBase = {
+  from?: string
   to: string
+}
+
+type TextMassage = MessageBase & {
   content: string
 }
+
+type FileMessage = MessageBase & {
+  file: string
+  file_type: 'image' | 'document' | 'video' | 'audio'
+}
+
+type Message = (TextMassage | FileMessage)
 
 async function main () {
   const queue = new Queue("FlowTriggers", { connection: redis })
@@ -21,9 +31,27 @@ async function main () {
   await redis.set(`whatsapp:${instanceId}:ready`, "true")
 
   const worker = new Worker<Message>(`MessagesSender:${instanceId}`, async job => {
-    const { to, content } = job.data
+    let data: Message
 
-    await whatsapp.sendMessageWTyping({ text: content }, to)
+    switch (job.name) {
+      case 'send-message':
+        data = job.data as TextMassage
+        await whatsapp.sendMessageTyping({ text: data.content }, data.to)
+
+        break
+
+      case 'send-file':
+        data = job.data as FileMessage
+
+        switch (data.file_type) {
+          case 'audio':
+            await whatsapp.sendAudio(data.file, data.to)
+
+            break
+        }
+
+        break
+    }
   }, { connection: redis })
 
   worker.on("completed", job => {

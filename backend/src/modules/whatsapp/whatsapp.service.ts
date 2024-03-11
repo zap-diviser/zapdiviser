@@ -54,11 +54,13 @@ export class WhatsappService {
     const id = whatsapp.id;
 
     await docker.createContainer({
-      Image: 'registry:5000/whatsapp',
+      Image: 'registry.zapdiviser.localhost/whatsapp',
       name: `zapdiviser-node-${id}`,
       Env: [
         `INSTANCE_ID=${id}`,
         `REDIS_URL=${this.configService.get('REDIS_URL')}`,
+        `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
+        `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
       ],
     });
 
