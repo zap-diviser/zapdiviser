@@ -2,8 +2,6 @@ services:
   frontend:
     build:
       context: ./frontend
-    volumes:
-      - - /var/run/docker.sock:/var/run/docker.sock
     expose:
       - 3000:3000
     networks:
@@ -34,6 +32,8 @@ services:
       - minio
     env_file:
       - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     labels:
       caddy: backend.${HOST}
       caddy.reverse_proxy: "{{upstreams 8000}}"
