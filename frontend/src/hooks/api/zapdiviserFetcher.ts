@@ -1,6 +1,5 @@
 import { ZapdiviserContext } from './zapdiviserContext';
 
-// @ts-ignore
 const baseUrl = process.env.BACKEND_URL;
 
 export type ErrorWrapper<TError> = TError | { status: 'unknown'; payload: string };
