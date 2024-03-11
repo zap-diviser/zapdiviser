@@ -3,7 +3,7 @@ services:
     build:
       context: ./frontend
     expose:
-      - 8080:8080
+      - 3000:3000
     networks:
       - caddy
     depends_on:
@@ -12,11 +12,11 @@ services:
       VITE_BACKEND_URL: backend.${HOST}
     labels:
       caddy: ${HOST}
-      caddy.reverse_proxy: "{{upstreams 8080}}"
+      caddy.reverse_proxy: "{{upstreams 3000}}"
     deploy:
       labels:
         caddy: ${HOST}
-        caddy.reverse_proxy: "{{upstreams 8080}}"
+        caddy.reverse_proxy: "{{upstreams 3000}}"
 
   backend:
     build:

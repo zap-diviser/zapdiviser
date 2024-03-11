@@ -19,6 +19,6 @@ FROM base
 COPY --from=build /app/dist /app/dist
 RUN pnpm i -g serve
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD ["serve", "dist"]
