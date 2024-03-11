@@ -353,7 +353,7 @@ export class ProductService {
     );
 
     return {
-      upload_url,
+      upload_url: upload_url.replace(':9000', ''),
       id,
     };
   }
