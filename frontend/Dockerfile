@@ -1,23 +1,24 @@
 FROM node:20-slim as base
 
-ARG API_URL
-
-ENV API_URL=${API_URL}
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV DISABLE_HUSKY="true"
 RUN corepack enable
 
+COPY . /app
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml /app/
+FROM base AS prod-deps
+RUN pnpm install --prod
 
+FROM base AS build
 RUN NODE_ENV=development pnpm install
-
-COPY . /app
-
 RUN pnpm run build
 
-EXPOSE 8000
+FROM base
 
-CMD ["pnpm", "start"]
+COPY --from=build /app/dist /app/dist
+RUN pnpm i -g serve
+
+EXPOSE 3000
+
+CMD ["serve", "dist"]

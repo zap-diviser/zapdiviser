@@ -14,7 +14,6 @@ import { WhatsappService } from '../whatsapp/whatsapp.service';
 import { EventsHistoryEntity } from './entities/events-history.entity';
 import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ProductService {
@@ -31,7 +30,6 @@ export class ProductService {
     private readonly flowEventQueue: Queue,
     private readonly whatsappService: WhatsappService,
     @InjectMinio() private readonly minioClient: Client,
-    private readonly config: ConfigService,
   ) {}
 
   async webhook(product_id: string, body: any) {
@@ -63,7 +61,7 @@ export class ProductService {
         404,
       );
 
-    const whatsappId =
+    const instanceId =
       whatsapps[Math.floor(Math.random() * whatsapps.length)].id;
 
     const lastInstanceOccurrence = await this.eventsHistoryRepository.findOne({
@@ -78,7 +76,7 @@ export class ProductService {
 
     const flowData = {
       product_id,
-      instanceId: lastInstanceOccurrence?.instanceId || whatsappId,
+      instanceId: lastInstanceOccurrence?.instanceId || instanceId,
       events: productFlowEvents.events,
       phone: data.phone,
       name: data.name,
@@ -349,7 +347,7 @@ export class ProductService {
     if (!product) throw new HttpException('Produto não encontrado', 404);
 
     const upload_url = await this.minioClient.presignedPutObject(
-      this.config.get<string>('MINIO_BUCKET')!,
+      'zapdiviser',
       id,
       60 * 60,
     );

@@ -34,7 +34,6 @@ const handlers: Handler[] = [
   {
     name: 'perfectpay',
     detect: (data) => {
-      console.log('data', data);
       return _.has(data, 'customer.phone_number');
     },
     phonePath: 'customer.phone_formated_ddi',
@@ -207,6 +206,22 @@ const handlers: Handler[] = [
           event === 'order.created' &&
           value.resource.search.payment_method === 'credit_card',
         mapTo: 'card_approved',
+      },
+    ],
+  },
+  {
+    name: 'vega',
+    detect: (data) => {
+      return _.has(data, 'store_name');
+    },
+    eventPath: 'status',
+    namePath: 'customer.name',
+    phonePath: 'customer.phone',
+    eventMap: [
+      {
+        type: 'value',
+        value: 'abandoned_cart',
+        mapTo: 'cart_abandoned',
       },
     ],
   },

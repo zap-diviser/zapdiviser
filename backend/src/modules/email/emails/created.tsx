@@ -18,7 +18,7 @@ interface LinearLoginCodeEmailProps {
   token: string;
 }
 
-const baseUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 const CreatedEmail = ({ token = '' }: LinearLoginCodeEmailProps) => (
   <Html>

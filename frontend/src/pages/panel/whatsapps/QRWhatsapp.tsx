@@ -33,16 +33,17 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
   const { mutateAsync } = useWhatsappControllerCreate({});
 
   useEffect(() => {
-    const socket = io(process.env.API_URL as string);
+    // @ts-ignore
+    const socket = io(import.meta.env.VITE_BACKEND_URL || 'https://backend.zapdiviser.com');
 
     (async () => {
       if (data?.id) {
-        console.log('instanceId', data.instanceId);
-        socket.emit('createWhatsapp', { instanceId: data.instanceId });
+        console.log('instanceId', data.id);
+        socket.emit('createWhatsapp', { instanceId: data.id });
       } else {
         const data = await mutateAsync({});
         console.log('instanceId', data.instanceId);
-        socket.emit('createWhatsapp', { instanceId: data.instanceId });
+        socket.emit('createWhatsapp', { instanceId: data.id });
 
         const queryKey = queryKeyFn({ path: '/api/whatsapp', operationId: 'whatsappControllerFindAll', variables: {} });
 

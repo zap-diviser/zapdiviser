@@ -79,7 +79,7 @@ const Products = () => {
             }}
             title="Copiar Link"
             onClick={() => {
-              navigator.clipboard.writeText('https://zapdiviser.com/webhook/' + value);
+              navigator.clipboard.writeText('https://webhook.zapdiviser.com/' + value);
               dispatch(
                 openSnackbar({
                   open: true,
@@ -94,7 +94,7 @@ const Products = () => {
             }}
           >
             <span
-              //   href={'https://zapdiviser.com/webhook/' + value}
+              //   href={'https://webhook.zapdiviser.com/' + value}
               //   target="_blank"
               //   rel="noopener noreferrer"
               style={{
@@ -103,7 +103,7 @@ const Products = () => {
                 fontWeight: 600
               }}
             >
-              https://zapdiviser.com/webhook/{value}
+              https://webhook.zapdiviser.com/{value}
             </span>
           </Tooltip>
         )

@@ -7,6 +7,6 @@ export class UpdateFlowEventDto {
   };
 
   @IsString()
-  @IsIn(['message', 'delay'])
+  @IsIn(['message', 'delay', 'audio'])
   type: string;
 }

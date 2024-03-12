@@ -27,8 +27,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         endPoint: configService.get<string>('MINIO_ENDPOINT')!,
-        port: parseInt(configService.get<string>('MINIO_PORT')!),
-        useSSL: false,
+        useSSL: true,
         accessKey: configService.get<string>('MINIO_ACCESS_KEY')!,
         secretKey: configService.get<string>('MINIO_SECRET_KEY')!,
         bucket: 'zapdiviser',

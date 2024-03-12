@@ -1,12 +1,50 @@
 services:
-  portainer:
-    image: portainer/portainer-ce:latest
-    ports:
-      - 9443:9443
-    volumes:
-      - portainer:/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+  frontend:
+    build:
+      context: ./frontend
+    expose:
+      - 3000:3000
+    networks:
+      - local
+      - caddy
+    depends_on:
+      - backend
+    environment:
+      VITE_BACKEND_URL: backend.${HOST}
+    labels:
+      caddy: ${HOST}, www.${HOST}
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+    deploy:
+      labels:
+        caddy: ${HOST}, www.${HOST}
+        caddy.reverse_proxy: "{{upstreams 3000}}"
 
-volumes:
-  portainer:
+  backend:
+    build:
+      context: ./backend
+    expose:
+      - 8000:8000
+    networks:
+      - local
+      - caddy
+    depends_on:
+      - db
+      - redis
+      - minio
+    env_file:
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      caddy_0: backend.${HOST}
+      caddy_0.reverse_proxy: "{{upstreams 8000}}"
+      caddy_1: webhook.${HOST}
+      caddy_1.rewrite: "* /api/product/webhook{uri}"
+      caddy_1.reverse_proxy: "{{upstreams 8000}}"
+    deploy:
+      labels:
+        caddy_0: backend.${HOST}
+        caddy_0.reverse_proxy: "{{upstreams 8000}}"
+        caddy_1: webhook.${HOST}
+        caddy_1.rewrite: "* /api/product/webhook{uri}"
+        caddy_1.reverse_proxy: "{{upstreams 8000}}"

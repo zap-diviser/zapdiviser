@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const axiosServices = axios.create({ baseURL: '/api' });
+// @ts-ignore
+const axiosServices = axios.create({ baseURL: `${import.meta.env.VITE_BACKEND_URL || 'https://backend.zapdiviser.com'}/api` });
 
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
 
