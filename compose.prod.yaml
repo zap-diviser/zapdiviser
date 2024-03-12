@@ -15,8 +15,7 @@ services:
       caddy_0: ${HOST}
       caddy_0.reverse_proxy: "{{upstreams 3000}}"
       caddy_1: www.${HOST}
-      caddy_1.redir: ${HOST}
-      caddy_1.tls: internal
+      caddy_1.redir: https://${HOST}{uri}
 
   backend:
     build:
@@ -58,5 +57,5 @@ services:
       caddy_2.reverse_proxy: "{{upstreams 8000}}"
       caddy_3: admin.${HOST}
       caddy_3.rewrite: "* /admin-br{uri}"
-      caddy_3.redir: "/admin-br /"
+      caddy_3.redir: "/admin-br{uri} {uri}"
       caddy_3.reverse_proxy: "{{upstreams 8000}}"
