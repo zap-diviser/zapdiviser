@@ -14,12 +14,10 @@ services:
     labels:
       caddy: ${HOST}, www.${HOST}
       caddy.reverse_proxy: "{{upstreams 3000}}"
-      caddy.rewrite: "* /"
     deploy:
       labels:
         caddy: ${HOST}, www.${HOST}
         caddy.reverse_proxy: "{{upstreams 3000}}"
-        caddy.rewrite: "* /"
 
   backend:
     build:
@@ -41,12 +39,12 @@ services:
       caddy: backend.${HOST}
       caddy.reverse_proxy: "{{upstreams 8000}}"
       caddy_webhook: webhook.${HOST}
-      caddy_webhook.rewrite: "* /api/product{uri}"
+      caddy_webhook.rewrite: "* /api/product/webhook{uri}"
       caddy_webhook.reverse_proxy: "{{upstreams 8000}}"
     deploy:
       labels:
         caddy: backend.${HOST}
         caddy.reverse_proxy: "{{upstreams 8000}}"
         caddy_webhook: webhook.${HOST}
-        caddy_webhook.rewrite: "* /api/product{uri}"
+        caddy_webhook.rewrite: "* /api/product/webhook{uri}"
         caddy_webhook.reverse_proxy: "{{upstreams 8000}}"
