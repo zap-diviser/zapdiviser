@@ -33,13 +33,14 @@ import { dispatch } from 'store';
 import defaultError from 'utils/defaultError';
 import MessageType from './MessageType';
 import DelayType from './DelayType';
-import AudioType from './AudioType';
+import FileType from './FileType';
 
 const getInitialValues = (customer: FormikValues | null) => {
   const newCustomer = {
     message: undefined,
     delay: undefined,
-    audio: undefined,
+    file: undefined,
+    file_type: undefined,
     type: 'message'
   };
 
@@ -60,8 +61,8 @@ const CustomerSchema = Yup.object().shape({
     if (type[0] === 'message') return schema.required('É necessário informar a mensagem');
     return schema;
   }),
-  audio: Yup.string().when('type', (type, schema) => {
-    if (type[0] === 'audio') return schema.required('É necessário informar o áudio');
+  file: Yup.string().when('type', (type, schema) => {
+    if (type[0] === 'file') return schema.required('É necessário informar o áudio');
     return schema;
   })
 });
@@ -69,7 +70,7 @@ const CustomerSchema = Yup.object().shape({
 const allTypes = [
   { id: 1, type: 'message', label: 'Mensagem' },
   { id: 2, type: 'delay', label: 'Delay' },
-  { id: 3, type: 'audio', label: 'Áudio' }
+  { id: 3, type: 'file', label: 'Arquivo' }
 ];
 
 const AddEventModal = () => {
@@ -212,7 +213,23 @@ const AddEventModal = () => {
     enableReinitialize: true,
     validationSchema: CustomerSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      const { type, isNew, ...metadata } = values;
+      const { type, ...pre_metadata } = values;
+
+      let metadata = {};
+
+      switch (type) {
+        case 'message':
+          metadata = { message: pre_metadata.message };
+          break;
+        case 'delay':
+          metadata = { delay: pre_metadata.delay };
+          break;
+        case 'file':
+          metadata = { file: pre_metadata.file, file_type: pre_metadata.file_type };
+          break;
+        default:
+          break;
+      }
 
       if (funnelData.isNew) {
         await createProductFlowEvent({
@@ -258,6 +275,7 @@ const AddEventModal = () => {
         );
       }
 
+      resetForm();
       onCancel();
     }
   });
@@ -357,7 +375,7 @@ const AddEventModal = () => {
                 ) : formik.values.type === 'delay' ? (
                   <DelayType getFieldProps={getFieldProps} touched={touched} errors={errors} />
                 ) : (
-                  <AudioType setFieldValue={setFieldValue} getFieldProps={getFieldProps} touched={touched} errors={errors} />
+                  <FileType setFieldValue={setFieldValue} getFieldProps={getFieldProps} touched={touched} errors={errors} />
                 )}
               </Grid>
             </DialogContent>

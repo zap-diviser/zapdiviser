@@ -2,6 +2,7 @@ import { useTheme, styled, Divider } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import { Typography } from '@mui/material';
 import { useFunnel } from 'contexts/FunnelContext';
+import { Document } from 'iconsax-react';
 import { Handle, Position } from 'reactflow';
 
 const Header = styled('div')(({ theme }) => ({
@@ -16,14 +17,23 @@ const Header = styled('div')(({ theme }) => ({
 
 const TypeBox = styled('div')(({ theme }) => ({
   width: '100%',
-  background: theme.palette.primary.lighter,
   fontWeight: 'bold',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   padding: '10px',
   color: theme.palette.primary.main,
   marginBottom: '10px'
 }));
 
-export function Audio({ data }: any) {
+const mapFileTypes = {
+  image: 'imagem',
+  video: 'vídeo',
+  audio: 'áudio',
+  document: 'documento'
+};
+
+export function File({ data }: any) {
   const theme = useTheme();
 
   const { dispatch } = useFunnel();
@@ -36,7 +46,9 @@ export function Audio({ data }: any) {
             type: 'OPEN_ADD_NEW_FUNNEL_MODAL',
             payload: {
               data: {
-                audio: data?.metadata?.audio,
+                type: 'file',
+                file: data?.metadata?.file,
+                file_type: data?.metadata?.file_type,
                 id: data?.id
               }
             }
@@ -72,17 +84,14 @@ export function Audio({ data }: any) {
             padding: '10px'
           }}
         >
-          <Tooltip title={data?.metadata?.message}>
-            <audio
-              controls
+          <TypeBox>
+            <Document
               style={{
-                width: '100%'
+                marginRight: '10px'
               }}
-            >
-              <source src={`https://minio-api.zapdiviser.vitordaniel.com/zapdiviser/${data?.metadata?.audio}`} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-          </Tooltip>
+            />{' '}
+            Arquivo de {mapFileTypes[data?.metadata?.file_type as any]}
+          </TypeBox>
         </div>
       </div>
       <Handle

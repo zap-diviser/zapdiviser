@@ -9,13 +9,13 @@ import { useParams } from 'react-router';
 import addNewCard from './helpers/add-new-card';
 import addNewEdge from './helpers/add-new-edge';
 import { Delay } from './flow-types/delay';
-import { Audio } from './flow-types/audio';
+import { File } from './flow-types/file';
 
 const nodeTypes = {
   add_new: AddNew,
   message: Message,
   delay: Delay,
-  audio: Audio
+  file: File
 };
 
 export default function Flow() {
