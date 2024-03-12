@@ -23,7 +23,7 @@ import { RedirectEntity } from './entities/redirect.entity';
 export class RedirectsController {
   constructor(private readonly redirectsService: RedirectsService) {}
 
-  @Get(':slug/execute')
+  @Get(':slug')
   @ApiOperation({ summary: 'Executar o redirect' })
   @Redirect()
   async redirect(@Param('slug') slug: string) {

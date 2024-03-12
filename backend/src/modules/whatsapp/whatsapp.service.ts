@@ -54,7 +54,7 @@ export class WhatsappService {
     const id = whatsapp.id;
 
     const container = await docker.createContainer({
-      Image: 'registry.zapdiviser.localhost/whatsapp',
+      Image: 'whatsapp',
       name: `zapdiviser-node-${id}`,
       HostConfig: {
         NetworkMode: 'host',

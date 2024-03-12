@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   frontend:
     build:
@@ -16,10 +14,6 @@ services:
     labels:
       caddy: ${HOST}, www.${HOST}
       caddy.reverse_proxy: "{{upstreams 3000}}"
-    deploy:
-      labels:
-        caddy: ${HOST}, www.${HOST}
-        caddy.reverse_proxy: "{{upstreams 3000}}"
 
   backend:
     build:
@@ -38,7 +32,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${zapdiviser}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: ${REDIS_URL}
@@ -57,21 +51,8 @@ services:
       caddy_1.rewrite: "* /api/product/webhook{uri}"
       caddy_1.reverse_proxy: "{{upstreams 8000}}"
       caddy_2: redirect.${HOST}
-      caddy_2.rewrite: "* /api/product/redirect{uri}"
+      caddy_2.rewrite: "* /api/redirects{uri}"
       caddy_2.reverse_proxy: "{{upstreams 8000}}"
       caddy_3: admin.${HOST}
       caddy_3.rewrite: "* /admin-br{uri}"
       caddy_3.reverse_proxy: "{{upstreams 8000}}"
-    deploy:
-      labels:
-        caddy_0: backend.${HOST}
-        caddy_0.reverse_proxy: "{{upstreams 8000}}"
-        caddy_1: webhook.${HOST}
-        caddy_1.rewrite: "* /api/product/webhook{uri}"
-        caddy_1.reverse_proxy: "{{upstreams 8000}}"
-        caddy_2: redirect.${HOST}
-        caddy_2.rewrite: "* /api/product/redirect{uri}"
-        caddy_2.reverse_proxy: "{{upstreams 8000}}"
-        caddy_3: admin.${HOST}
-        caddy_3.rewrite: "* /admin-br{uri}"
-        caddy_3.reverse_proxy: "{{upstreams 8000}}"
