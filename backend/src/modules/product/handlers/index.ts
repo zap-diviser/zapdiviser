@@ -209,6 +209,22 @@ const handlers: Handler[] = [
       },
     ],
   },
+  {
+    name: 'vega',
+    detect: (data) => {
+      return _.has(data, 'store_name');
+    },
+    eventPath: 'status',
+    namePath: 'customer.name',
+    phonePath: 'customer.phone',
+    eventMap: [
+      {
+        type: 'value',
+        value: 'abandoned_cart',
+        mapTo: 'cart_abandoned',
+      },
+    ],
+  },
 ];
 
 type HandleResult = {
