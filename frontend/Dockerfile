@@ -14,11 +14,8 @@ FROM base AS build
 RUN NODE_ENV=development pnpm install
 RUN pnpm run build
 
-FROM base
+FROM devforth/spa-to-http
 
-COPY --from=build /app/dist /app/dist
-RUN pnpm i -g serve
+COPY --from=build /app/dist .
 
-EXPOSE 3000
-
-CMD ["serve", "dist"]
+EXPOSE 8000
