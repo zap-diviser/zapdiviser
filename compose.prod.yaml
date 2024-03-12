@@ -36,17 +36,15 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      caddy: backend.${HOST}
-      caddy.reverse_proxy: "{{upstreams 8000}}"
-      caddy_webhook: webhook.${HOST}
-      caddy_webhook.rewrite: "* /api/product/webhook{uri}"
-      caddy_webhook.reverse_proxy: "{{upstreams 8000}}"
-      caddy_webhook.tls: "internal"
+      caddy_0: backend.${HOST}
+      caddy_0.reverse_proxy: "{{upstreams 8000}}"
+      caddy_1: webhook.${HOST}
+      caddy_1.rewrite: "* /api/product/webhook{uri}"
+      caddy_1.reverse_proxy: "{{upstreams 8000}}"
     deploy:
       labels:
-        caddy: backend.${HOST}
-        caddy.reverse_proxy: "{{upstreams 8000}}"
-        caddy_webhook: webhook.${HOST}
-        caddy_webhook.rewrite: "* /api/product/webhook{uri}"
-        caddy_webhook.reverse_proxy: "{{upstreams 8000}}"
-        caddy_webhook.tls: "internal"
+        caddy_0: backend.${HOST}
+        caddy_0.reverse_proxy: "{{upstreams 8000}}"
+        caddy_1: webhook.${HOST}
+        caddy_1.rewrite: "* /api/product/webhook{uri}"
+        caddy_1.reverse_proxy: "{{upstreams 8000}}"
