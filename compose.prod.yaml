@@ -4,7 +4,7 @@ services:
       context: ./frontend
     command: --brotli
     expose:
-      - 8000:8000
+      - 8080:8080
     networks:
       - local
       - caddy
@@ -14,7 +14,7 @@ services:
       VITE_BACKEND_URL: backend.${HOST}
     labels:
       caddy_0: ${HOST}
-      caddy_0.reverse_proxy: "{{upstreams 8000}}"
+      caddy_0.reverse_proxy: "{{upstreams 8080}}"
       caddy_1: www.${HOST}
       caddy_1.redir: https://${HOST}{uri}
 

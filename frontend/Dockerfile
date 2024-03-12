@@ -18,4 +18,4 @@ FROM devforth/spa-to-http
 
 COPY --from=build /app/dist .
 
-EXPOSE 8000
+EXPOSE 8080
