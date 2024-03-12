@@ -12,16 +12,14 @@ services:
     environment:
       VITE_BACKEND_URL: backend.${HOST}
     labels:
-      caddy: ${HOST}
-      caddy.reverse_proxy: "/webhook {{upstreams 8000}}"
-      caddy_2: ${HOST}
-      caddy_2.reverse_proxy: "* {{upstreams 3000}}"
+      caddy: ${HOST}, www.${HOST}
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+      caddy.rewrite: "* /"
     deploy:
       labels:
-        caddy: ${HOST}
-        caddy.reverse_proxy: "/webhook {{upstreams 8000}}"
-        caddy_2: ${HOST}
-        caddy_2.reverse_proxy: "* {{upstreams 3000}}"
+        caddy: ${HOST}, www.${HOST}
+        caddy.reverse_proxy: "{{upstreams 3000}}"
+        caddy.rewrite: "* /"
 
   backend:
     build:
@@ -42,7 +40,13 @@ services:
     labels:
       caddy: backend.${HOST}
       caddy.reverse_proxy: "{{upstreams 8000}}"
+      caddy_webhook: webhook.${HOST}
+      caddy_webhook.rewrite: "* /api/product{uri}"
+      caddy_webhook.reverse_proxy: {{upstreams 8000}}
     deploy:
       labels:
         caddy: backend.${HOST}
         caddy.reverse_proxy: "{{upstreams 8000}}"
+        caddy_webhook: webhook.${HOST}
+        caddy_webhook.rewrite: "* /api/product{uri}"
+        caddy_webhook.reverse_proxy: {{upstreams 8000}}

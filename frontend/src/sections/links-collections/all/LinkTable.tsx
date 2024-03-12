@@ -195,7 +195,7 @@ export const LinksTable = () => {
         accessor: 'slug',
         Cell: ({ value }: { value: string }) => (
           <a
-            href={'https://zapdiviser.com/webhook/' + value}
+            href={'https://webhook.zapdiviser.com/' + value}
             target="_blank"
             rel="noopener noreferrer"
             style={{
