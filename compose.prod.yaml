@@ -57,5 +57,5 @@ services:
       caddy_2.reverse_proxy: "{{upstreams 8000}}"
       caddy_3: admin.${HOST}
       caddy_3.rewrite: "* /admin-br{uri}"
-      caddy_3.redir: "/admin-br{uri} {uri}"
+      caddy_3.redir: "/admin-br/{uri} /{uri}"
       caddy_3.reverse_proxy: "{{upstreams 8000}}"
