@@ -41,8 +41,6 @@ export class WhatsappEntity extends DefaultEntity {
   @Column()
   user_id: string;
 
-  @ManyToMany(() => ProductEntity, (product) => product.whatsapps, {
-    cascade: true,
-  })
+  @ManyToMany(() => ProductEntity, (product) => product.whatsapps)
   products: ProductEntity[];
 }
