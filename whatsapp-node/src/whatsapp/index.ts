@@ -237,6 +237,52 @@ class Whatsapp {
     })
   }
 
+  async sendVideo(url: string, phone: string) {
+    const result = await this.sock.onWhatsApp(phone).catch(() => null)
+
+    if (result === null || result.length === 0 || !result[0].jid) {
+      return
+    }
+
+    const jid = result[0].jid
+
+    minio.getObject("zapdiviser", url, async (err, stream) => {
+      if (err) {
+        return console.log(err)
+      }
+
+      const buffer = await streamToBuffer(stream)
+
+      await this.sock.sendMessage(
+        jid,
+        { video: buffer }
+      )
+    })
+  }
+
+  async sendImage(url: string, phone: string) {
+    const result = await this.sock.onWhatsApp(phone).catch(() => null)
+
+    if (result === null || result.length === 0 || !result[0].jid) {
+      return
+    }
+
+    const jid = result[0].jid
+
+    minio.getObject("zapdiviser", url, async (err, stream) => {
+      if (err) {
+        return console.log(err)
+      }
+
+      const buffer = await streamToBuffer(stream)
+
+      await this.sock.sendMessage(
+        jid,
+        { image: buffer }
+      )
+    })
+  }
+
   async getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {
     return proto.Message.fromObject({})
   }

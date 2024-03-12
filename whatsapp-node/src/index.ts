@@ -48,6 +48,16 @@ async function main () {
             await whatsapp.sendAudio(data.file, data.to)
 
             break
+
+          case 'video':
+            await whatsapp.sendVideo(data.file, data.to)
+
+            break
+
+          case 'image':
+            await whatsapp.sendImage(data.file, data.to)
+
+            break
         }
 
         break

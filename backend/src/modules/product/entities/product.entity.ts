@@ -27,11 +27,11 @@ export class ProductEntity extends DefaultEntity {
   @Column()
   name: string;
 
-  @OneToMany(() => ProductFlowEntity, (item) => item.product)
+  @OneToMany(() => ProductFlowEntity, (item) => item.product, { cascade: true })
   flows: ProductFlowEntity[];
 
   @ApiProperty({ type: () => [WhatsappEntity] })
-  @ManyToMany(() => WhatsappEntity, (item) => item.products)
+  @ManyToMany(() => WhatsappEntity, (item) => item.products, { cascade: true })
   @JoinTable()
   whatsapps: WhatsappEntity[];
 

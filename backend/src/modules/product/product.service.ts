@@ -14,6 +14,7 @@ import { WhatsappService } from '../whatsapp/whatsapp.service';
 import { EventsHistoryEntity } from './entities/events-history.entity';
 import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
+import { Status } from '../whatsapp/entities/whatsapp.entity';
 
 @Injectable()
 export class ProductService {
@@ -53,17 +54,6 @@ export class ProductService {
     if (!productFlowEvents)
       throw new HttpException('Evento não encontrado para este produto', 404);
 
-    const whatsapps = await this.findProductWhatsapps(product_id);
-
-    if (whatsapps.length === 0)
-      throw new HttpException(
-        'Nenhum whatsapp cadastrado para este produto',
-        404,
-      );
-
-    const instanceId =
-      whatsapps[Math.floor(Math.random() * whatsapps.length)].id;
-
     const lastInstanceOccurrence = await this.eventsHistoryRepository.findOne({
       where: {
         product_id,
@@ -74,9 +64,33 @@ export class ProductService {
       },
     });
 
+    let instanceId: string;
+
+    if (
+      lastInstanceOccurrence &&
+      (await this.whatsappService.isAvailable(
+        lastInstanceOccurrence.instanceId,
+      ))
+    ) {
+      instanceId = lastInstanceOccurrence.instanceId;
+    } else {
+      let whatsapps = await this.findProductWhatsapps(product_id);
+      whatsapps = whatsapps.filter(
+        (whatsapp) => whatsapp.status === Status.CONNECTED,
+      );
+
+      if (whatsapps.length === 0)
+        throw new HttpException(
+          'Nenhum whatsapp cadastrado para este produto',
+          404,
+        );
+
+      instanceId = whatsapps[Math.floor(Math.random() * whatsapps.length)].id;
+    }
+
     const flowData = {
       product_id,
-      instanceId: lastInstanceOccurrence?.instanceId || instanceId,
+      instanceId,
       events: productFlowEvents.events,
       phone: data.phone,
       name: data.name,

@@ -51,11 +51,11 @@ export class FlowEventConsumer {
         });
         break;
       }
-      case 'audio': {
+      case 'file': {
         await queue.add('send-file', {
           to: data.phone,
-          file: firstEvent.metadata.audio,
-          file_type: 'audio',
+          file: firstEvent.metadata.file,
+          type: firstEvent.metadata.file_type,
         });
 
         if (restQueue.length === 0) return;

@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RedisService } from '@liaoliaots/nestjs-redis';
-import { WhatsappEntity } from './entities/whatsapp.entity';
+import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
 
@@ -36,6 +36,14 @@ export class WhatsappService {
     whatsapp.status = 1;
 
     return await this.repository.save(whatsapp);
+  }
+
+  async isAvailable(id: string) {
+    const whatsapp = await this.repository.findOne({
+      where: { id },
+    });
+
+    return whatsapp?.status === Status.CONNECTED;
   }
 
   async getByUserId(userId: string) {
