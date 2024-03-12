@@ -4,13 +4,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default () => {
   const serverConfig: ServerOptions = {
-    proxy: {
-      '/webhook': {
-        target: "http://localhost:8000/api/product",
-        secure: false,
-        changeOrigin: true,
-      }
-    },
     port: 8080,
     strictPort: true,
     host: true

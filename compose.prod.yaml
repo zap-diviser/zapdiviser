@@ -41,6 +41,7 @@ services:
       caddy_webhook: webhook.${HOST}
       caddy_webhook.rewrite: "* /api/product/webhook{uri}"
       caddy_webhook.reverse_proxy: "{{upstreams 8000}}"
+      caddy_webhook.tls: "internal"
     deploy:
       labels:
         caddy: backend.${HOST}
@@ -48,3 +49,4 @@ services:
         caddy_webhook: webhook.${HOST}
         caddy_webhook.rewrite: "* /api/product/webhook{uri}"
         caddy_webhook.reverse_proxy: "{{upstreams 8000}}"
+        caddy_webhook.tls: "internal"
