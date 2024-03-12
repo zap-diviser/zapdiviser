@@ -32,7 +32,10 @@ services:
       - redis
       - minio
     env_file:
-      - .env
+      - path: .env
+        required: false
+      - path: stack.env
+        redirect: false
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
@@ -41,6 +44,12 @@ services:
       caddy_1: webhook.${HOST}
       caddy_1.rewrite: "* /api/product/webhook{uri}"
       caddy_1.reverse_proxy: "{{upstreams 8000}}"
+      caddy_2: redirect.${HOST}
+      caddy_2.rewrite: "* /api/product/redirect{uri}"
+      caddy_2.reverse_proxy: "{{upstreams 8000}}"
+      caddy_3: admin.${HOST}
+      caddy_3.rewrite: "* /admin-br{uri}"
+      caddy_3.reverse_proxy: "{{upstreams 8000}}"
     deploy:
       labels:
         caddy_0: backend.${HOST}
@@ -48,3 +57,9 @@ services:
         caddy_1: webhook.${HOST}
         caddy_1.rewrite: "* /api/product/webhook{uri}"
         caddy_1.reverse_proxy: "{{upstreams 8000}}"
+        caddy_2: redirect.${HOST}
+        caddy_2.rewrite: "* /api/product/redirect{uri}"
+        caddy_2.reverse_proxy: "{{upstreams 8000}}"
+        caddy_3: admin.${HOST}
+        caddy_3.rewrite: "* /admin-br{uri}"
+        caddy_3.reverse_proxy: "{{upstreams 8000}}"

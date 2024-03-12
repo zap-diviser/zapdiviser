@@ -33,9 +33,14 @@ services:
       context: ./backend
     depends_on:
       - db
+    networks:
+      - local
     command: ["sh", "-c", "node ./node_modules/typeorm/cli -d ./dist/ormconfig.js migration:run"]
     env_file:
-      - .env
+      - path: .env
+        required: false
+      - path: stack.env
+        redirect: false
 
   redis:
     image: redis:alpine
