@@ -42,7 +42,7 @@ services:
       caddy.reverse_proxy: "{{upstreams 8000}}"
       caddy_webhook: webhook.${HOST}
       caddy_webhook.rewrite: "* /api/product{uri}"
-      caddy_webhook.reverse_proxy: {{upstreams 8000}}
+      caddy_webhook.reverse_proxy: "{{upstreams 8000}}"
     deploy:
       labels:
         caddy: backend.${HOST}
