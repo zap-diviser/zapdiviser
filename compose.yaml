@@ -13,7 +13,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - caddy_data:/data
-    restart: unless-stoppedz
+    restart: unless-stopped
 
   db:
     image: postgres:alpine
