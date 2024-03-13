@@ -52,19 +52,23 @@ services:
       traefik.enable: true
 
       traefik.http.routers.backend.rule: Host(`backend.${HOST}`)
+      traefik.http.routers.backend.service: noop@internal
       traefik.http.services.backend.loadbalancer.server.port: 8000
 
       traefik.http.routers.webhook.rule: Host(`webhook.${HOST}`)
+      traefik.http.routers.webhook.service: noop@internal
       traefik.http.routers.webhook.middlewares: addprefix-webhook
       traefik.http.middlewares.addprefix-webhook.addprefix.prefix: /api/product/webhook
       traefik.http.services.webhook.loadbalancer.server.port: 8000
 
       traefik.http.routers.redirect.rule: Host(`redirect.${HOST}`)
+      traefik.http.routers.redirect.service: noop@internal
       traefik.http.routers.redirect.middlewares: addprefix-redirect
       traefik.http.middlewares.addprefix-redirect.addprefix.prefix: /api/redirects
       traefik.http.services.redirect.loadbalancer.server.port: 8000
 
       traefik.http.routers.admin.rule: Host(`admin.${HOST}`)
+      traefik.http.routers.admin.service: noop@internal
       traefik.http.routers.admin.middlewares: addprefix-admin, redirect-to-root
       traefik.http.middlewares.addprefix-admin.addprefix.prefix: /admin-br
       traefik.http.middlewares.redirect-to-root.redirectregex.regex: ^/admin-br/(.*)
