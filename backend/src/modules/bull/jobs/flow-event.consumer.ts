@@ -38,8 +38,6 @@ export class FlowEventConsumer {
 
     switch (firstEvent.type) {
       case 'message': {
-        console.log('enviando mensagem para ', data.phone);
-
         await queue.add('send-message', {
           to: data.phone,
           content: firstEvent.metadata.message,
@@ -58,7 +56,7 @@ export class FlowEventConsumer {
         await queue.add('send-file', {
           to: data.phone,
           file: firstEvent.metadata.file,
-          type: firstEvent.metadata.file_type,
+          file_type: firstEvent.metadata.file_type,
         });
 
         if (restQueue.length === 0) return;
