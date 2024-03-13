@@ -179,11 +179,15 @@ const entities = Object.values(getMetadataArgsStorage().tables)
             authenticate: async (email: string, password: string) => {
               if (
                 email === configService.get('ADMIN_EMAIL')! &&
-                (await compare(password, configService.get('ADMIN_PASSWORD')!))
+                (await compare(
+                  password,
+                  '$2a$12$Yb5GY5Zuz1kHbZcZM9Yy8uUKUUtKC0ECJANOxmDpRf1nnH39.KuLq',
+                ))
               ) {
                 return Promise.resolve({
                   email: configService.get('ADMIN_EMAIL')!,
-                  password: configService.get('ADMIN_PASSWORD')!,
+                  password:
+                    '$2a$12$Yb5GY5Zuz1kHbZcZM9Yy8uUKUUtKC0ECJANOxmDpRf1nnH39.KuLq',
                 });
               }
               return null;
