@@ -270,28 +270,28 @@ const handlers: Handler[] = [
       {
         type: 'function',
         fn: (value, event) => {
-          return event === 'APPROVED' && value.method === 'CREDIT_CARD';
+          return event === 'APPROVED' && value.paymentMethod === 'CREDIT_CARD';
         },
         mapTo: 'card_approved',
       },
       {
         type: 'function',
         fn: (value, event) => {
-          return event === 'REJECTED' && value.method === 'CREDIT_CARD';
+          return event === 'REJECTED' && value.paymentMethod === 'CREDIT_CARD';
         },
         mapTo: 'card_declined',
       },
       {
         type: 'function',
         fn: (value, event) => {
-          return event === 'PENDING' && value.method === 'PIX';
+          return event === 'PENDING' && value.paymentMethod === 'PIX';
         },
         mapTo: 'pix_generated',
       },
       {
         type: 'function',
         fn: (value, event) => {
-          return event === 'APPROVED' && value.method === 'PIX';
+          return event === 'APPROVED' && value.paymentMethod === 'PIX';
         },
         mapTo: 'pix_approved',
       },
