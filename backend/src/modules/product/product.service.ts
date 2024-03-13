@@ -15,9 +15,12 @@ import { EventsHistoryEntity } from './entities/events-history.entity';
 import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
 import { Status } from '../whatsapp/entities/whatsapp.entity';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class ProductService {
+  private readonly logger = new Logger(ProductService.name);
+
   constructor(
     @InjectRepository(ProductEntity)
     private productRepository: Repository<ProductEntity>,
@@ -34,6 +37,8 @@ export class ProductService {
   ) {}
 
   async webhook(product_id: string, body: any) {
+    this.logger.log(`webhook - body: ${body}`);
+
     const data = handle(body);
 
     if (!data) throw new HttpException('Evento não encontrado', 404);

@@ -254,7 +254,7 @@ const handlers: Handler[] = [
     ],
   },
   {
-    name: 'officePay',
+    name: 'hofficePay',
     detect: (data) => {
       return _.has(data, 'paymentId');
     },
