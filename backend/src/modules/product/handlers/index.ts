@@ -138,7 +138,7 @@ const handlers: Handler[] = [
   {
     name: 'eduzz',
     detect: (data) => {
-      return _.has(data, 'customer.phone');
+      return _.has(data, 'customer.phone') && _.has(data, 'product_name');
     },
     phonePath: 'customer.phone',
     namePath: 'customer.name',
