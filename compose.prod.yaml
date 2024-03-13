@@ -61,7 +61,7 @@ services:
 
       traefik.http.routers.redirect.rule: Host(`redirect.${HOST}`)
       traefik.http.routers.redirect.middlewares: addprefix-redirect
-      traefik.http.middlewares.redirect.addprefix-redirect.prefix: /api/redirects
+      traefik.http.middlewares.addprefix-redirect.addprefix.prefix: /api/redirects
       traefik.http.services.redirect.loadbalancer.server.port: 8000
 
       traefik.http.routers.admin.rule: Host(`admin.${HOST}`)
