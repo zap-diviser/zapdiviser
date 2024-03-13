@@ -1,6 +1,7 @@
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import Queue, { Job, Queue as IQueue } from 'bull';
+import { Logger } from '@nestjs/common';
 
 interface IFlowEvent {
   product_id: string;
@@ -13,6 +14,8 @@ interface IFlowEvent {
 
 @Processor('flow-event-queue')
 export class FlowEventConsumer {
+  private readonly logger = new Logger(FlowEventConsumer.name);
+
   constructor(
     @InjectQueue('flow-event-queue')
     private readonly reservaCotaQueue: IQueue<IFlowEvent>,
@@ -25,7 +28,7 @@ export class FlowEventConsumer {
 
     const firstEvent = data.events[0];
 
-    console.log(data.instanceId);
+    this.logger.log(`Dispach event: ${JSON.stringify(data, null, 2)}`);
 
     const queue = new Queue(`MessagesSender:${data.instanceId}`, {
       redis: this.configService.get<string>('REDIS_URL'),
@@ -69,7 +72,6 @@ export class FlowEventConsumer {
       }
       case 'delay': {
         const delay = firstEvent.metadata.delay;
-        console.log('delay de ', delay, 'segundos');
 
         if (restQueue.length === 0) return;
 
