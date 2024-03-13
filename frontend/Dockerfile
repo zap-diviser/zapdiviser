@@ -17,5 +17,3 @@ RUN pnpm run build
 FROM devforth/spa-to-http
 
 COPY --from=build /app/dist .
-
-EXPOSE 8080

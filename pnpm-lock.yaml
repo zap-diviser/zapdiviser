@@ -95,6 +95,9 @@ importers:
       adminjs:
         specifier: ^5.11.0
         version: 5.11.0
+      apache-md5:
+        specifier: ^1.1.8
+        version: 1.1.8
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -8452,6 +8455,11 @@ packages:
     dependencies:
       normalize-path: 3.0.0
       picomatch: 2.3.1
+
+  /apache-md5@1.1.8:
+    resolution: {integrity: sha512-FCAJojipPn0bXjuEpjOOOMN8FZDkxfWWp4JGN9mifU2IhxvKyXZYqpzPHdnTSUpmPDy+tsslB6Z1g+Vg6nVbYA==}
+    engines: {node: '>=8'}
+    dev: false
 
   /app-root-path@3.1.0:
     resolution: {integrity: sha512-biN3PwB2gUtjaYy/isrU3aNWI5w+fAfvHkSvCKeQGxhmYpwKFUxudR3Yya+KqVRHBmEDYh+/lTozYCFbmzX4nA==}
@@ -23443,7 +23451,7 @@ packages:
       lodash.isequal: 4.5.0
       validator: 10.11.0
     optionalDependencies:
-      commander: 2.11.0
+      commander: 2.20.3
     dev: false
 
   /zen-observable-ts@1.2.5:

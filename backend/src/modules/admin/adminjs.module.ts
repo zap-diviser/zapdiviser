@@ -4,16 +4,13 @@ import { AdminModule } from '@adminjs/nestjs';
 import { Database, Resource } from '@adminjs/typeorm';
 import AdminJS from 'adminjs';
 import userConfig from './features/userConfig';
+import md5 from 'apache-md5';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 AdminJS.registerAdapter({
   Resource,
   Database,
 });
-
-const DEFAULT_ADMIN = {
-  email: 'admin',
-  password: 'hcu13gvcasf',
-};
 
 const entities = Object.values(getMetadataArgsStorage().tables)
   .map((table) => table.target)
@@ -32,20 +29,18 @@ const entities = Object.values(getMetadataArgsStorage().tables)
 @Module({
   imports: [
     AdminModule.createAdminAsync({
-      useFactory: () => {
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
         return {
           adminJsOptions: {
             rootPath: '/admin-br',
             resources: entities,
             loginPath: '/admin-br/login',
             logoutPath: '/admin-br/logout',
-            //add specific columns to show in table Users
-
             locale: {
-              language: 'en', // default language of application (also fallback)
-              //   availableLanguages: Object.keys(AdminJSLocales),
+              language: 'pt-BR',
               translations: {
-                //change resources name
                 resources: {
                   UserEntity: {
                     properties: {
@@ -58,7 +53,6 @@ const entities = Object.values(getMetadataArgsStorage().tables)
                     },
                   },
                 },
-
                 actions: {
                   new: 'Criar novo',
                   edit: 'Editar',
@@ -184,10 +178,14 @@ const entities = Object.values(getMetadataArgsStorage().tables)
           auth: {
             authenticate: async (email: string, password: string) => {
               if (
-                email === DEFAULT_ADMIN.email &&
-                password === DEFAULT_ADMIN.password
+                email === configService.get('ADMIN_EMAIL')! &&
+                md5(password, configService.get('ADMIN_PASSWORD')!) ===
+                  configService.get('ADMIN_PASSWORD')!
               ) {
-                return Promise.resolve(DEFAULT_ADMIN);
+                return Promise.resolve({
+                  email: configService.get('ADMIN_EMAIL')!,
+                  password: configService.get('ADMIN_PASSWORD')!,
+                });
               }
               return null;
             },

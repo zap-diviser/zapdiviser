@@ -26,7 +26,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     NestMinioModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        endPoint: configService.get<string>('MINIO_ENDPOINT')!,
+        endPoint: `minio-api.${configService.get<string>('HOST')}`,
         useSSL: true,
         accessKey: configService.get<string>('MINIO_ACCESS_KEY')!,
         secretKey: configService.get<string>('MINIO_SECRET_KEY')!,
