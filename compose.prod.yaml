@@ -5,33 +5,27 @@ services:
     command: --brotli
     networks:
       - internal
-      - traefik
+      - caddy
     depends_on:
       - backend
     environment:
       VITE_BACKEND_URL: backend.${HOST}
     labels:
-      traefik.enable: true
-
-      traefik.http.routers.frontend.rule: Host(`${HOST}`) || Host(`www.${HOST}`)
-      traefik.http.services.frontend.loadbalancer.server.port: 8080
-      traefik.http.routers.frontend.middlewares: redirect-to-non-www
-      traefik.http.middlewares.redirect-to-non-www.redirectregex.regex: ^https?://www.${HOST}/(.*)
-      traefik.http.middlewares.redirect-to-non-www.redirectregex.replacement: https://${HOST}/$${1}
-      traefik.http.middlewares.redirect-to-non-www.redirectregex.permanent: true
+      caddy_0: ${HOST}
+      caddy_0.reverse_proxy: "{{upstreams 8080}}"
+      caddy_1: www.${HOST}
+      caddy_1.redir: https://${HOST}{uri}
 
   backend:
     build:
       context: ./backend
     networks:
       - internal
-      - traefik
+      - caddy
     depends_on:
       - db
       - redis
       - minio
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       HOST: ${HOST}
       POSTGRES_HOST: ${POSTGRES_HOST}
@@ -48,30 +42,17 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      traefik.enable: true
-
-      traefik.http.routers.backend.rule: Host(`backend.${HOST}`)
-      traefik.http.routers.backend.service: noop@internal
-      traefik.http.services.backend.loadbalancer.server.port: 8000
-
-      traefik.http.routers.webhook.rule: Host(`webhook.${HOST}`)
-      traefik.http.routers.webhook.service: noop@internal
-      traefik.http.routers.webhook.middlewares: addprefix-webhook
-      traefik.http.middlewares.addprefix-webhook.addprefix.prefix: /api/product/webhook
-      traefik.http.services.webhook.loadbalancer.server.port: 8000
-
-      traefik.http.routers.redirect.rule: Host(`redirect.${HOST}`)
-      traefik.http.routers.redirect.service: noop@internal
-      traefik.http.routers.redirect.middlewares: addprefix-redirect
-      traefik.http.middlewares.addprefix-redirect.addprefix.prefix: /api/redirects
-      traefik.http.services.redirect.loadbalancer.server.port: 8000
-
-      traefik.http.routers.admin.rule: Host(`admin.${HOST}`)
-      traefik.http.routers.admin.service: noop@internal
-      traefik.http.routers.admin.middlewares: addprefix-admin, redirect-to-root
-      traefik.http.middlewares.addprefix-admin.addprefix.prefix: /admin-br
-      traefik.http.middlewares.redirect-to-root.redirectregex.regex: ^/admin-br/(.*)
-      traefik.http.middlewares.redirect-to-root.redirectregex.replacement: /$$1
-      traefik.http.middlewares.redirect-to-root.redirectregex.permanent: true
-      traefik.http.services.admin.loadbalancer.server.port: 8000
+      caddy_0: backend.${HOST}
+      caddy_0.reverse_proxy: "{{upstreams 8000}}"
+      caddy_1: webhook.${HOST}
+      caddy_1.rewrite: "* /api/product/webhook{uri}"
+      caddy_1.reverse_proxy: "{{upstreams 8000}}"
+      caddy_2: redirect.${HOST}
+      caddy_2.rewrite: "* /api/redirects{uri}"
+      caddy_2.reverse_proxy: "{{upstreams 8000}}"
+      caddy_3: admin.${HOST}
+      caddy_3.redir: "/ /admin-br"
+      caddy_3.reverse_proxy: "{{upstreams 8000}}"

@@ -4,7 +4,7 @@ import { AdminModule } from '@adminjs/nestjs';
 import { Database, Resource } from '@adminjs/typeorm';
 import AdminJS from 'adminjs';
 import userConfig from './features/userConfig';
-import md5 from 'apache-md5';
+import { compare } from 'bcrypt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 AdminJS.registerAdapter({
@@ -179,8 +179,7 @@ const entities = Object.values(getMetadataArgsStorage().tables)
             authenticate: async (email: string, password: string) => {
               if (
                 email === configService.get('ADMIN_EMAIL')! &&
-                md5(password, configService.get('ADMIN_PASSWORD')!) ===
-                  configService.get('ADMIN_PASSWORD')!
+                (await compare(password, configService.get('ADMIN_PASSWORD')!))
               ) {
                 return Promise.resolve({
                   email: configService.get('ADMIN_EMAIL')!,

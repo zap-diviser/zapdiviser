@@ -1,35 +1,19 @@
 version: "3.9"
 
 services:
-  traefik:
-    image: traefik
-    restart: unless-stopped
-    command:
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      - --entrypoints.websecure.address=:443
-      - --providers.docker=true
-      - --providers.docker.exposedByDefault=false
-      - --api
-      - --certificatesresolvers.letsencryptresolver.acme.email=${EMAIL}
-      - --certificatesresolvers.letsencryptresolver.acme.storage=/acme.json
-      - --certificatesresolvers.letsencryptresolver.acme.tlschallenge=true
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
     ports:
       - 80:80
       - 443:443
+    environment:
+      - CADDY_INGRESS_NETWORKS=caddy
+    networks:
+      - caddy
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${TRAEFIK_DIR}/acme.json:/acme.json
-    labels:
-      - traefik.enable=true
-      - traefik.http.middlewares.admin.basicauth.users=${ADMIN_EMAIL}:${ADMIN_PASSWORD}
-      - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.rule=Host(`traefik.${HOST}`)
-      - traefik.http.routers.traefik.service=api@internal
-      - traefik.http.routers.traefik.middlewares=admin
-      - traefik.http.routers.traefik.tls.certresolver=letsencryptresolver
+      - /var/run/docker.sock:/var/run/docker.sock
+      - caddy_data:/data
+    restart: unless-stoppedz
 
   db:
     image: postgres:alpine
@@ -75,19 +59,14 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     networks:
       - internal
-      - traefik
+      - caddy
     command: server /data --console-address :9001
     restart: unless-stopped
     labels:
-      traefik.enable: true
-
-      traefik.http.routers.minio-api.rule: Host(`minio-api.${HOST}`)
-      traefik.http.routers.minio-api.service: noop@internal
-      traefik.http.services.minio-api.loadbalancer.server.port: 9000
-
-      traefik.http.routers.minio.rule: Host(`minio.${HOST}`)
-      traefik.http.routers.minio.service: noop@internal
-      traefik.http.services.minio.loadbalancer.server.port: 9001
+      caddy_0: minio-api.${HOST}
+      caddy_0.reverse_proxy: "{{upstreams 9000}}"
+      caddy_1: minio.${HOST}
+      caddy_1.reverse_proxy: "{{upstreams 9001}}"
 
   setup-minio:
     image: minio/mc
@@ -108,11 +87,12 @@ services:
         mc mb minio/zapdiviser
 
 networks:
-  traefik:
+  caddy:
     external: true
   internal:
 
 volumes:
+  caddy_data:
   redis:
   postgres:
   minio:
