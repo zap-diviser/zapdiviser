@@ -37,7 +37,7 @@ export class ProductService {
   ) {}
 
   async webhook(product_id: string, body: any) {
-    this.logger.log(`webhook - body: ${body}`);
+    this.logger.log(`webhook - body: ${JSON.stringify(body, null, 2)}`);
 
     const data = handle(body);
 
