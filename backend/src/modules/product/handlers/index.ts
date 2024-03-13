@@ -223,6 +223,78 @@ const handlers: Handler[] = [
         value: 'abandoned_cart',
         mapTo: 'cart_abandoned',
       },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'approved' && value.method === 'credit_card';
+        },
+        mapTo: 'card_approved',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'refused' && value.method === 'credit_card';
+        },
+        mapTo: 'card_declined',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'pending' && value.method === 'pix';
+        },
+        mapTo: 'pix_generated',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'approved' && value.method === 'pix';
+        },
+        mapTo: 'pix_approved',
+      },
+    ],
+  },
+  {
+    name: 'officePay',
+    detect: (data) => {
+      return _.has(data, 'paymentId');
+    },
+    eventPath: 'status',
+    namePath: 'customer.name',
+    phonePath: 'customer.phone',
+    eventMap: [
+      {
+        type: 'value',
+        value: 'ABANDONED_CART',
+        mapTo: 'cart_abandoned',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'APPROVED' && value.method === 'CREDIT_CARD';
+        },
+        mapTo: 'card_approved',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'REJECTED' && value.method === 'CREDIT_CARD';
+        },
+        mapTo: 'card_declined',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'PENDING' && value.method === 'PIX';
+        },
+        mapTo: 'pix_generated',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return event === 'APPROVED' && value.method === 'PIX';
+        },
+        mapTo: 'pix_approved',
+      },
     ],
   },
 ];
