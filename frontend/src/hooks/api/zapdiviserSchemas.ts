@@ -3,81 +3,8 @@
  *
  * @version 1.0.0
  */
-export type ForgetPasswordDto = {
-  email: string;
-};
-
-export type CheckCodeDto = {
-  code: string;
-  email: string;
-};
-
-export type ForgetPasswordWithCodeDto = {
-  code: string;
-  email: string;
-  newPassword: string;
-};
-
-export type UpdateUserDto = {
+export type CreateProductDto = {
   name: string;
-  phone: string;
-  has_installed: boolean;
-  has_downloaded: boolean;
-};
-
-export type UpdatePasswordWithOldPasswordDto = {};
-
-export type UpdatePasswordWithTokenDto = {};
-
-export type Costumer = {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-};
-
-export type CreateUserDto = {
-  costumer: Costumer;
-};
-
-export type LoginUserDto = {
-  /**
-   * @default string@email.com
-   */
-  email: Record<string, any>;
-  password: string;
-};
-
-export type CreateRedirectDto = {
-  name: string;
-  slug: string;
-  links: Record<string, any>;
-};
-
-export type CreateRedirectLinkDto = {
-  link: string;
-};
-
-export type WhatsappEntity = {
-  id: string;
-  /**
-   * @format date-time
-   */
-  deleted_at: string;
-  /**
-   * @format date-time
-   */
-  created_at: string;
-  /**
-   * @format date-time
-   */
-  updated_at: string;
-  phone: string | null;
-  profileUrl: string | null;
-  status: 0 | 1 | 2 | 3;
-  user: UserEntity;
-  user_id: string;
-  products: ProductEntity[];
 };
 
 export type FlowEventEntity = {
@@ -166,6 +93,44 @@ export type ProductEntity = {
   eventsHistory: EventsHistoryEntity[];
 };
 
+export type RedirectLinkEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  link: string;
+  redirect: RedirectEntity;
+};
+
+export type RedirectEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  name: string;
+  slug: string;
+  links: RedirectLinkEntity[];
+  user: UserEntity;
+};
+
 export type UserEntity = {
   id: string;
   /**
@@ -190,7 +155,7 @@ export type UserEntity = {
   whatsapps: WhatsappEntity[];
 };
 
-export type RedirectEntity = {
+export type WhatsappEntity = {
   id: string;
   /**
    * @format date-time
@@ -204,28 +169,91 @@ export type RedirectEntity = {
    * @format date-time
    */
   updated_at: string;
-  name: string;
-  slug: string;
-  links: RedirectLinkEntity[];
+  phone: string | null;
+  profileUrl: string | null;
+  status: 0 | 1 | 2 | 3;
   user: UserEntity;
+  user_id: string;
+  products: ProductEntity[];
 };
 
-export type RedirectLinkEntity = {
-  id: string;
+export type CreateFlowEventDto = {
+  flow_name: 'card_approved' | 'card_declined' | 'pix_generated' | 'pix_approved' | 'cart_abandoned';
+  product_id: string;
+  metadata: {
+    message?: string;
+    delay?: number;
+  };
+  type: 'message' | 'delay' | 'file';
+  sort: number;
+};
+
+export type UpdateFlowEventDto = {
+  metadata: {
+    message?: string;
+  };
+  type: 'message' | 'delay' | 'file';
+};
+
+export type SetWhatsappsDto = {
+  whatsappId: string;
+};
+
+export type Object = {};
+
+export type ForgetPasswordDto = {
+  email: string;
+};
+
+export type CheckCodeDto = {
+  code: string;
+  email: string;
+};
+
+export type ForgetPasswordWithCodeDto = {
+  code: string;
+  email: string;
+  newPassword: string;
+};
+
+export type UpdateUserDto = {
+  name: string;
+  phone: string;
+  has_installed: boolean;
+  has_downloaded: boolean;
+};
+
+export type UpdatePasswordWithOldPasswordDto = {};
+
+export type UpdatePasswordWithTokenDto = {};
+
+export type Costumer = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
+
+export type CreateUserDto = {
+  costumer: Costumer;
+};
+
+export type LoginUserDto = {
   /**
-   * @format date-time
+   * @default string@email.com
    */
-  deleted_at: string;
-  /**
-   * @format date-time
-   */
-  created_at: string;
-  /**
-   * @format date-time
-   */
-  updated_at: string;
+  email: Record<string, any>;
+  password: string;
+};
+
+export type CreateRedirectDto = {
+  name: string;
+  slug: string;
+  links: Record<string, any>;
+};
+
+export type CreateRedirectLinkDto = {
   link: string;
-  redirect: RedirectEntity;
 };
 
 export type UpdateRedirectDto = {

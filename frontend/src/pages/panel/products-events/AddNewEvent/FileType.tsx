@@ -1,10 +1,10 @@
-import { CircularProgress, Link, Typography, useTheme } from '@mui/material';
+import { CircularProgress, Link, Typography } from '@mui/material';
 import { Grid, Stack, InputLabel, FormHelperText, Button } from '@mui/material';
 import SingleFileUpload from 'components/third-party/dropzone/SingleFile';
-import { useProductControllerCreateMediaPressignedUrl } from 'hooks/api/zapdiviserComponents';
+import { useProductControllerCreateMediaUploadUrl } from 'hooks/api/zapdiviserComponents';
 import { Document } from 'iconsax-react';
 import { useCallback, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-rouer';
 
 const allowedTypes = ['audio', 'image', 'video', 'document'];
 
@@ -26,7 +26,7 @@ export default function FileType({
 
   const { product_id } = useParams();
 
-  const { mutateAsync: createUrl } = useProductControllerCreateMediaPressignedUrl();
+  const { mutateAsync: createUrl } = useProductControllerCreateMediaUploadUrl();
 
   const uploadFile = async (file: any) => {
     const fileType = allowedTypes.find((type) => file.type.includes(type)) || 'document';

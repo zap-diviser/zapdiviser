@@ -9,6 +9,620 @@ import type * as Fetcher from './zapdiviserFetcher';
 import { zapdiviserFetch } from './zapdiviserFetcher';
 import type * as Schemas from './zapdiviserSchemas';
 
+export type ProductControllerCreateError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerCreateVariables = {
+  body: Schemas.CreateProductDto;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerCreate = (variables: ProductControllerCreateVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Schemas.ProductEntity, ProductControllerCreateError, Schemas.CreateProductDto, {}, {}, {}>({
+    url: '/api/product',
+    method: 'post',
+    ...variables,
+    signal
+  });
+
+export const useProductControllerCreate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.ProductEntity, ProductControllerCreateError, ProductControllerCreateVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Schemas.ProductEntity, ProductControllerCreateError, ProductControllerCreateVariables>({
+    mutationFn: (variables: ProductControllerCreateVariables) => fetchProductControllerCreate({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerFindAllError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerFindAllResponse = Schemas.ProductEntity[];
+
+export type ProductControllerFindAllVariables = ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerFindAll = (variables: ProductControllerFindAllVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<ProductControllerFindAllResponse, ProductControllerFindAllError, undefined, {}, {}, {}>({
+    url: '/api/product',
+    method: 'get',
+    ...variables,
+    signal
+  });
+
+export const useProductControllerFindAll = <TData = ProductControllerFindAllResponse>(
+  variables: ProductControllerFindAllVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<ProductControllerFindAllResponse, ProductControllerFindAllError, TData>,
+    'queryKey' | 'queryFn' | 'initialData'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useZapdiviserContext(options);
+  return reactQuery.useQuery<ProductControllerFindAllResponse, ProductControllerFindAllError, TData>({
+    queryKey: queryKeyFn({ path: '/api/product', operationId: 'productControllerFindAll', variables }),
+    queryFn: ({ signal }) => fetchProductControllerFindAll({ ...fetcherOptions, ...variables }, signal),
+    ...options,
+    ...queryOptions
+  });
+};
+
+export type ProductControllerFindOnePathParams = {
+  id: string;
+};
+
+export type ProductControllerFindOneError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerFindOneVariables = {
+  pathParams: ProductControllerFindOnePathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerFindOne = (variables: ProductControllerFindOneVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Schemas.ProductEntity, ProductControllerFindOneError, undefined, {}, {}, ProductControllerFindOnePathParams>({
+    url: '/api/product/{id}',
+    method: 'get',
+    ...variables,
+    signal
+  });
+
+export const useProductControllerFindOne = <TData = Schemas.ProductEntity>(
+  variables: ProductControllerFindOneVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Schemas.ProductEntity, ProductControllerFindOneError, TData>,
+    'queryKey' | 'queryFn' | 'initialData'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useZapdiviserContext(options);
+  return reactQuery.useQuery<Schemas.ProductEntity, ProductControllerFindOneError, TData>({
+    queryKey: queryKeyFn({ path: '/api/product/{id}', operationId: 'productControllerFindOne', variables }),
+    queryFn: ({ signal }) => fetchProductControllerFindOne({ ...fetcherOptions, ...variables }, signal),
+    ...options,
+    ...queryOptions
+  });
+};
+
+export type ProductControllerUpdatePathParams = {
+  id: string;
+};
+
+export type ProductControllerUpdateError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerUpdateVariables = {
+  body: Schemas.CreateProductDto;
+  pathParams: ProductControllerUpdatePathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerUpdate = (variables: ProductControllerUpdateVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Record<string, any>, ProductControllerUpdateError, Schemas.CreateProductDto, {}, {}, ProductControllerUpdatePathParams>({
+    url: '/api/product/{id}',
+    method: 'patch',
+    ...variables,
+    signal
+  });
+
+export const useProductControllerUpdate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Record<string, any>, ProductControllerUpdateError, ProductControllerUpdateVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Record<string, any>, ProductControllerUpdateError, ProductControllerUpdateVariables>({
+    mutationFn: (variables: ProductControllerUpdateVariables) => fetchProductControllerUpdate({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerDeletePathParams = {
+  id: string;
+};
+
+export type ProductControllerDeleteError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerDeleteVariables = {
+  pathParams: ProductControllerDeletePathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerDelete = (variables: ProductControllerDeleteVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Schemas.ProductEntity, ProductControllerDeleteError, undefined, {}, {}, ProductControllerDeletePathParams>({
+    url: '/api/product/{id}',
+    method: 'delete',
+    ...variables,
+    signal
+  });
+
+export const useProductControllerDelete = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.ProductEntity, ProductControllerDeleteError, ProductControllerDeleteVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Schemas.ProductEntity, ProductControllerDeleteError, ProductControllerDeleteVariables>({
+    mutationFn: (variables: ProductControllerDeleteVariables) => fetchProductControllerDelete({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerCreateFlowEventError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerCreateFlowEventVariables = {
+  body: Schemas.CreateFlowEventDto;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerCreateFlowEvent = (variables: ProductControllerCreateFlowEventVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Record<string, any>, ProductControllerCreateFlowEventError, Schemas.CreateFlowEventDto, {}, {}, {}>({
+    url: '/api/product/flow-event',
+    method: 'post',
+    ...variables,
+    signal
+  });
+
+export const useProductControllerCreateFlowEvent = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Record<string, any>, ProductControllerCreateFlowEventError, ProductControllerCreateFlowEventVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Record<string, any>, ProductControllerCreateFlowEventError, ProductControllerCreateFlowEventVariables>({
+    mutationFn: (variables: ProductControllerCreateFlowEventVariables) =>
+      fetchProductControllerCreateFlowEvent({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerCreateMediaUploadUrlPathParams = {
+  productId: string;
+};
+
+export type ProductControllerCreateMediaUploadUrlError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerCreateMediaUploadUrlVariables = {
+  pathParams: ProductControllerCreateMediaUploadUrlPathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerCreateMediaUploadUrl = (
+  variables: ProductControllerCreateMediaUploadUrlVariables,
+  signal?: AbortSignal
+) =>
+  zapdiviserFetch<
+    undefined,
+    ProductControllerCreateMediaUploadUrlError,
+    undefined,
+    {},
+    {},
+    ProductControllerCreateMediaUploadUrlPathParams
+  >({ url: '/api/product/flow-event/upload-file/{productId}', method: 'post', ...variables, signal });
+
+export const useProductControllerCreateMediaUploadUrl = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, ProductControllerCreateMediaUploadUrlError, ProductControllerCreateMediaUploadUrlVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<undefined, ProductControllerCreateMediaUploadUrlError, ProductControllerCreateMediaUploadUrlVariables>({
+    mutationFn: (variables: ProductControllerCreateMediaUploadUrlVariables) =>
+      fetchProductControllerCreateMediaUploadUrl({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerCreateMediaDownloadUrlPathParams = {
+  productId: string;
+  fileId: string;
+};
+
+export type ProductControllerCreateMediaDownloadUrlError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerCreateMediaDownloadUrlVariables = {
+  pathParams: ProductControllerCreateMediaDownloadUrlPathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerCreateMediaDownloadUrl = (
+  variables: ProductControllerCreateMediaDownloadUrlVariables,
+  signal?: AbortSignal
+) =>
+  zapdiviserFetch<
+    string,
+    ProductControllerCreateMediaDownloadUrlError,
+    undefined,
+    {},
+    {},
+    ProductControllerCreateMediaDownloadUrlPathParams
+  >({ url: '/api/product/flow-event/download-file/{productId}/{fileId}', method: 'post', ...variables, signal });
+
+export const useProductControllerCreateMediaDownloadUrl = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<string, ProductControllerCreateMediaDownloadUrlError, ProductControllerCreateMediaDownloadUrlVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<string, ProductControllerCreateMediaDownloadUrlError, ProductControllerCreateMediaDownloadUrlVariables>({
+    mutationFn: (variables: ProductControllerCreateMediaDownloadUrlVariables) =>
+      fetchProductControllerCreateMediaDownloadUrl({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerUpdateFlowEventPathParams = {
+  id: string;
+};
+
+export type ProductControllerUpdateFlowEventError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerUpdateFlowEventVariables = {
+  body: Schemas.UpdateFlowEventDto;
+  pathParams: ProductControllerUpdateFlowEventPathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerUpdateFlowEvent = (variables: ProductControllerUpdateFlowEventVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<
+    Record<string, any>,
+    ProductControllerUpdateFlowEventError,
+    Schemas.UpdateFlowEventDto,
+    {},
+    {},
+    ProductControllerUpdateFlowEventPathParams
+  >({ url: '/api/product/flow-event/{id}', method: 'patch', ...variables, signal });
+
+export const useProductControllerUpdateFlowEvent = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Record<string, any>, ProductControllerUpdateFlowEventError, ProductControllerUpdateFlowEventVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Record<string, any>, ProductControllerUpdateFlowEventError, ProductControllerUpdateFlowEventVariables>({
+    mutationFn: (variables: ProductControllerUpdateFlowEventVariables) =>
+      fetchProductControllerUpdateFlowEvent({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerDeleteFlowEventPathParams = {
+  id: string;
+};
+
+export type ProductControllerDeleteFlowEventError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerDeleteFlowEventVariables = {
+  pathParams: ProductControllerDeleteFlowEventPathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerDeleteFlowEvent = (variables: ProductControllerDeleteFlowEventVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<
+    Schemas.FlowEventEntity,
+    ProductControllerDeleteFlowEventError,
+    undefined,
+    {},
+    {},
+    ProductControllerDeleteFlowEventPathParams
+  >({ url: '/api/product/flow-event/{id}', method: 'delete', ...variables, signal });
+
+export const useProductControllerDeleteFlowEvent = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.FlowEventEntity,
+      ProductControllerDeleteFlowEventError,
+      ProductControllerDeleteFlowEventVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Schemas.FlowEventEntity, ProductControllerDeleteFlowEventError, ProductControllerDeleteFlowEventVariables>({
+    mutationFn: (variables: ProductControllerDeleteFlowEventVariables) =>
+      fetchProductControllerDeleteFlowEvent({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerSetWhatsappPathParams = {
+  id: string;
+};
+
+export type ProductControllerSetWhatsappError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerSetWhatsappVariables = {
+  body: Schemas.SetWhatsappsDto;
+  pathParams: ProductControllerSetWhatsappPathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerSetWhatsapp = (variables: ProductControllerSetWhatsappVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<
+    Schemas.ProductEntity,
+    ProductControllerSetWhatsappError,
+    Schemas.SetWhatsappsDto,
+    {},
+    {},
+    ProductControllerSetWhatsappPathParams
+  >({ url: '/api/product/{id}/whatsapp', method: 'post', ...variables, signal });
+
+export const useProductControllerSetWhatsapp = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.ProductEntity, ProductControllerSetWhatsappError, ProductControllerSetWhatsappVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Schemas.ProductEntity, ProductControllerSetWhatsappError, ProductControllerSetWhatsappVariables>({
+    mutationFn: (variables: ProductControllerSetWhatsappVariables) =>
+      fetchProductControllerSetWhatsapp({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerRemoveWhatsappFromProductPathParams = {
+  id: string;
+};
+
+export type ProductControllerRemoveWhatsappFromProductError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerRemoveWhatsappFromProductVariables = {
+  body: Schemas.SetWhatsappsDto;
+  pathParams: ProductControllerRemoveWhatsappFromProductPathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerRemoveWhatsappFromProduct = (
+  variables: ProductControllerRemoveWhatsappFromProductVariables,
+  signal?: AbortSignal
+) =>
+  zapdiviserFetch<
+    Schemas.ProductEntity,
+    ProductControllerRemoveWhatsappFromProductError,
+    Schemas.SetWhatsappsDto,
+    {},
+    {},
+    ProductControllerRemoveWhatsappFromProductPathParams
+  >({ url: '/api/product/{id}/whatsapp', method: 'delete', ...variables, signal });
+
+export const useProductControllerRemoveWhatsappFromProduct = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.ProductEntity,
+      ProductControllerRemoveWhatsappFromProductError,
+      ProductControllerRemoveWhatsappFromProductVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<
+    Schemas.ProductEntity,
+    ProductControllerRemoveWhatsappFromProductError,
+    ProductControllerRemoveWhatsappFromProductVariables
+  >({
+    mutationFn: (variables: ProductControllerRemoveWhatsappFromProductVariables) =>
+      fetchProductControllerRemoveWhatsappFromProduct({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type ProductControllerWebhookPathParams = {
+  id: string;
+};
+
+export type ProductControllerWebhookError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProductControllerWebhookVariables = {
+  body?: Schemas.Object;
+  pathParams: ProductControllerWebhookPathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchProductControllerWebhook = (variables: ProductControllerWebhookVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<undefined, ProductControllerWebhookError, Schemas.Object, {}, {}, ProductControllerWebhookPathParams>({
+    url: '/api/product/webhook/{id}',
+    method: 'post',
+    ...variables,
+    signal
+  });
+
+export const useProductControllerWebhook = (
+  options?: Omit<reactQuery.UseMutationOptions<undefined, ProductControllerWebhookError, ProductControllerWebhookVariables>, 'mutationFn'>
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<undefined, ProductControllerWebhookError, ProductControllerWebhookVariables>({
+    mutationFn: (variables: ProductControllerWebhookVariables) => fetchProductControllerWebhook({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type WhatsappControllerFindAllError = Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerFindAllResponse = Schemas.WhatsappEntity[];
+
+export type WhatsappControllerFindAllVariables = ZapdiviserContext['fetcherOptions'];
+
+export const fetchWhatsappControllerFindAll = (variables: WhatsappControllerFindAllVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<WhatsappControllerFindAllResponse, WhatsappControllerFindAllError, undefined, {}, {}, {}>({
+    url: '/api/whatsapp',
+    method: 'get',
+    ...variables,
+    signal
+  });
+
+export const useWhatsappControllerFindAll = <TData = WhatsappControllerFindAllResponse>(
+  variables: WhatsappControllerFindAllVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<WhatsappControllerFindAllResponse, WhatsappControllerFindAllError, TData>,
+    'queryKey' | 'queryFn' | 'initialData'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useZapdiviserContext(options);
+  return reactQuery.useQuery<WhatsappControllerFindAllResponse, WhatsappControllerFindAllError, TData>({
+    queryKey: queryKeyFn({ path: '/api/whatsapp', operationId: 'whatsappControllerFindAll', variables }),
+    queryFn: ({ signal }) => fetchWhatsappControllerFindAll({ ...fetcherOptions, ...variables }, signal),
+    ...options,
+    ...queryOptions
+  });
+};
+
+export type WhatsappControllerCreateError = Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerCreateVariables = ZapdiviserContext['fetcherOptions'];
+
+export const fetchWhatsappControllerCreate = (variables: WhatsappControllerCreateVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Schemas.WhatsappEntity, WhatsappControllerCreateError, undefined, {}, {}, {}>({
+    url: '/api/whatsapp',
+    method: 'post',
+    ...variables,
+    signal
+  });
+
+export const useWhatsappControllerCreate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.WhatsappEntity, WhatsappControllerCreateError, WhatsappControllerCreateVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Schemas.WhatsappEntity, WhatsappControllerCreateError, WhatsappControllerCreateVariables>({
+    mutationFn: (variables: WhatsappControllerCreateVariables) => fetchWhatsappControllerCreate({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type WhatsappControllerUpdateCodeError = Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerUpdateCodeVariables = ZapdiviserContext['fetcherOptions'];
+
+export const fetchWhatsappControllerUpdateCode = (variables: WhatsappControllerUpdateCodeVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<undefined, WhatsappControllerUpdateCodeError, undefined, {}, {}, {}>({
+    url: '/api/whatsapp/update-code',
+    method: 'post',
+    ...variables,
+    signal
+  });
+
+export const useWhatsappControllerUpdateCode = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, WhatsappControllerUpdateCodeError, WhatsappControllerUpdateCodeVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<undefined, WhatsappControllerUpdateCodeError, WhatsappControllerUpdateCodeVariables>({
+    mutationFn: (variables: WhatsappControllerUpdateCodeVariables) =>
+      fetchWhatsappControllerUpdateCode({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type WhatsappControllerFindOnePathParams = {
+  id: string;
+};
+
+export type WhatsappControllerFindOneError = Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerFindOneVariables = {
+  pathParams: WhatsappControllerFindOnePathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchWhatsappControllerFindOne = (variables: WhatsappControllerFindOneVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Record<string, any>, WhatsappControllerFindOneError, undefined, {}, {}, WhatsappControllerFindOnePathParams>({
+    url: '/api/whatsapp/{id}',
+    method: 'get',
+    ...variables,
+    signal
+  });
+
+export const useWhatsappControllerFindOne = <TData = Record<string, any>>(
+  variables: WhatsappControllerFindOneVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Record<string, any>, WhatsappControllerFindOneError, TData>,
+    'queryKey' | 'queryFn' | 'initialData'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useZapdiviserContext(options);
+  return reactQuery.useQuery<Record<string, any>, WhatsappControllerFindOneError, TData>({
+    queryKey: queryKeyFn({ path: '/api/whatsapp/{id}', operationId: 'whatsappControllerFindOne', variables }),
+    queryFn: ({ signal }) => fetchWhatsappControllerFindOne({ ...fetcherOptions, ...variables }, signal),
+    ...options,
+    ...queryOptions
+  });
+};
+
+export type WhatsappControllerUpdatePathParams = {
+  id: string;
+};
+
+export type WhatsappControllerUpdateError = Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerUpdateVariables = {
+  pathParams: WhatsappControllerUpdatePathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchWhatsappControllerUpdate = (variables: WhatsappControllerUpdateVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<undefined, WhatsappControllerUpdateError, undefined, {}, {}, WhatsappControllerUpdatePathParams>({
+    url: '/api/whatsapp/{id}',
+    method: 'patch',
+    ...variables,
+    signal
+  });
+
+export const useWhatsappControllerUpdate = (
+  options?: Omit<reactQuery.UseMutationOptions<undefined, WhatsappControllerUpdateError, WhatsappControllerUpdateVariables>, 'mutationFn'>
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<undefined, WhatsappControllerUpdateError, WhatsappControllerUpdateVariables>({
+    mutationFn: (variables: WhatsappControllerUpdateVariables) => fetchWhatsappControllerUpdate({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
+export type WhatsappControllerRemovePathParams = {
+  id: string;
+};
+
+export type WhatsappControllerRemoveError = Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerRemoveVariables = {
+  pathParams: WhatsappControllerRemovePathParams;
+} & ZapdiviserContext['fetcherOptions'];
+
+export const fetchWhatsappControllerRemove = (variables: WhatsappControllerRemoveVariables, signal?: AbortSignal) =>
+  zapdiviserFetch<Schemas.WhatsappEntity, WhatsappControllerRemoveError, undefined, {}, {}, WhatsappControllerRemovePathParams>({
+    url: '/api/whatsapp/{id}',
+    method: 'delete',
+    ...variables,
+    signal
+  });
+
+export const useWhatsappControllerRemove = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Schemas.WhatsappEntity, WhatsappControllerRemoveError, WhatsappControllerRemoveVariables>,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<Schemas.WhatsappEntity, WhatsappControllerRemoveError, WhatsappControllerRemoveVariables>({
+    mutationFn: (variables: WhatsappControllerRemoveVariables) => fetchWhatsappControllerRemove({ ...fetcherOptions, ...variables }),
+    ...options
+  });
+};
+
 export type UserControllerFindMeError = Fetcher.ErrorWrapper<undefined>;
 
 export type UserControllerFindMeVariables = ZapdiviserContext['fetcherOptions'];
@@ -445,18 +1059,23 @@ export type RedirectsControllerUpdateVariables = {
 } & ZapdiviserContext['fetcherOptions'];
 
 export const fetchRedirectsControllerUpdate = (variables: RedirectsControllerUpdateVariables, signal?: AbortSignal) =>
-  zapdiviserFetch<undefined, RedirectsControllerUpdateError, Schemas.UpdateRedirectDto, {}, {}, RedirectsControllerUpdatePathParams>({
-    url: '/api/redirects/{id}',
-    method: 'patch',
-    ...variables,
-    signal
-  });
+  zapdiviserFetch<
+    Record<string, any>,
+    RedirectsControllerUpdateError,
+    Schemas.UpdateRedirectDto,
+    {},
+    {},
+    RedirectsControllerUpdatePathParams
+  >({ url: '/api/redirects/{id}', method: 'patch', ...variables, signal });
 
 export const useRedirectsControllerUpdate = (
-  options?: Omit<reactQuery.UseMutationOptions<undefined, RedirectsControllerUpdateError, RedirectsControllerUpdateVariables>, 'mutationFn'>
+  options?: Omit<
+    reactQuery.UseMutationOptions<Record<string, any>, RedirectsControllerUpdateError, RedirectsControllerUpdateVariables>,
+    'mutationFn'
+  >
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
-  return reactQuery.useMutation<undefined, RedirectsControllerUpdateError, RedirectsControllerUpdateVariables>({
+  return reactQuery.useMutation<Record<string, any>, RedirectsControllerUpdateError, RedirectsControllerUpdateVariables>({
     mutationFn: (variables: RedirectsControllerUpdateVariables) => fetchRedirectsControllerUpdate({ ...fetcherOptions, ...variables }),
     ...options
   });
@@ -558,181 +1177,27 @@ export const useRedirectsControllerRemoveLink = (
   });
 };
 
-export type WhatsappControllerFindAllError = Fetcher.ErrorWrapper<undefined>;
-
-export type WhatsappControllerFindAllResponse = Schemas.WhatsappEntity[];
-
-export type WhatsappControllerFindAllVariables = ZapdiviserContext['fetcherOptions'];
-
-export const fetchWhatsappControllerFindAll = (variables: WhatsappControllerFindAllVariables, signal?: AbortSignal) =>
-  zapdiviserFetch<WhatsappControllerFindAllResponse, WhatsappControllerFindAllError, undefined, {}, {}, {}>({
-    url: '/api/whatsapp',
-    method: 'get',
-    ...variables,
-    signal
-  });
-
-export const useWhatsappControllerFindAll = <TData = WhatsappControllerFindAllResponse>(
-  variables: WhatsappControllerFindAllVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<WhatsappControllerFindAllResponse, WhatsappControllerFindAllError, TData>,
-    'queryKey' | 'queryFn' | 'initialData'
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useZapdiviserContext(options);
-  return reactQuery.useQuery<WhatsappControllerFindAllResponse, WhatsappControllerFindAllError, TData>({
-    queryKey: queryKeyFn({ path: '/api/whatsapp', operationId: 'whatsappControllerFindAll', variables }),
-    queryFn: ({ signal }) => fetchWhatsappControllerFindAll({ ...fetcherOptions, ...variables }, signal),
-    ...options,
-    ...queryOptions
-  });
-};
-
-export type WhatsappControllerCreateError = Fetcher.ErrorWrapper<undefined>;
-
-export type WhatsappControllerCreateVariables = ZapdiviserContext['fetcherOptions'];
-
-export const fetchWhatsappControllerCreate = (variables: WhatsappControllerCreateVariables, signal?: AbortSignal) =>
-  zapdiviserFetch<Schemas.WhatsappEntity, WhatsappControllerCreateError, undefined, {}, {}, {}>({
-    url: '/api/whatsapp',
-    method: 'post',
-    ...variables,
-    signal
-  });
-
-export const useWhatsappControllerCreate = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<Schemas.WhatsappEntity, WhatsappControllerCreateError, WhatsappControllerCreateVariables>,
-    'mutationFn'
-  >
-) => {
-  const { fetcherOptions } = useZapdiviserContext();
-  return reactQuery.useMutation<Schemas.WhatsappEntity, WhatsappControllerCreateError, WhatsappControllerCreateVariables>({
-    mutationFn: (variables: WhatsappControllerCreateVariables) => fetchWhatsappControllerCreate({ ...fetcherOptions, ...variables }),
-    ...options
-  });
-};
-
-export type WhatsappControllerUpdateCodeError = Fetcher.ErrorWrapper<undefined>;
-
-export type WhatsappControllerUpdateCodeVariables = ZapdiviserContext['fetcherOptions'];
-
-export const fetchWhatsappControllerUpdateCode = (variables: WhatsappControllerUpdateCodeVariables, signal?: AbortSignal) =>
-  zapdiviserFetch<undefined, WhatsappControllerUpdateCodeError, undefined, {}, {}, {}>({
-    url: '/api/whatsapp/update-code',
-    method: 'post',
-    ...variables,
-    signal
-  });
-
-export const useWhatsappControllerUpdateCode = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, WhatsappControllerUpdateCodeError, WhatsappControllerUpdateCodeVariables>,
-    'mutationFn'
-  >
-) => {
-  const { fetcherOptions } = useZapdiviserContext();
-  return reactQuery.useMutation<undefined, WhatsappControllerUpdateCodeError, WhatsappControllerUpdateCodeVariables>({
-    mutationFn: (variables: WhatsappControllerUpdateCodeVariables) =>
-      fetchWhatsappControllerUpdateCode({ ...fetcherOptions, ...variables }),
-    ...options
-  });
-};
-
-export type WhatsappControllerFindOnePathParams = {
-  id: string;
-};
-
-export type WhatsappControllerFindOneError = Fetcher.ErrorWrapper<undefined>;
-
-export type WhatsappControllerFindOneVariables = {
-  pathParams: WhatsappControllerFindOnePathParams;
-} & ZapdiviserContext['fetcherOptions'];
-
-export const fetchWhatsappControllerFindOne = (variables: WhatsappControllerFindOneVariables, signal?: AbortSignal) =>
-  zapdiviserFetch<Record<string, any>, WhatsappControllerFindOneError, undefined, {}, {}, WhatsappControllerFindOnePathParams>({
-    url: '/api/whatsapp/{id}',
-    method: 'get',
-    ...variables,
-    signal
-  });
-
-export const useWhatsappControllerFindOne = <TData = Record<string, any>>(
-  variables: WhatsappControllerFindOneVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<Record<string, any>, WhatsappControllerFindOneError, TData>,
-    'queryKey' | 'queryFn' | 'initialData'
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useZapdiviserContext(options);
-  return reactQuery.useQuery<Record<string, any>, WhatsappControllerFindOneError, TData>({
-    queryKey: queryKeyFn({ path: '/api/whatsapp/{id}', operationId: 'whatsappControllerFindOne', variables }),
-    queryFn: ({ signal }) => fetchWhatsappControllerFindOne({ ...fetcherOptions, ...variables }, signal),
-    ...options,
-    ...queryOptions
-  });
-};
-
-export type WhatsappControllerUpdatePathParams = {
-  id: string;
-};
-
-export type WhatsappControllerUpdateError = Fetcher.ErrorWrapper<undefined>;
-
-export type WhatsappControllerUpdateVariables = {
-  pathParams: WhatsappControllerUpdatePathParams;
-} & ZapdiviserContext['fetcherOptions'];
-
-export const fetchWhatsappControllerUpdate = (variables: WhatsappControllerUpdateVariables, signal?: AbortSignal) =>
-  zapdiviserFetch<undefined, WhatsappControllerUpdateError, undefined, {}, {}, WhatsappControllerUpdatePathParams>({
-    url: '/api/whatsapp/{id}',
-    method: 'patch',
-    ...variables,
-    signal
-  });
-
-export const useWhatsappControllerUpdate = (
-  options?: Omit<reactQuery.UseMutationOptions<undefined, WhatsappControllerUpdateError, WhatsappControllerUpdateVariables>, 'mutationFn'>
-) => {
-  const { fetcherOptions } = useZapdiviserContext();
-  return reactQuery.useMutation<undefined, WhatsappControllerUpdateError, WhatsappControllerUpdateVariables>({
-    mutationFn: (variables: WhatsappControllerUpdateVariables) => fetchWhatsappControllerUpdate({ ...fetcherOptions, ...variables }),
-    ...options
-  });
-};
-
-export type WhatsappControllerRemovePathParams = {
-  id: string;
-};
-
-export type WhatsappControllerRemoveError = Fetcher.ErrorWrapper<undefined>;
-
-export type WhatsappControllerRemoveVariables = {
-  pathParams: WhatsappControllerRemovePathParams;
-} & ZapdiviserContext['fetcherOptions'];
-
-export const fetchWhatsappControllerRemove = (variables: WhatsappControllerRemoveVariables, signal?: AbortSignal) =>
-  zapdiviserFetch<Schemas.WhatsappEntity, WhatsappControllerRemoveError, undefined, {}, {}, WhatsappControllerRemovePathParams>({
-    url: '/api/whatsapp/{id}',
-    method: 'delete',
-    ...variables,
-    signal
-  });
-
-export const useWhatsappControllerRemove = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<Schemas.WhatsappEntity, WhatsappControllerRemoveError, WhatsappControllerRemoveVariables>,
-    'mutationFn'
-  >
-) => {
-  const { fetcherOptions } = useZapdiviserContext();
-  return reactQuery.useMutation<Schemas.WhatsappEntity, WhatsappControllerRemoveError, WhatsappControllerRemoveVariables>({
-    mutationFn: (variables: WhatsappControllerRemoveVariables) => fetchWhatsappControllerRemove({ ...fetcherOptions, ...variables }),
-    ...options
-  });
-};
-
 export type QueryOperation =
+  | {
+      path: '/api/product';
+      operationId: 'productControllerFindAll';
+      variables: ProductControllerFindAllVariables;
+    }
+  | {
+      path: '/api/product/{id}';
+      operationId: 'productControllerFindOne';
+      variables: ProductControllerFindOneVariables;
+    }
+  | {
+      path: '/api/whatsapp';
+      operationId: 'whatsappControllerFindAll';
+      variables: WhatsappControllerFindAllVariables;
+    }
+  | {
+      path: '/api/whatsapp/{id}';
+      operationId: 'whatsappControllerFindOne';
+      variables: WhatsappControllerFindOneVariables;
+    }
   | {
       path: '/api/user';
       operationId: 'userControllerFindMe';
@@ -757,14 +1222,4 @@ export type QueryOperation =
       path: '/api/redirects/{id}';
       operationId: 'redirectsControllerFindOne';
       variables: RedirectsControllerFindOneVariables;
-    }
-  | {
-      path: '/api/whatsapp';
-      operationId: 'whatsappControllerFindAll';
-      variables: WhatsappControllerFindAllVariables;
-    }
-  | {
-      path: '/api/whatsapp/{id}';
-      operationId: 'whatsappControllerFindOne';
-      variables: WhatsappControllerFindOneVariables;
     };

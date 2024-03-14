@@ -30,7 +30,8 @@ services:
 
   migrate:
     build:
-      context: ./backend
+      context: .
+      target: backend
     depends_on:
       - db
     networks:
