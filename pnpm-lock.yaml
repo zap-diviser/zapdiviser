@@ -24064,7 +24064,7 @@ packages:
       lodash.isequal: 4.5.0
       validator: 10.11.0
     optionalDependencies:
-      commander: 2.20.3
+      commander: 2.11.0
     dev: false
 
   /zen-observable-ts@1.2.5:
