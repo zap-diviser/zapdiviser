@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 // material-ui
 import {
@@ -11,22 +11,26 @@ import {
   FormHelperText,
   InputLabel,
   Stack,
-  TextField
+  TextField,
+  InputAdornment
 } from '@mui/material';
 
 import _ from 'lodash';
 import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider, FormikValues } from 'formik';
-
-// import { linksTable } from './linksTable';
-// import { linksCollectionService } from 'services/linksCollection';
-// import { addLinkCollection, updateLinkCollection } from 'store/reducers/links-collections';
 import { LinksTable } from './LinksTable';
-import { useRedirectsControllerCreate, useRedirectsControllerCreateLink } from 'hooks/api/zapdiviserComponents';
+import {
+  useRedirectsControllerCreate,
+  useRedirectsControllerCreateLink,
+  useRedirectsControllerRemoveLink,
+  useRedirectsControllerUpdate
+} from 'hooks/api/zapdiviserComponents';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { dispatch } from 'store';
 import { useZapdiviserContext } from 'hooks/api/zapdiviserContext';
 import { queryClient } from 'utils/query-client';
+import { formatSlug } from 'utils/formatSlug';
+import axiosServices from 'utils/axios';
 
 // constant
 const getInitialValues = (customer: FormikValues | null) => {
@@ -38,13 +42,9 @@ const getInitialValues = (customer: FormikValues | null) => {
 
   if (customer) {
     const data = _.merge({}, newCustomer, customer);
-    console.log('das', customer);
     return data;
   }
 
-  console.log({
-    newCustomer
-  });
   return newCustomer;
 };
 
@@ -60,30 +60,64 @@ export interface Props {
   onSucess: () => void;
 }
 
-const CustomerSchema = Yup.object().shape({
-  name: Yup.string().max(255).required('Título é um campo obrigatório'),
-  links: Yup.array().min(1, 'Deve ter pelo menos 1 número cadastrado').required('Número é um campo obrigatório')
-});
-
 const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
   const { queryKeyFn } = useZapdiviserContext();
   const queryKey = queryKeyFn({ path: '/api/redirects', operationId: 'redirectsControllerFindAll', variables: {} });
 
   const { mutateAsync: addRedirect } = useRedirectsControllerCreate({
-    onSuccess: (data) => {
-      queryClient.cancelQueries({
-        queryKey
-      });
-
+    onSuccess: (data: any) => {
       queryClient.setQueryData(queryKey, (old: any) => {
-        return [...old, { ...data, links: [] }];
+        return [...old, { ...data }];
       });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queryKey });
     }
   });
-  const { mutateAsync: addRedirectLink } = useRedirectsControllerCreateLink();
+
+  const { mutateAsync: addLink } = useRedirectsControllerCreateLink({
+    onSuccess: (data: any) => {
+      queryClient.setQueryData(queryKey, (old: any) => {
+        return old.map((item: any) => {
+          if (item.id === redirect?.id) {
+            return {
+              ...item,
+              links: [...item.links, data[0]]
+            };
+          }
+          return item;
+        });
+      });
+    }
+  });
+
+  const { mutateAsync: deletedLink } = useRedirectsControllerRemoveLink({
+    onSuccess: (data: any) => {
+      console.log('redirect id - ', redirect?.id);
+
+      queryClient.setQueryData(queryKey, (old: any) => {
+        return old.map((item: any) => {
+          if (item.id === redirect?.id) {
+            return {
+              ...item,
+              links: item.links.filter((link: any) => link.id !== data[0].id)
+            };
+          }
+          return item;
+        });
+      });
+    }
+  });
+
+  const { mutateAsync: updateRedirect } = useRedirectsControllerUpdate({
+    onSuccess: (data: any) => {
+      queryClient.setQueryData(queryKey, (old: any) => {
+        return old.map((item: any) => {
+          if (item.id === redirect?.id) {
+            return { ...item, ...data };
+          }
+          return item;
+        });
+      });
+    }
+  });
 
   const isCreating = useMemo(() => {
     return !redirect;
@@ -93,50 +127,94 @@ const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
     return getInitialValues(redirect);
   }, [redirect]);
 
+  const CustomerSchema = Yup.object().shape({
+    name: Yup.string().max(255).required('Título é um campo obrigatório'),
+    links: Yup.array().min(1, 'Deve ter pelo menos 1 número cadastrado').required('Número é um campo obrigatório'),
+    slug: Yup.string().max(255).required('Slug é um campo obrigatório')
+  });
+
   const formik = useFormik({
     initialValues: initialValues,
     enableReinitialize: true,
+    validateOnBlur: false,
     validationSchema: CustomerSchema,
     onSubmit: async (values: any, { setSubmitting }) => {
       try {
-        const savedRedirect = await addRedirect({
-          body: {
-            name: values.name,
-            slug: _.kebabCase(values.name)
-          }
-        });
+        if (values.slug !== initialValues.slug) {
+          const res = await axiosServices.get(`/redirects/slug-available/${values.slug}`);
 
-        await Promise.all(
-          values.links.map(async (link: any) => {
-            await addRedirectLink({
+          const isValid = res.data.available;
+
+          if (!isValid) {
+            setErrors({ slug: 'Este slug está indisponível' });
+            return;
+          }
+        }
+
+        if (isCreating) {
+          (await addRedirect({
+            body: {
+              name: values.name,
+              slug: values.slug,
+              links: values.links
+            }
+          })) as any;
+
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Link adicionado com sucesso.',
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              },
+              close: false
+            })
+          );
+        } else {
+          const ghostLinks = values.links.filter((link: any) => link.isGhost);
+
+          for (const link of ghostLinks) {
+            await addLink({
+              pathParams: {
+                id: redirect?.id as string
+              },
               body: {
                 link: link.link
-              },
-              pathParams: {
-                id: savedRedirect.id
               }
             });
-          })
-        );
+          }
 
-        dispatch(
-          openSnackbar({
-            open: true,
-            message: 'Link adicionado com sucesso.',
-            variant: 'alert',
-            alert: {
-              color: 'success'
-            },
-            close: false
-          })
-        );
+          const deletedLinks = values.links.filter((link: any) => link.isDeleted);
+
+          for (const link of deletedLinks) {
+            await deletedLink({
+              pathParams: {
+                linkId: link.id
+              }
+            });
+          }
+
+          //check if redirect changed
+          if (values.name !== initialValues.name || values.slug !== initialValues.slug) {
+            await updateRedirect({
+              pathParams: {
+                id: redirect?.id as string
+              },
+              body: {
+                name: values.name,
+                slug: values.slug
+              }
+            });
+          }
+        }
 
         onSucess();
       } catch (error) {
         dispatch(
           openSnackbar({
             open: true,
-            message: 'este slug está inválido! Escolha outro.',
+            message: 'Erro ao adicionar link.',
             variant: 'alert',
             alert: {
               color: 'error'
@@ -148,7 +226,32 @@ const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
     }
   });
 
-  const { errors, touched, handleSubmit, isSubmitting, getFieldProps, setFieldValue } = formik;
+  const { errors, touched, handleSubmit, isSubmitting, getFieldProps, setFieldValue, setFieldError, setErrors, resetForm } = formik;
+
+  const onChangeSlug = useCallback(
+    async (e: any) => {
+      const slug = formatSlug(e.target.value);
+      await setFieldValue('slug', slug);
+      if (slug === initialValues.slug) return;
+
+      const res = await axiosServices.get(`/redirects/slug-available/${slug}`);
+
+      const isValid = res.data.available;
+
+      if (!isValid) {
+        setErrors({
+          ...errors,
+          slug: 'Este slug está indisponível'
+        });
+      }
+    },
+    [setFieldValue, initialValues.slug, setFieldError, setErrors]
+  );
+
+  const onClose = useCallback(() => {
+    onCancel();
+    resetForm();
+  }, [onCancel]);
 
   return (
     <>
@@ -169,20 +272,58 @@ const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
                         placeholder="Insira um nome para a campanha de links"
                         {...getFieldProps('name')}
                         error={Boolean(touched.name && errors.name)}
-                        helperText={touched.name && errors.name}
+                        helperText={touched.name && (errors.name as string)}
                       />
                     </Stack>
                   </Grid>
+                </Grid>
+                <Grid item xs={12} mt={2}>
+                  <Stack spacing={1.25}>
+                    <InputLabel htmlFor="customer-slug">Slug</InputLabel>
+
+                    <TextField
+                      fullWidth
+                      id="customer-slug"
+                      placeholder="meu-site"
+                      {...getFieldProps('slug')}
+                      value={getFieldProps('slug').value}
+                      onChange={(e) => {
+                        console;
+                        onChangeSlug(e);
+                      }}
+                      style={{
+                        marginTop: 5
+                      }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment
+                            position="start"
+                            style={{
+                              marginLeft: 10,
+                              marginRight: 0,
+                              paddingRight: 0
+                            }}
+                          >
+                            www.zapdiviser.com/
+                          </InputAdornment>
+                        )
+                      }}
+                      error={Boolean(touched.slug && errors.slug)}
+                      helperText={touched.slug && errors.slug && 'Este slug está indisponível'}
+                    />
+                  </Stack>
                 </Grid>
                 <LinksTable
                   getFieldProps={getFieldProps}
                   initialData={getFieldProps('links').value}
                   isEditing={!isCreating}
-                  changeState={(data: any) => setFieldValue('links', data)}
+                  changeState={(data: any) => {
+                    setFieldValue('links', data);
+                  }}
                 />
                 {touched.links && errors.links && (
                   <FormHelperText error id="standard-weight-helper-text-email-login">
-                    {errors.links}
+                    {errors.links as string}
                   </FormHelperText>
                 )}
               </Grid>
@@ -194,7 +335,7 @@ const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
               <Grid item></Grid>
               <Grid item>
                 <Stack direction="row" spacing={2} alignItems="center">
-                  <Button color="error" onClick={onCancel}>
+                  <Button color="error" onClick={onClose}>
                     Cancelar
                   </Button>
                   <Button type="submit" variant="contained" disabled={isSubmitting}>

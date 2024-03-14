@@ -11,7 +11,7 @@ export class RedirectEntity extends DefaultEntity {
   @Column({ unique: true })
   slug: string;
 
-  @OneToMany(() => RedirectLinkEntity, (link) => link.redirect)
+  @OneToMany(() => RedirectLinkEntity, (link) => link.redirect, {})
   links: RedirectLinkEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.redirects)

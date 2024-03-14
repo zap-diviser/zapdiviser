@@ -3,7 +3,60 @@
  *
  * @version 1.0.0
  */
-export type CreateProductDto = {};
+export type ForgetPasswordDto = {
+  email: string;
+};
+
+export type CheckCodeDto = {
+  code: string;
+  email: string;
+};
+
+export type ForgetPasswordWithCodeDto = {
+  code: string;
+  email: string;
+  newPassword: string;
+};
+
+export type UpdateUserDto = {
+  name: string;
+  phone: string;
+  has_installed: boolean;
+  has_downloaded: boolean;
+};
+
+export type UpdatePasswordWithOldPasswordDto = {};
+
+export type UpdatePasswordWithTokenDto = {};
+
+export type Costumer = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
+
+export type CreateUserDto = {
+  costumer: Costumer;
+};
+
+export type LoginUserDto = {
+  /**
+   * @default string@email.com
+   */
+  email: Record<string, any>;
+  password: string;
+};
+
+export type CreateRedirectDto = {
+  name: string;
+  slug: string;
+  links: Record<string, any>;
+};
+
+export type CreateRedirectLinkDto = {
+  link: string;
+};
 
 export type WhatsappEntity = {
   id: string;
@@ -20,7 +73,75 @@ export type WhatsappEntity = {
    */
   updated_at: string;
   phone: string | null;
+  profileUrl: string | null;
+  status: 0 | 1 | 2 | 3;
+  user: UserEntity;
+  user_id: string;
+  products: ProductEntity[];
+};
+
+export type FlowEventEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  product_flow: ProductFlowEntity;
+  product_flow_id: string;
+  type: string;
+  sort: number;
+  metadata: {
+    text?: string;
+  };
+  times_sent: number;
+};
+
+export type ProductFlowEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  product: ProductEntity;
+  product_id: string;
+  name: string;
+  events: FlowEventEntity[];
+};
+
+export type EventsHistoryEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
   instanceId: string;
+  to: string;
+  product: ProductEntity;
+  product_id: string;
 };
 
 export type ProductEntity = {
@@ -38,36 +159,81 @@ export type ProductEntity = {
    */
   updated_at: string;
   whatsapps: WhatsappEntity[];
+  user: UserEntity;
+  user_id: string;
+  name: string;
+  flows: ProductFlowEntity[];
+  eventsHistory: EventsHistoryEntity[];
 };
 
-export type CreateFlowEventDto = {};
+export type UserEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  name: string;
+  email: string;
+  phone: string;
+  is_active?: boolean;
+  level: string;
+  products: ProductEntity[];
+  redirects: RedirectEntity[];
+  whatsapps: WhatsappEntity[];
+};
 
-export type UpdateFlowEventDto = {};
+export type RedirectEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  name: string;
+  slug: string;
+  links: RedirectLinkEntity[];
+  user: UserEntity;
+};
 
-export type SetWhatsappsDto = {};
+export type RedirectLinkEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  link: string;
+  redirect: RedirectEntity;
+};
 
-export type Object = {};
+export type UpdateRedirectDto = {
+  name?: string;
+  slug?: string;
+  links?: Record<string, any>;
+};
 
-export type ForgetPasswordDto = {};
-
-export type CheckCodeDto = {};
-
-export type ForgetPasswordWithCodeDto = {};
-
-export type UpdateUserDto = {};
-
-export type UpdatePasswordWithOldPasswordDto = {};
-
-export type UpdatePasswordWithTokenDto = {};
-
-export type CreateUserDto = {};
-
-export type LoginUserDto = {};
-
-export type CreateRedirectDto = {};
-
-export type CreateRedirectLinkDto = {};
-
-export type UpdateRedirectDto = {};
-
-export type UpdateRedirectLinkDto = {};
+export type UpdateRedirectLinkDto = {
+  link?: string;
+};

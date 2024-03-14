@@ -45,12 +45,11 @@ interface Props {
 
 function ReactTable({ columns, data }: Props) {
   const theme = useTheme();
-  const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
 
   const filterTypes = useMemo(() => renderFilterTypes, []);
   const sortBy = { id: 'title', desc: false };
 
-  const { getTableProps, getTableBodyProps, headerGroups, prepareRow, setHiddenColumns, rows } = useTable(
+  const { getTableProps, getTableBodyProps, headerGroups, prepareRow, rows } = useTable(
     {
       columns,
       data,
@@ -131,17 +130,13 @@ export const LinksTable = ({
 
   const [data, setData] = useState<any>(initialData);
 
-  useEffect(() => {
-    setData(initialData.filter((x) => !x.isDeleted));
-  }, [initialData]);
+  // useEffect(() => {
+  //   changeState(data);
+  // }, [data]);
 
-  //   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState<{
-  //     isOpen: boolean;
-  //     data: any;
-  //   }>({
-  //     isOpen: false,
-  //     data: {}
-  //   });
+  useEffect(() => {
+    setData(initialData.filter((x: any) => !x.isDeleted));
+  }, [initialData]);
 
   const [deleteIsOpen, setDeleteIsOpen] = useState<{
     isOpen: boolean;
@@ -206,30 +201,36 @@ export const LinksTable = ({
       redirects: 0,
       id: new Date().getTime()
     };
-    const newLinks = [...data, newLink];
+    const newLinks = [...initialData, newLink];
     setData(newLinks);
     changeState(newLinks);
     setLinkUrl('');
-  }, [data, linkUrl, changeState]);
+  }, [initialData, linkUrl, changeState]);
 
   const handleDeleteLink = useCallback(() => {
-    let newLinks = data.map((item: any) => {
-      if (item.id === deleteIsOpen.data.id) {
-        return {
-          ...item,
-          isDeleted: true
-        };
-      }
-      return item;
-    });
+    let newLinks = [];
 
-    if (deleteIsOpen.data.isGhost) {
-      newLinks = newLinks.filter((item: any) => item.id !== deleteIsOpen.data.id);
+    if (isEditing) {
+      newLinks = initialData.map((item: any) => {
+        if (item.id === deleteIsOpen.data.id) {
+          return {
+            ...item,
+            isDeleted: true
+          };
+        }
+        return item;
+      });
+
+      if (deleteIsOpen.data.isGhost) {
+        newLinks = newLinks.filter((item: any) => item.id !== deleteIsOpen.data.id);
+      }
+    } else {
+      newLinks = initialData.filter((item: any) => item.id !== deleteIsOpen.data.id);
     }
 
-    setData(newLinks);
+    // setData(newLinks);
     changeState(newLinks);
-  }, [data, deleteIsOpen?.data?.id, deleteIsOpen?.data?.isGhost, changeState]);
+  }, [initialData, deleteIsOpen?.data?.id, changeState, isEditing]);
 
   return (
     <>
