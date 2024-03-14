@@ -4,7 +4,7 @@ import SingleFileUpload from 'components/third-party/dropzone/SingleFile';
 import { useProductControllerCreateMediaUploadUrl } from 'hooks/api/zapdiviserComponents';
 import { Document } from 'iconsax-react';
 import { useCallback, useState } from 'react';
-import { useParams } from 'react-rouer';
+import { useParams } from 'react-router';
 
 const allowedTypes = ['audio', 'image', 'video', 'document'];
 
