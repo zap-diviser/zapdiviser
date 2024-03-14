@@ -87,7 +87,7 @@ export class RedirectsService {
       },
     });
 
-    return redirect !== undefined;
+    return !redirect;
   }
 
   async createRedirectLink(
