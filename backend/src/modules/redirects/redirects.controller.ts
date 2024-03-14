@@ -107,21 +107,17 @@ export class RedirectsController {
     );
   }
 
+  @Delete('link/:linkId')
+  @UserIsAuthenticated()
+  @ApiOperation({ summary: 'Remover um link de um redirect' })
+  async removeLink(@Param('linkId') linkId: string, @Req() req: any) {
+    return this.redirectsService.removeRedirectLink(linkId, req.user.id);
+  }
+
   @Delete(':id')
   @UserIsAuthenticated()
   @ApiOperation({ summary: 'Remover um redirect' })
   remove(@Param('id') id: string, @Req() req: any) {
     return this.redirectsService.remove(id, req.user.id);
-  }
-
-  @Delete(':id/link/:linkId')
-  @UserIsAuthenticated()
-  @ApiOperation({ summary: 'Remover um link de um redirect' })
-  async removeLink(
-    @Param('id') id: string,
-    @Param('linkId') linkId: string,
-    @Req() req: any,
-  ) {
-    return this.redirectsService.removeRedirectLink(id, linkId, req.user.id);
   }
 }

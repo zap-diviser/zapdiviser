@@ -52,13 +52,32 @@ export class RedirectsService {
     return currentUrl;
   }
 
-  create(createRedirectDto: CreateRedirectDto, userId: string) {
-    return this.redirectRepository.save({
-      ...createRedirectDto,
+  async create(createRedirectDto: CreateRedirectDto, userId: string) {
+    const redirect = await this.redirectRepository.save({
+      slug: createRedirectDto.slug,
+      name: createRedirectDto.name,
       user: {
         id: userId,
       },
     });
+
+    const links: any = [];
+
+    for (const link of createRedirectDto.links) {
+      const linkData = await this.redirectLinkRepository.save({
+        redirect: redirect,
+        link: link.link,
+      });
+
+      linkData.redirect = undefined as any;
+
+      links.push(linkData);
+    }
+
+    return {
+      ...redirect,
+      links,
+    };
   }
 
   async slugAvailable(slug: string) {
@@ -68,7 +87,7 @@ export class RedirectsService {
       },
     });
 
-    return redirect === undefined;
+    return redirect !== undefined;
   }
 
   async createRedirectLink(
@@ -89,9 +108,7 @@ export class RedirectsService {
       throw new NotFoundException();
     }
 
-    const link = new URL(
-      'https://localhost:5173/r/' + createRedirectLinkDto.link,
-    ).toString();
+    const link = createRedirectLinkDto.link;
 
     return Promise.all([
       this.redirectLinkRepository
@@ -134,12 +151,12 @@ export class RedirectsService {
       where: {
         id,
         redirect: {
-          id,
           user: {
             id: userId,
           },
         },
       },
+      relations: ['redirect'],
     });
   }
 
@@ -174,15 +191,14 @@ export class RedirectsService {
       );
     }
 
-    return this.redirectRepository.update(
-      {
-        id,
-        user: {
-          id: userId,
-        },
+    //update but returning new data
+    return this.redirectRepository.save({
+      id,
+      ...updateRedirectDto,
+      user: {
+        id: userId,
       },
-      updateRedirectDto,
-    );
+    });
   }
 
   async updateRedirectLink(
@@ -268,7 +284,7 @@ export class RedirectsService {
     ]);
   }
 
-  async removeRedirectLink(redirectId: string, linkId: string, userId: string) {
+  async removeRedirectLink(linkId: string, userId: string) {
     const linkEntity = await this.getLink(linkId, userId);
 
     if (!linkEntity) {
@@ -276,14 +292,9 @@ export class RedirectsService {
     }
 
     return Promise.all([
+      linkEntity,
       this.redirectLinkRepository.delete({
-        id: linkId,
-        redirect: {
-          id: redirectId,
-          user: {
-            id: userId,
-          },
-        },
+        id: linkEntity.id,
       }),
       this.redisService
         .getClient()

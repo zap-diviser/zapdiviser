@@ -7,6 +7,8 @@ export class RedirectLinkEntity extends DefaultEntity {
   @Column()
   link: string;
 
-  @ManyToOne(() => RedirectEntity, (redirect) => redirect.links)
+  @ManyToOne(() => RedirectEntity, (redirect) => redirect.links, {
+    onDelete: 'CASCADE',
+  })
   redirect: Relation<RedirectEntity>;
 }

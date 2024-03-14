@@ -1,5 +1,5 @@
 {
-  "name": "zap-diviser",
+  "name": "zap-diviser-backend",
   "version": "1.0.0",
   "description": "",
   "author": "",
@@ -12,9 +12,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node --max-old-space-size=4096 ./dist/main.js",
     "email:dev": "email dev --dir src/modules/email/emails",
-    "migration:generate": "ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:generate",
-    "migration:run": "ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:run",
-    "migration:revert": "ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:revert",
+    "migration:generate": "pnpm build &&ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:generate",
+    "migration:run": "pnpm build && ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:run",
+    "migration:revert": "pnpm build && ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:revert",
     "menu": "ts-node ./src/common/commands/menu/index.ts",
     "create:database": "ts-node ./src/common/commands/create-database/index.ts"
   },

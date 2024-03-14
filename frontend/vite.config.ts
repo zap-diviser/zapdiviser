@@ -7,7 +7,7 @@ export default () => {
     port: 8080,
     strictPort: true,
     host: true
-  }
+  };
 
   return defineConfig({
     plugins: [tsconfigPaths(), react()],
@@ -18,7 +18,7 @@ export default () => {
       rollupOptions: {
         output: {
           manualChunks: {
-            redux: ['redux'],
+            redux: ['redux']
           }
         }
       }

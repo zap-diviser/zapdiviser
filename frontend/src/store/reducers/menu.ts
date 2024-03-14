@@ -1,8 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-// project-imports
-import axios from 'utils/axios';
-
 // types
 import { MenuProps } from 'types/menu';
 
@@ -11,8 +8,8 @@ const initialState: MenuProps = {
   openItem: ['dashboard'],
   openComponent: 'buttons',
   selectedID: null,
-  drawerOpen: false,
-  componentDrawerOpen: true,
+  drawerOpen: true,
+  componentDrawerOpen: false,
   menu: {},
   error: null
 };

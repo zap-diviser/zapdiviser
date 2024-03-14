@@ -21,6 +21,7 @@ import { ThemeMode } from 'types/config';
 import AddRedirect from './AddRedirect';
 import { useRedirectsControllerFindAll } from 'hooks/api/zapdiviserComponents';
 import { SimpleTable } from 'components/SimpleTable';
+import DeleteRedirect from './DeleteRedirect';
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -30,7 +31,7 @@ export const RedirectsTable = () => {
   const theme = useTheme();
   const mode = theme.palette.mode;
 
-  const [, setOpen] = useState<{
+  const [deleteIsOpen, setDeleteOpen] = useState<{
     isOpen: boolean;
     data: any;
   }>({
@@ -76,14 +77,10 @@ export const RedirectsTable = () => {
           </a>
         )
       },
-      {
-        accessor: 'links',
-        className: 'd-none'
-      },
-      {
-        Header: 'Redirecionamentos',
-        accessor: 'redirects'
-      },
+      // {
+      //   Header: 'Redirecionamentos',
+      //   accessor: 'redirects'
+      // },
       {
         Header: 'Ações',
         className: 'cell-center',
@@ -107,8 +104,8 @@ export const RedirectsTable = () => {
                   color="secondary"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     console.log('link clicado = ', x);
-                    // setRedirect(row.original);
-                    // handleAdd();
+                    setRedirect(x.row.original);
+                    handleAdd();
                   }}
                 >
                   {collapseIcon}
@@ -129,9 +126,9 @@ export const RedirectsTable = () => {
                   color="error"
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
-                    setOpen({
-                      isOpen: true
-                      //   data: row.original
+                    setDeleteOpen({
+                      isOpen: true,
+                      data: x.row.original.id
                     });
                   }}
                 >
@@ -147,15 +144,12 @@ export const RedirectsTable = () => {
     [theme]
   );
 
+  console.log('DATAA MUDOUU', deleteIsOpen);
+
   return (
     <MainCard content={false}>
       <ScrollX>
-        <SimpleTable
-          addTitle="Adicionar Redirecionamento"
-          columns={columns}
-          data={data?.map((item) => ({ name: item.name, slug: item.slug, redirects: item.links.length })) ?? []}
-          handleAdd={handleAdd}
-        />
+        <SimpleTable addTitle="Adicionar Redirecionamento" columns={columns} data={data || []} handleAdd={handleAdd} />
       </ScrollX>
       <Dialog
         maxWidth="sm"
@@ -175,6 +169,18 @@ export const RedirectsTable = () => {
           }}
         />
       </Dialog>
+
+      <DeleteRedirect
+        title="Deletar Campanha"
+        open={deleteIsOpen.isOpen}
+        handleClose={() =>
+          setDeleteOpen((prev) => ({
+            ...prev,
+            isOpen: false
+          }))
+        }
+        id={deleteIsOpen?.data}
+      />
     </MainCard>
   );
 };
