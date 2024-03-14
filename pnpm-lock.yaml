@@ -39,6 +39,9 @@ importers:
       '@adminjs/typeorm':
         specifier: ^5.0.1
         version: 5.0.1(adminjs@7.7.2)(typeorm@0.3.20)
+      '@babel/plugin-syntax-import-assertions':
+        specifier: ^7.23.3
+        version: 7.23.3(@babel/core@7.24.0)
       '@bull-board/api':
         specifier: ^5.15.1
         version: 5.15.1(@bull-board/ui@5.15.1)
@@ -24064,7 +24067,7 @@ packages:
       lodash.isequal: 4.5.0
       validator: 10.11.0
     optionalDependencies:
-      commander: 2.11.0
+      commander: 2.20.3
     dev: false
 
   /zen-observable-ts@1.2.5:

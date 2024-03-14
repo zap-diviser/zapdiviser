@@ -24,6 +24,7 @@
     "@adminjs/nestjs": "^6.1.0",
     "@adminjs/passwords": "4.0.0",
     "@adminjs/typeorm": "^5.0.1",
+    "@babel/plugin-syntax-import-assertions": "^7.23.3",
     "@bull-board/api": "^5.15.1",
     "@bull-board/express": "^5.15.1",
     "@bull-board/nestjs": "^5.15.1",
