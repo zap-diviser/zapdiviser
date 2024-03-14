@@ -53,26 +53,26 @@ export class RedirectsService {
   }
 
   async create(createRedirectDto: CreateRedirectDto, userId: string) {
-    const redirect = await this.redirectRepository.save({
-      slug: createRedirectDto.slug,
-      name: createRedirectDto.name,
-      user: {
-        id: userId,
-      },
-    });
+    const links = createRedirectDto.links.map((link) => ({
+      link: link.link,
+    }));
 
-    const links: any = [];
-
-    for (const link of createRedirectDto.links) {
-      const linkData = await this.redirectLinkRepository.save({
-        redirect: redirect,
-        link: link.link,
-      });
-
-      linkData.redirect = undefined as any;
-
-      links.push(linkData);
-    }
+    const [redirect] = await Promise.all([
+      this.redirectRepository.save({
+        slug: createRedirectDto.slug,
+        name: createRedirectDto.name,
+        user: {
+          id: userId,
+        },
+        links,
+      }),
+      this.redisService
+        .getClient()
+        .lpush(
+          `redirect:${createRedirectDto.slug}:links`,
+          ...links.map((link) => link.link),
+        ),
+    ]);
 
     return {
       ...redirect,

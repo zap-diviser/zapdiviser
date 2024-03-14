@@ -8,5 +8,5 @@ export class CreateRedirectDto {
   slug: string;
 
   @IsObject({ each: true })
-  links: any;
+  links: any[];
 }

@@ -5,6 +5,10 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "overrides": {
+    "gauge": "^3.0.0",
+    "react": "^16.14.0"
+  },
   "scripts": {
     "build": "nest build",
     "start": "nest start",
