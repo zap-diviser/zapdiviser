@@ -28,6 +28,7 @@ export class RedirectsController {
   @Redirect()
   async redirect(@Param('slug') slug: string) {
     const url = await this.redirectsService.redirect(slug);
+    console.log(url);
 
     return {
       url,

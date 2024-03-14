@@ -1,4 +1,19 @@
 services:
+  migrate:
+    build:
+      context: ./backend
+    depends_on:
+      - db
+    networks:
+      - internal
+    command: ["sh", "-c", "node ./node_modules/typeorm/cli -d ./dist/ormconfig.js migration:run"]
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
   frontend:
     build:
       context: ./frontend
@@ -13,6 +28,9 @@ services:
     labels:
       caddy_0: app.${HOST}
       caddy_0.reverse_proxy: "{{upstreams 8080}}"
+      caddy_1: ${HOST}
+      caddy_1.rewrite: "* /zapdiviser{uri}"
+      caddy_1.reverse_proxy: https://contingenciainfinita.com
 
   backend:
     build:
