@@ -64,7 +64,7 @@ export const RedirectsTable = () => {
         accessor: 'slug',
         Cell: ({ value }: { value: string }) => (
           <a
-            href={'https://webhook.zapdiviser.com/' + value}
+            href={'https://redirect.zapdiviser.com/' + value}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -73,7 +73,7 @@ export const RedirectsTable = () => {
               fontWeight: 600
             }}
           >
-            zapdiviser.com/webhook/{value}
+            https://redirect.zapdiviser.com/{value}
           </a>
         )
       },
