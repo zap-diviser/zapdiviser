@@ -69,7 +69,7 @@ import { LogEntity } from './entities/resource.entity';
               loginPath: '/admin-br/login',
               logoutPath: '/admin-br/logout',
               locale: {
-                language: 'pt',
+                language: 'pt-BR',
                 availableLanguages: Object.keys(locales),
                 translations: {
                   resources: {
