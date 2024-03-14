@@ -1,9 +1,10 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs';
-import * as inquirer from 'inquirer';
 
 export default class CreateCrud {
   async execute() {
+    const { default: inquirer } = await import('inquirer');
+
     let answer1: any = null;
 
     while (!answer1) {

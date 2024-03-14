@@ -353,7 +353,7 @@ export class ProductService {
     return item;
   }
 
-  async createMediaPressignedUrl(product_id: string, user_id: string) {
+  async createUploadUrl(product_id: string, user_id: string) {
     const product = await this.productRepository.findOne({
       where: {
         id: product_id,
@@ -375,5 +375,13 @@ export class ProductService {
       upload_url,
       id,
     };
+  }
+
+  async createDownloadUrl(path: string) {
+    return await this.minioClient.presignedGetObject(
+      'zapdiviser',
+      path,
+      60 * 60,
+    );
   }
 }

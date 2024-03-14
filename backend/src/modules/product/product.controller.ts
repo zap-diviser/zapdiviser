@@ -69,13 +69,22 @@ export class ProductController {
 
   @Post('flow-event/upload-file/:product_id')
   @UserIsAuthenticated()
-  createMediaPressignedUrl(
+  createMediaUploadUrl(
     @Param('product_id') product_id: string,
     @Req() req: any,
   ) {
-    return this.productService.createMediaPressignedUrl(
-      product_id,
-      req.user.id,
+    return this.productService.createUploadUrl(product_id, req.user.id);
+  }
+
+  @Post('flow-event/download-file/:product_id/:file_id')
+  @UserIsAuthenticated()
+  createMediaDownloadUrl(
+    @Param('product_id') product_id: string,
+    @Param('file_id') file_id: string,
+    @Req() req: any,
+  ) {
+    return this.productService.createDownloadUrl(
+      `${req.user.id}/${product_id}/${file_id}`,
     );
   }
 

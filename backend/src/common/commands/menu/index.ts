@@ -1,5 +1,4 @@
 import CreateCrud from './create-crud/index';
-import * as inquirer from 'inquirer';
 import { execSync } from 'child_process';
 
 execSync('cls', { stdio: 'inherit' });
@@ -16,6 +15,7 @@ const options = [
 ];
 
 async function init() {
+  const { default: inquirer } = await import('inquirer');
   await new Promise((res) => setTimeout(res, 100));
 
   const answer = await inquirer.prompt([

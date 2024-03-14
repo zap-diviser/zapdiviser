@@ -297,6 +297,67 @@ const handlers: Handler[] = [
       },
     ],
   },
+  {
+    name: 'payt',
+    detect: (data) => {
+      return _.has(data, 'integration_key');
+    },
+    eventPath: 'type',
+    namePath: 'customer.name',
+    phonePath: 'customer.phone',
+    eventMap: [
+      {
+        type: 'value',
+        value: 'abandoned-cart',
+        mapTo: 'cart_abandoned',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return (
+            event === 'order' &&
+            value.status === 'paid' &&
+            _.get(value, 'transaction.payment_method') === 'credit_card'
+          );
+        },
+        mapTo: 'card_approved',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return (
+            event === 'order' &&
+            value.status === 'cancelled' &&
+            _.get(value, 'transaction.payment_method') === 'credit_card'
+          );
+        },
+        mapTo: 'card_declined',
+      },
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return (
+            event === 'order' &&
+            value.status === 'waiting_payment' &&
+            _.get(value, 'transaction.payment_method') === 'pix'
+          );
+        },
+        mapTo: 'pix_generated',
+      },
+
+      {
+        type: 'function',
+        fn: (value, event) => {
+          return (
+            event === 'order' &&
+            value.status === 'paid' &&
+            _.get(value, 'transaction.payment_method') === 'pix'
+          );
+        },
+        mapTo: 'pix_approved',
+      },
+    ],
+  },
 ];
 
 type HandleResult = {

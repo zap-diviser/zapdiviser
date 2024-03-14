@@ -57,7 +57,7 @@ const Main: NavItemType = {
       title: 'Tutoriais',
       breadcrumbs: false,
       type: 'item',
-      url: 'http://google.com',
+      url: 'https://www.youtube.com/@zapdiviser/videos',
       icon: icons.tutorials
     }
   ]

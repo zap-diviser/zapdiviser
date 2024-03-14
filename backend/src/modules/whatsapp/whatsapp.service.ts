@@ -5,11 +5,14 @@ import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from '@nestjs/common';
 
 const docker = new Docker();
 
 @Injectable()
 export class WhatsappService {
+  private readonly logger = new Logger(WhatsappService.name);
+
   constructor(
     @InjectRepository(WhatsappEntity)
     protected readonly repository: Repository<WhatsappEntity>,
@@ -116,6 +119,9 @@ export class WhatsappService {
       const container = docker.getContainer(containerId);
       await container.stop();
     }
+
+    whatsapp.products = [];
+    await whatsapp.save();
 
     await this.repository.delete({
       id: whatsapp.id,

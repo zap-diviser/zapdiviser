@@ -13,6 +13,7 @@ export default () => {
     plugins: [tsconfigPaths(), react()],
     server: serverConfig,
     preview: serverConfig,
+    envDir: '../',
     build: {
       rollupOptions: {
         output: {
