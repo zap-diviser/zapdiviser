@@ -144,8 +144,6 @@ export const RedirectsTable = () => {
     [theme]
   );
 
-  console.log('DATAA MUDOUU', deleteIsOpen);
-
   return (
     <MainCard content={false}>
       <ScrollX>
