@@ -33,6 +33,8 @@ services:
       caddy_1.reverse_proxy: https://contingenciainfinita.com
       caddy_1.reverse_proxy.0_header_up: Host contingenciainfinita.com
       caddy_1.reverse_proxy.1_header_up: Alt-Used contingenciainfinita.com
+      caddy_2: www.${HOST}
+      caddy_2.redir: https://${HOST}{uri}
 
   backend:
     build:
