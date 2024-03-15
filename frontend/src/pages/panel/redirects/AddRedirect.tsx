@@ -288,7 +288,6 @@ const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
                       {...getFieldProps('slug')}
                       value={getFieldProps('slug').value}
                       onChange={(e) => {
-                        console;
                         onChangeSlug(e);
                       }}
                       style={{
@@ -304,7 +303,7 @@ const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
                               paddingRight: 0
                             }}
                           >
-                            www.zapdiviser.com/
+                            https://redirect.zapdiviser.com/
                           </InputAdornment>
                         )
                       }}
