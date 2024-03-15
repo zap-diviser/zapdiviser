@@ -30,7 +30,6 @@ services:
       caddy_0.reverse_proxy: "{{upstreams 8080}}"
       caddy_1: ${HOST}
       caddy_1.reverse_proxy: https://contingenciainfinita.com
-      caddy_1.reverse_proxy.rewrite: "* /zapdiviser{uri}"
 
   backend:
     build:
