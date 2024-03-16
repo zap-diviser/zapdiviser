@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Delete,
-  Req,
-  Post,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Get, Param, Delete, Req, Post } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
 import { WhatsappEntity } from './entities/whatsapp.entity';
 import { UserIsAuthenticated } from '@/common/decorators/userIsAuthenticated.decorator';
@@ -44,11 +36,6 @@ export class WhatsappController {
   @UserIsAuthenticated()
   findOne(@Param('id') id: string, @Req() req: any) {
     return this.whatsappService.findOne(id, req.user.id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.whatsappService.update(id);
   }
 
   @Delete(':id')
