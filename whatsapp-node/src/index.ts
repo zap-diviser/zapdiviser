@@ -87,6 +87,22 @@ async function main () {
   whatsapp.onConnected(async () => {
     await queue.add("Whatsapp", { event: "connected", instanceId, data: { phone: whatsapp.getSelfPhone() } })
   })
+
+  whatsapp.onBanned(async () => {
+    await queue.add("Whatsapp", { event: "banned", instanceId, data: { phone: whatsapp.getSelfPhone() } })
+  })
+
+  whatsapp.onDisconnected(async () => {
+    await queue.add("Whatsapp", { event: "disconnected", instanceId, data: { phone: whatsapp.getSelfPhone() } })
+  })
+
+  whatsapp.onStop(async () => {
+    await queue.add("Whatsapp", { event: "stopped", instanceId, data: { phone: whatsapp.getSelfPhone() } })
+  })
+
+  whatsapp.onLogout(async () => {
+    await queue.add("Whatsapp", { event: "logout", instanceId, data: { phone: whatsapp.getSelfPhone() } })
+  })
 }
 
 main()

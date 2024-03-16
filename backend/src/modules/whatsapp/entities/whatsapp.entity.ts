@@ -12,10 +12,11 @@ import {
 } from 'typeorm';
 
 export enum Status {
-  AVAILABLE,
-  CONNECTED,
   PENDING,
+  CONNECTING,
+  CONNECTED,
   PAUSED,
+  BANNED,
 }
 
 @Entity('whatsapp')

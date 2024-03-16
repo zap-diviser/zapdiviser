@@ -3,6 +3,7 @@ import { Job } from 'bull';
 import { WhatsappGateway } from './whatsapp.gateway';
 import { WhatsappService } from './whatsapp.service';
 import { RedisService } from '@liaoliaots/nestjs-redis';
+import { Status } from './entities/whatsapp.entity';
 
 @Processor('FlowTriggers')
 export class WhatsappConsumer {
@@ -13,18 +14,20 @@ export class WhatsappConsumer {
   ) {}
 
   @Process('Whatsapp')
-  async transcode(job: Job<any>) {
+  async transcode(job: Job<{ instanceId: string; event: string; data: any }>) {
     const { data } = job;
-
-    console.log('WhatsappConsumer -> transcode -> data', data);
+    const redis = this.redisService.getClient();
 
     switch (data.event) {
       case 'qr':
-        const redis = this.redisService.getClient();
         await redis.set(`whatsapp-${data.instanceId}-qr`, data.data, 'EX', 60);
         this.gateway.io.to(data.instanceId).emit('qr', data.data);
         break;
       case 'connecting':
+        await this.whatsappService.setStatus(
+          data.instanceId,
+          Status.CONNECTING,
+        );
         this.gateway.io.to(data.instanceId).emit('whatsapp-connecting');
         break;
       case 'connected':
@@ -33,18 +36,23 @@ export class WhatsappConsumer {
           data.data.phone,
         );
 
-        console.log(
-          'WhatsappConsumer -> transcode -> updatedWhatsapp',
-          updatedWhatsapp,
-        );
-
         if (!updatedWhatsapp) return;
 
-        console.log('sending');
         this.gateway.io
           .to(data.instanceId)
           .emit('whatsapp-connected', updatedWhatsapp);
         break;
+      case 'banned':
+        await this.whatsappService.setStatus(data.instanceId, Status.BANNED);
+      case 'disconnected':
+        await this.whatsappService.setStatus(
+          data.instanceId,
+          Status.CONNECTING,
+        );
+      case 'stopped':
+        await this.whatsappService.setStatus(data.instanceId, Status.PAUSED);
+      case 'logout':
+        await this.whatsappService.setWhatsappPhone(data.instanceId, null);
     }
   }
 }

@@ -70,6 +70,8 @@ class Whatsapp {
       browser: ["Zapdivizer", "Zapdivizer", "1.0.0"],
     })
 
+    let qrQuantity = 0
+
     this.sock.ev.process(
       async (events) => {
         if (events["connection.update"]) {
@@ -77,17 +79,30 @@ class Whatsapp {
           const { connection, lastDisconnect, qr } = update
 
           if (qr) {
-            this.emmiter.emit("qr", qr)
+            qrQuantity++
+
+            if (qrQuantity > 120) {
+              this.emmiter.emit("stop")
+            } else {
+              this.emmiter.emit("qr", qr)
+            }
           }
 
           if (connection === "close") {
-            if ([401, DisconnectReason.loggedOut].includes((lastDisconnect?.error as Boom)?.output?.statusCode)) {
+            if ([403, DisconnectReason.forbidden].includes((lastDisconnect?.error as Boom)?.output?.statusCode)) {
               await clearData()
-              this.startSock()
+              this.emmiter.emit("banned")
             } else {
+              if ([401, DisconnectReason.loggedOut].includes((lastDisconnect?.error as Boom)?.output?.statusCode)) {
+                await clearData()
+                this.emmiter.emit("logout")
+              } else {
+                this.emmiter.emit("disconnected")
+              }
               this.startSock()
             }
           } else if (connection === "connecting") {
+            qrQuantity = 0
             this.emmiter.emit("connecting")
           } else if (connection === "open") {
             this.emmiter.emit("connected")
@@ -212,14 +227,6 @@ class Whatsapp {
   }
 
   async sendAudio(url: string, phone: string) {
-    const result = await this.sock.onWhatsApp(phone).catch(() => null)
-
-    if (result === null || result.length === 0 || !result[0].jid) {
-      return
-    }
-
-    const jid = result[0].jid
-
     minio.getObject("zapdiviser", url, async (err, stream) => {
       if (err) {
         return console.log(err)
@@ -229,8 +236,8 @@ class Whatsapp {
       // const data = await fileTypeFromBuffer(buffer)
 
       // if (data) {
-        await this.sock.sendMessage(
-          jid,
+        await this.sendMessage(
+          phone,
           { audio: buffer, mimetype: 'audio/mp3', ptt: true } // data.mime, ptt: true }
         )
       // }
@@ -238,14 +245,6 @@ class Whatsapp {
   }
 
   async sendVideo(url: string, phone: string) {
-    const result = await this.sock.onWhatsApp(phone).catch(() => null)
-
-    if (result === null || result.length === 0 || !result[0].jid) {
-      return
-    }
-
-    const jid = result[0].jid
-
     minio.getObject("zapdiviser", url, async (err, stream) => {
       if (err) {
         return console.log(err)
@@ -253,14 +252,29 @@ class Whatsapp {
 
       const buffer = await streamToBuffer(stream)
 
-      await this.sock.sendMessage(
-        jid,
+      await this.sendMessage(
+        phone,
         { video: buffer }
       )
     })
   }
 
   async sendImage(url: string, phone: string) {
+    minio.getObject("zapdiviser", url, async (err, stream) => {
+      if (err) {
+        return console.log(err)
+      }
+
+      const buffer = await streamToBuffer(stream)
+
+      await this.sendMessage(
+        phone,
+        { image: buffer }
+      )
+    })
+  }
+
+  private async sendMessage(phone: string, content: AnyMessageContent) {
     const result = await this.sock.onWhatsApp(phone).catch(() => null)
 
     if (result === null || result.length === 0 || !result[0].jid) {
@@ -269,18 +283,10 @@ class Whatsapp {
 
     const jid = result[0].jid
 
-    minio.getObject("zapdiviser", url, async (err, stream) => {
-      if (err) {
-        return console.log(err)
-      }
-
-      const buffer = await streamToBuffer(stream)
-
-      await this.sock.sendMessage(
-        jid,
-        { image: buffer }
-      )
-    })
+    await this.sock.sendMessage(
+      jid,
+      content
+    )
   }
 
   async getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {
@@ -301,6 +307,22 @@ class Whatsapp {
 
   async onConnected(cb: () => void) {
     this.emmiter.on("connected", cb)
+  }
+
+  async onBanned(cb: () => void) {
+    this.emmiter.on("banned", cb)
+  }
+
+  async onDisconnected(cb: () => void) {
+    this.emmiter.on("disconnected", cb)
+  }
+
+  async onStop(cb: () => void) {
+    this.emmiter.on("stop", cb)
+  }
+
+  async onLogout(cb: () => void) {
+    this.emmiter.on("logout", cb)
   }
 }
 

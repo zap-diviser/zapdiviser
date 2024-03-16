@@ -1,20 +1,6 @@
 version: "3.9"
 
 services:
-  caddy:
-    image: lucaslorentz/caddy-docker-proxy:ci-alpine
-    ports:
-      - 80:80
-      - 443:443
-    environment:
-      - CADDY_INGRESS_NETWORKS=caddy
-    networks:
-      - caddy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - caddy_data:/data
-    restart: unless-stopped
-
   db:
     image: postgres:alpine
     ports:
@@ -43,19 +29,16 @@ services:
     image: minio/minio
     volumes:
       - "minio:/data"
+    ports:
+      - 9000:9000
+      - 9001:9001
     environment:
       MINIO_ROOT_USER: ${MINIO_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     networks:
       - internal
-      - caddy
     command: server /data --console-address :9001
     restart: unless-stopped
-    labels:
-      caddy_0: minio-api.${HOST}
-      caddy_0.reverse_proxy: "{{upstreams 9000}}"
-      caddy_1: minio.${HOST}
-      caddy_1.reverse_proxy: "{{upstreams 9001}}"
 
   setup-minio:
     image: minio/mc
@@ -76,12 +59,9 @@ services:
         mc mb minio/zapdiviser
 
 networks:
-  caddy:
-    external: true
   internal:
 
 volumes:
-  caddy_data:
   redis:
   postgres:
   minio:
