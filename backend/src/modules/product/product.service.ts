@@ -41,7 +41,7 @@ export class ProductService {
 
     const data = handle(body);
 
-    if (!data) throw new HttpException('Evento não encontrado', 404);
+    if (!data) throw new HttpException('Evento não encontrado', 200);
 
     const productFlowEvents = await this.productFlowRepository.findOne({
       where: {
@@ -57,7 +57,7 @@ export class ProductService {
     });
 
     if (!productFlowEvents)
-      throw new HttpException('Evento não encontrado para este produto', 404);
+      throw new HttpException('Evento não encontrado para este produto', 200);
 
     const lastInstanceOccurrence = await this.eventsHistoryRepository.findOne({
       where: {
