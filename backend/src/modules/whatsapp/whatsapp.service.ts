@@ -28,7 +28,7 @@ export class WhatsappService {
     });
   }
 
-  async setWhatsappPhone(id: string, phone: string) {
+  async setWhatsappPhone(id: string, phone: string | null) {
     const whatsapp = await this.repository.findOne({
       where: { id },
     });
@@ -36,7 +36,7 @@ export class WhatsappService {
     if (!whatsapp) return null;
 
     whatsapp.phone = phone;
-    whatsapp.status = 1;
+    whatsapp.status = phone !== null ? Status.CONNECTED : Status.PENDING;
 
     return await this.repository.save(whatsapp);
   }
@@ -97,8 +97,10 @@ export class WhatsappService {
     });
   }
 
-  update(id: string) {
-    return this.repository.update(id, {});
+  setStatus(id: string, status: Status) {
+    return this.repository.update(id, {
+      status,
+    });
   }
 
   async remove(id: string, user_id: string) {

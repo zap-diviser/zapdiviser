@@ -1,4 +1,27 @@
 services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CADDY_INGRESS_NETWORKS=caddy
+    networks:
+      - caddy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - caddy_data:/data
+    restart: unless-stopped
+
+  minio:
+    networks:
+      - caddy
+    labels:
+      caddy_0: minio-api.${HOST}
+      caddy_0.reverse_proxy: "{{upstreams 9000}}"
+      caddy_1: minio.${HOST}
+      caddy_1.reverse_proxy: "{{upstreams 9001}}"
+
   migrate:
     build:
       context: ./backend
@@ -29,7 +52,12 @@ services:
       caddy_0: app.${HOST}
       caddy_0.reverse_proxy: "{{upstreams 8080}}"
       caddy_1: ${HOST}
+      caddy_1.rewrite: "* /zapdiviser{uri}"
       caddy_1.reverse_proxy: https://contingenciainfinita.com
+      caddy_1.reverse_proxy.0_header_up: Host contingenciainfinita.com
+      caddy_1.reverse_proxy.1_header_up: Alt-Used contingenciainfinita.com
+      caddy_2: www.${HOST}
+      caddy_2.redir: https://${HOST}{uri}
 
   backend:
     build:
@@ -50,6 +78,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: ${REDIS_URL}
+      MINIO_HOST: ${MINIO_HOST}
+      MINIO_PORT: ${MINIO_PORT}
       MINIO_USER: ${MINIO_USER}
       MINIO_PASSWORD: ${MINIO_PASSWORD}
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
@@ -57,6 +87,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      NODE_ENV: ${NODE_ENV}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
@@ -71,3 +102,10 @@ services:
       caddy_3: admin.${HOST}
       caddy_3.redir: "/ /admin-br"
       caddy_3.reverse_proxy: "{{upstreams 8000}}"
+
+networks:
+  caddy:
+    external: true
+
+volumes:
+  caddy_data:

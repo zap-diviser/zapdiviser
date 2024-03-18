@@ -1,5 +1,0 @@
-services:
-  minio:
-    labels:
-      caddy_0.tls: "internal"
-      caddy_1.tls: "internal"
