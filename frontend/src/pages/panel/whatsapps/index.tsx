@@ -121,7 +121,6 @@ const Whatsapp = () => {
                 >
                   <Button
                     color="warning"
-                    variant="outlined"
                     sx={{
                       marginRight: '15px'
                     }}
