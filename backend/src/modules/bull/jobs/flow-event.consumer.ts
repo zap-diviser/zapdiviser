@@ -99,7 +99,7 @@ export class FlowEventConsumer {
     }
 
     await this.flowEventRepository.query(
-      `UPDATE flow_event_entity SET times_sent = times_sent + 1 WHERE id = ${firstEvent.id}`,
+      `UPDATE flow-event SET times_sent = times_sent + 1 WHERE id = ${firstEvent.id}`,
     );
   }
 }
