@@ -22,6 +22,37 @@ import { SimpleTable } from 'components/SimpleTable';
 import { useWhatsappControllerFindAll } from 'hooks/api/zapdiviserComponents';
 import DeleteWhatsapp from './DeleteWhatsapp';
 
+export enum Status {
+  PENDING,
+  CONNECTING,
+  CONNECTED,
+  PAUSED,
+  BANNED
+}
+
+const statusMapped = {
+  [Status.PENDING]: {
+    label: 'Pendente',
+    color: 'warning'
+  },
+  [Status.CONNECTING]: {
+    label: 'Conectando',
+    color: 'success'
+  },
+  [Status.CONNECTED]: {
+    label: 'Conectado',
+    color: 'success'
+  },
+  [Status.PAUSED]: {
+    label: 'Pausado',
+    color: 'warning'
+  },
+  [Status.BANNED]: {
+    label: 'Banido',
+    color: 'error'
+  }
+};
+
 const Whatsapp = () => {
   const theme = useTheme();
   const mode = theme.palette.mode;
@@ -65,15 +96,8 @@ const Whatsapp = () => {
       {
         Header: 'Status',
         accessor: 'status',
-        Cell: ({ value }: { value: number }) => {
-          switch (value) {
-            case 1:
-              return <Chip color="success" label="Conectado" size="small" variant="light" />;
-            case 2:
-              return <Chip color="warning" label="Aguardando QRCode" size="small" variant="light" />;
-            default:
-              return <Chip color="success" label="Ativo" size="small" variant="light" />;
-          }
+        Cell: ({ value }: { value: Status }) => {
+          return <Chip label={statusMapped[value].label || ''} color={(statusMapped[value].color as any) || 'default'} />;
         }
       },
       {
@@ -83,7 +107,7 @@ const Whatsapp = () => {
         Cell: ({ row }: { row: Row<any> }) => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              {row.original.status === 2 && (
+              {row.original.status === Status.PENDING && (
                 <Tooltip
                   componentsProps={{
                     tooltip: {
@@ -97,7 +121,6 @@ const Whatsapp = () => {
                 >
                   <Button
                     color="warning"
-                    variant="outlined"
                     sx={{
                       marginRight: '15px'
                     }}
