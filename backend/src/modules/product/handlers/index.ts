@@ -32,6 +32,56 @@ type Handler = {
 
 const handlers: Handler[] = [
   {
+    name: 'cashtime',
+    detect: (data) => {
+      return _.has(data, 'data.postbackUrl');
+    },
+    phonePath: 'data.customer.phone',
+    namePath: 'data.customer.name',
+    eventPath: 'data',
+    eventMap: [
+      {
+        type: 'function',
+        fn: (value) => {
+          return (
+            value.data.status === 'paid' &&
+            value.data.paymentMethod === 'credit_card'
+          );
+        },
+        mapTo: 'card_approved',
+      },
+      {
+        type: 'function',
+        fn: (value) => {
+          return (
+            value.data.status === 'refused' &&
+            value.data.paymentMethod === 'credit_card'
+          );
+        },
+        mapTo: 'card_approved',
+      },
+      {
+        type: 'function',
+        fn: (value) => {
+          return (
+            value.data.status === 'paid' && value.data.paymentMethod === 'pix'
+          );
+        },
+        mapTo: 'pix_approved',
+      },
+      {
+        type: 'function',
+        fn: (value) => {
+          return (
+            value.data.status === 'waiting_payment' &&
+            value.data.paymentMethod === 'pix'
+          );
+        },
+        mapTo: 'pix_generated',
+      },
+    ],
+  },
+  {
     name: 'perfectpay',
     detect: (data) => {
       return _.has(data, 'customer.phone_number');
