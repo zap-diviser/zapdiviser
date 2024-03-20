@@ -130,7 +130,7 @@ export class ProductService {
       relations: ['whatsapps'],
     });
 
-    if (!product) throw new HttpException('Produto não encontrado', 200);
+    if (!product) throw new HttpException('Produto não encontrado', 404);
 
     product.whatsapps = product.whatsapps.filter(
       (whatsapp) => whatsapp.id !== whatsappId,
@@ -323,7 +323,7 @@ export class ProductService {
 
     if (!product) throw new HttpException('Produto não encontrado', 404);
 
-    return product.whatsapps.filter((whatsapp) => whatsapp.status === 1);
+    return product.whatsapps.filter((whatsapp) => whatsapp.status === Status.CONNECTED);
   }
 
   async updateProduct(id: string, body: CreateProductDto, user_id: string) {
