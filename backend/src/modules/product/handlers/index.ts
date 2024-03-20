@@ -58,7 +58,7 @@ const handlers: Handler[] = [
             value.data.paymentMethod === 'credit_card'
           );
         },
-        mapTo: 'card_approved',
+        mapTo: 'card_declined',
       },
       {
         type: 'function',
