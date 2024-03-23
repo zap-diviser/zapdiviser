@@ -10,10 +10,8 @@ sources:
       - zapdiviser-whatsapp
 
 sinks:
-  console:
+  loki:
+    type: loki
     inputs:
       - docker_logs
-    target: stdout
-    type: console
-    encoding:
-      codec: json
+    endpoint: http://loki:3100
