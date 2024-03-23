@@ -115,7 +115,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       caddy: portainer.${HOST}
-      caddy.reverse_proxy: "{{upstreams 9443}}"
+      caddy.reverse_proxy: "{{upstreams 9000}}"
 
   vector:
     image: timberio/vector:latest-alpine
@@ -126,7 +126,7 @@ services:
       - caddy
     labels:
       caddy: vector.${HOST}
-      caddy.reverse_proxy: "{{upstreams 9443}}"
+      caddy.reverse_proxy: "{{upstreams 8686}}"
 
   loki:
     image: grafana/loki
