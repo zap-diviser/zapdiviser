@@ -109,7 +109,7 @@ services:
     networks:
       - caddy
     volumes:
-      - data:/data
+      - portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       caddy: portainer.${HOST}
@@ -170,3 +170,4 @@ networks:
 
 volumes:
   caddy_data:
+  portainer:
