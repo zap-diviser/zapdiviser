@@ -13,6 +13,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ProductModule } from './modules/product/product.module';
 import { BullManagerModule } from './modules/bull/bull.module';
 import { AdminJsModule } from './modules/admin/adminjs.module';
+import { LoggerModule } from 'nestjs-pino';
 import configuration from './config';
 
 @Module({
@@ -34,6 +35,13 @@ import configuration from './config';
       inject: [ConfigService],
     }),
     TypeOrmModule.forRoot(configOptions),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: {
+          target: 'pino-pretty',
+        },
+      },
+    }),
     AdminJsModule,
     UserModule,
     AuthModule,

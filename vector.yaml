@@ -1,0 +1,19 @@
+api:
+  enabled: true
+  address: 0.0.0.0:8686
+
+sources:
+  docker_logs:
+    type: docker_logs
+    include_containers:
+      - zapdiviser-backend
+      - zapdiviser-whatsapp
+
+sinks:
+  console:
+    inputs:
+      - docker_logs
+    target: stdout
+    type: console
+    encoding:
+      codec: json

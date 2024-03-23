@@ -103,6 +103,67 @@ services:
       caddy_3.redir: "/ /admin-br"
       caddy_3.reverse_proxy: "{{upstreams 8000}}"
 
+  portainer:
+    image: portainer/portainer-ce
+    restart: unless-stopped
+    networks:
+      - caddy
+    volumes:
+      - data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      caddy: portainer.${HOST}
+      caddy.reverse_proxy: "{{upstreams 9443}}"
+
+  vector:
+    image: timberio/vector:latest-alpine
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./vector.yaml:/etc/vector/vector.yaml:ro
+    networks:
+      - caddy
+    labels:
+      caddy: vector.${HOST}
+      caddy.reverse_proxy: "{{upstreams 9443}}"
+
+  loki:
+    image: grafana/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - internal
+
+  grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:latest
+    networks:
+      - caddy
+      - internal
+    labels:
+      caddy: grafana.${HOST}
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+
 networks:
   caddy:
     external: true

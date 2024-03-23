@@ -86,9 +86,7 @@ class Whatsapp {
             } else {
               this.emmiter.emit("qr", qr)
             }
-          }
-
-          if (connection === "close") {
+          } else if (connection === "close") {
             if ([403, DisconnectReason.forbidden].includes((lastDisconnect?.error as Boom)?.output?.statusCode)) {
               await clearData()
               this.emmiter.emit("banned")
