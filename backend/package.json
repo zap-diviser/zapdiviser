@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@adminjs/express": "^6.1.0",
-    "@adminjs/logger": "^5.0.1",
     "@adminjs/nestjs": "^6.1.0",
     "@adminjs/passwords": "4.0.0",
     "@adminjs/typeorm": "^5.0.1",

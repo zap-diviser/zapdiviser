@@ -3,7 +3,6 @@ import { getMetadataArgsStorage } from 'typeorm';
 import userConfig from './features/userConfig';
 import { compare } from 'bcrypt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LogEntity } from './entities/resource.entity';
 
 @Module({
   imports: [
@@ -12,21 +11,12 @@ import { LogEntity } from './entities/resource.entity';
         imports: [ConfigModule],
         inject: [ConfigService],
         useFactory: async (configService: ConfigService) => {
-          const {
-            default: AdminJS,
-            ComponentLoader,
-            locales,
-          } = await import('adminjs');
+          const { default: AdminJS, locales } = await import('adminjs');
           const { Database, Resource } = await import('@adminjs/typeorm');
           AdminJS.registerAdapter({
             Resource,
             Database,
           });
-
-          const { default: loggerFeature, createLoggerResource } = await import(
-            '@adminjs/logger'
-          );
-          const componentLoader = new ComponentLoader();
 
           const entities = Object.values(getMetadataArgsStorage().tables)
             .map((table) => table.target)
@@ -35,20 +25,6 @@ import { LogEntity } from './entities/resource.entity';
               switch (entity.name) {
                 case 'UserEntity': {
                   return userConfig(entity);
-                }
-                case 'LogEntity': {
-                  return {
-                    resource: LogEntity,
-                    features: [
-                      loggerFeature({
-                        componentLoader,
-                        propertiesMapping: {
-                          user: 'userId',
-                        },
-                        userIdAttribute: 'id',
-                      }),
-                    ],
-                  };
                 }
                 default: {
                   return entity;
@@ -59,13 +35,7 @@ import { LogEntity } from './entities/resource.entity';
           return {
             adminJsOptions: {
               rootPath: '/admin-br',
-              resources: [
-                ...entities,
-                createLoggerResource({
-                  resource: LogEntity,
-                  componentLoader,
-                }),
-              ],
+              resources: entities,
               loginPath: '/admin-br/login',
               logoutPath: '/admin-br/logout',
               locale: {

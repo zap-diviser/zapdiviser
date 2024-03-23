@@ -23,11 +23,11 @@ import { useWhatsappControllerFindAll } from 'hooks/api/zapdiviserComponents';
 import DeleteWhatsapp from './DeleteWhatsapp';
 
 export enum Status {
-  PENDING,
-  CONNECTING,
-  CONNECTED,
-  PAUSED,
-  BANNED
+  PENDING = 'PENDING',
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED',
+  PAUSED = 'PAUSED',
+  BANNED = 'BANNED',
 }
 
 const statusMapped = {
