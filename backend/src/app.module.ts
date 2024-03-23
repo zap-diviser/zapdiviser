@@ -39,6 +39,9 @@ import configuration from './config';
       pinoHttp: {
         transport: {
           target: 'pino-pretty',
+          options: {
+            singleLine: true,
+          },
         },
       },
     }),
