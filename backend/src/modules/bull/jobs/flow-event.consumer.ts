@@ -2,10 +2,17 @@ import { InjectQueue, Process, Processor } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import Queue, { Job, Queue as IQueue } from 'bull';
 import { Logger } from '@nestjs/common';
+import { FlowEventEntity } from '@/modules/product/entities/flow-event.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 interface IFlowEvent {
   product_id: string;
-  events: { type: string; metadata: any }[];
+  events: Array<
+    FlowEventEntity & {
+      metadata: any;
+    }
+  >;
   phone: string;
   name: string;
   instanceId: string;
@@ -20,6 +27,8 @@ export class FlowEventConsumer {
     @InjectQueue('flow-event-queue')
     private readonly reservaCotaQueue: IQueue<IFlowEvent>,
     private readonly configService: ConfigService,
+    @InjectRepository(FlowEventEntity)
+    private flowEventRepository: Repository<FlowEventEntity>,
   ) {}
 
   @Process('data-event-process')
@@ -88,5 +97,9 @@ export class FlowEventConsumer {
         break;
       }
     }
+
+    await this.flowEventRepository.query(
+      `UPDATE "flow-event" SET times_sent = times_sent + 1 WHERE id = '${firstEvent.id}'`,
+    );
   }
 }
