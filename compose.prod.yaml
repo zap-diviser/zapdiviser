@@ -124,6 +124,7 @@ services:
       - ./vector.yaml:/etc/vector/vector.yaml:ro
     networks:
       - caddy
+      - internal
     labels:
       caddy: vector.${HOST}
       caddy.reverse_proxy: "{{upstreams 8686}}"
