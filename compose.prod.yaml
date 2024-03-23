@@ -106,6 +106,8 @@ services:
   portainer:
     image: portainer/portainer-ce
     restart: unless-stopped
+    environment:
+      - VIRTUAL_HOST=portainer.${HOST}
     networks:
       - caddy
     volumes:
