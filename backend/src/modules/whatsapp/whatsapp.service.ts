@@ -5,20 +5,32 @@ import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from '@nestjs/common';
+import { OnModuleDestroy } from '@nestjs/common';
 
 const docker = new Docker();
 
 @Injectable()
-export class WhatsappService {
-  private readonly logger = new Logger(WhatsappService.name);
-
+export class WhatsappService implements OnModuleDestroy {
   constructor(
     @InjectRepository(WhatsappEntity)
     protected readonly repository: Repository<WhatsappEntity>,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
   ) {}
+
+  async onModuleDestroy() {
+    if (this.configService.get('NODE_ENV') !== 'production') {
+      const containers = await docker.listContainers();
+      const containersToStop = containers.filter((container) =>
+        container.Names.some((name) => name.startsWith('/zapdiviser-node')),
+      );
+      await Promise.all(
+        containersToStop.map((container) =>
+          docker.getContainer(container.Id).stop(),
+        ),
+      );
+    }
+  }
 
   async findAll(user_id: string) {
     return await this.repository.find({
@@ -68,11 +80,11 @@ export class WhatsappService {
       Image: 'whatsapp',
       name: `zapdiviser-node-${id}`,
       HostConfig: {
-        NetworkMode: 'host',
+        NetworkMode: 'zapdiviser',
       },
       Env: [
         `INSTANCE_ID=${id}`,
-        `REDIS_URL=redis://:${this.configService.get('REDIS_PASSWORD')}@localhost:6379`,
+        `REDIS_URL=${this.configService.get('REDIS_URL')}`,
         `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
         `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
       ],

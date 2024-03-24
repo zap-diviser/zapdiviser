@@ -1,6 +1,6 @@
 version: "3.9"
 
-name: zapdiviser
+name: code
 
 services:
   db:
@@ -8,7 +8,7 @@ services:
     ports:
       - 5433:5432
     networks:
-      - internal
+      - zapdiviser
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -22,7 +22,7 @@ services:
     ports:
       - 6379:6379
     networks:
-      - internal
+      - zapdiviser
     command: /bin/sh -c "redis-server --requirepass ${REDIS_PASSWORD}"
     volumes:
       - redis:/data
@@ -38,7 +38,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     networks:
-      - internal
+      - zapdiviser
     command: server /data --console-address :9001
     restart: unless-stopped
 
@@ -47,7 +47,7 @@ services:
     depends_on:
       - minio
     networks:
-      - internal
+      - zapdiviser
     entrypoint:
       - sh
       - -c
@@ -59,9 +59,10 @@ services:
         mc alias set minio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD}
         mc admin user svcacct add minio ${MINIO_USER} --access-key ${MINIO_ACCESS_KEY} --secret-key ${MINIO_SECRET_KEY}
         mc mb minio/zapdiviser
+        mc mb minio/backups
 
 networks:
-  internal:
+  zapdiviser:
 
 volumes:
   redis:

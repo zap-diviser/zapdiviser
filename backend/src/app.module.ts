@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -13,8 +13,11 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ProductModule } from './modules/product/product.module';
 import { BullManagerModule } from './modules/bull/bull.module';
 import { AdminJsModule } from './modules/admin/adminjs.module';
-import { LoggerModule } from 'nestjs-pino';
 import configuration from './config';
+import { WinstonModule } from 'nest-winston';
+import winston from 'winston';
+import LokiTransport from 'winston-loki';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -35,15 +38,18 @@ import configuration from './config';
       inject: [ConfigService],
     }),
     TypeOrmModule.forRoot(configOptions),
-    LoggerModule.forRoot({
-      pinoHttp: {
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            singleLine: true,
-          },
-        },
-      },
+    WinstonModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transports: [
+          configService.get('NODE_ENV') === 'production'
+            ? new LokiTransport({
+                host: 'http://loki:3100',
+              })
+            : new winston.transports.Console(),
+        ],
+      }),
+      inject: [ConfigService],
     }),
     AdminJsModule,
     UserModule,
@@ -54,4 +60,8 @@ import configuration from './config';
     WhatsappModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

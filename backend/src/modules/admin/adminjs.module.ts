@@ -186,13 +186,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                   email === configService.get('ADMIN_EMAIL')! &&
                   (await compare(
                     password,
-                    '$2a$12$Yb5GY5Zuz1kHbZcZM9Yy8uUKUUtKC0ECJANOxmDpRf1nnH39.KuLq',
+                    Buffer.from(
+                      configService.get<string>('ADMIN_PASSWORD')!,
+                      'base64',
+                    ).toString('ascii'),
                   ))
                 ) {
                   return Promise.resolve({
                     email: configService.get('ADMIN_EMAIL')!,
-                    password:
-                      '$2a$12$Yb5GY5Zuz1kHbZcZM9Yy8uUKUUtKC0ECJANOxmDpRf1nnH39.KuLq',
+                    password: configService.get<string>('ADMIN_PASSWORD')!,
                   });
                 }
                 return null;

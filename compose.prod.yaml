@@ -28,7 +28,7 @@ services:
     depends_on:
       - db
     networks:
-      - internal
+      - zapdiviser
     command: ["sh", "-c", "node ./node_modules/typeorm/cli -d ./dist/ormconfig.js migration:run"]
     environment:
       POSTGRES_HOST: db
@@ -42,7 +42,7 @@ services:
       context: ./frontend
     command: --brotli
     networks:
-      - internal
+      - zapdiviser
       - caddy
     depends_on:
       - backend
@@ -63,7 +63,7 @@ services:
     build:
       context: ./backend
     networks:
-      - internal
+      - zapdiviser
       - caddy
     depends_on:
       - db
@@ -117,23 +117,11 @@ services:
       caddy: portainer.${HOST}
       caddy.reverse_proxy: "{{upstreams 9000}}"
 
-  vector:
-    image: timberio/vector:latest-alpine
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./vector.yaml:/etc/vector/vector.yaml:ro
-    networks:
-      - caddy
-      - internal
-    labels:
-      caddy: vector.${HOST}
-      caddy.reverse_proxy: "{{upstreams 8686}}"
-
   loki:
     image: grafana/loki
     command: -config.file=/etc/loki/local-config.yaml
     networks:
-      - internal
+      - zapdiviser
 
   grafana:
     image: grafana/grafana
@@ -164,16 +152,32 @@ services:
       - grafana:/var/lib/grafana
     networks:
       - caddy
-      - internal
+      - zapdiviser
     labels:
       caddy: grafana.${HOST}
       caddy.reverse_proxy: "{{upstreams 3000}}"
 
+  db-backup:
+    image: martlark/pg_dump
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      S3_HOSTNAME: minio
+      S3_BUCKET_PATH: s3://backups/
+      S3_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      S3_SECRET_KEY: ${MINIO_SECRET_KEY}
+    networks:
+      - zapdiviser
+    volumes:
+      - db-backup:/dump
+
 networks:
   caddy:
+    external: true
+  zapdiviser:
     external: true
 
 volumes:
   caddy_data:
   portainer:
   grafana:
+  db-backup:

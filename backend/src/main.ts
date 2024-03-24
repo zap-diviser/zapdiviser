@@ -6,7 +6,13 @@ import { ValidationPipe } from './common/pipes/validation.pipe';
 import configSwagger from './common/config/swagger';
 import './common/commands/create-database';
 import configBullBoard from './common/config/bull-board';
-import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import Promise from 'bluebird';
+
+// @ts-expect-error promise type
+globalThis.Promise = Promise;
+// @ts-expect-error promise type
+global.Promise.config({ longStackTraces: true });
 
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -14,13 +20,12 @@ export async function bootstrap() {
     bufferLogs: true,
   });
 
-  app.useLogger(app.get(Logger));
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
   configBullBoard(app);
   configSwagger(app);
