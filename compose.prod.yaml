@@ -160,6 +160,7 @@ services:
   db-backup:
     image: martlark/pg_dump
     environment:
+      PGHOST: db
       PGPASSWORD: ${POSTGRES_PASSWORD}
       S3_HOSTNAME: minio
       S3_BUCKET_PATH: s3://backups/
