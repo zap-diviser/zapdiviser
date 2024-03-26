@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RedisService } from '@liaoliaots/nestjs-redis';
+import { RedisService } from 'nestjs-redis-cluster';
 import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';

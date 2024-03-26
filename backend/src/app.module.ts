@@ -5,7 +5,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EmailModule } from './modules/email/email.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModule } from 'nestjs-redis-cluster';
 import { configOptions } from './ormconfig';
 import { RedirectsModule } from './modules/redirects/redirects.module';
 import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
@@ -30,11 +30,15 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     BullManagerModule,
     RedisModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        config: {
-          url: configService.get<string>('REDIS_URL'),
-        },
-      }),
+      useFactory: (configService: ConfigService) => [
+        ...configService
+          .get<string>('REDIS_URLS')!
+          .split(';')
+          .map((url, index) => ({
+            name: `node-${index}`,
+            url,
+          })),
+      ],
       inject: [ConfigService],
     }),
     TypeOrmModule.forRoot(configOptions),
