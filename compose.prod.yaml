@@ -157,19 +157,50 @@ services:
       caddy: grafana.${HOST}
       caddy.reverse_proxy: "{{upstreams 3000}}"
 
-  db-backup:
-    image: martlark/pg_dump
+  backup:
+    image: tiredofit/db-backup
     environment:
-      PGHOST: db
-      PGPASSWORD: ${POSTGRES_PASSWORD}
-      S3_HOSTNAME: minio
-      S3_BUCKET_PATH: s3://backups/
-      S3_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      S3_SECRET_KEY: ${MINIO_SECRET_KEY}
-    networks:
-      - zapdiviser
-    volumes:
-      - db-backup:/dump
+      TIMEZONE: America/Sao_Paulo
+      CONTAINER_ENABLE_MONITORING: FALSE
+      DEFAULT_COMPRESSION_LEVE: 19
+      DEFAULT_S3_BUCKET: zapdiviser
+      DEFAULT_S3_KEY_ID: ${MINIO_ACCESS_KEY}
+      DEFAULT_S3_KEY_SECRET: ${MINIO_SECRET_KEY}
+      DEFAULT_S3_HOST: minio:9000
+      DB01_TYPE: postgres
+      DB01_HOST: db
+      DB01_NAME: ${POSTGRES_DB}
+      DB01_USER: ${POSTGRES_USER}
+      DB01_PASS: ${POSTGRES_PASSWORD}
+      DB01_CLEANUP_TIME: 10080
+      DB01_CHECKSUM: NONE
+      DB02_TYPE: redis
+      DB02_HOST: redis-node-1
+      DB02_CLEANUP_TIME: 10080
+      DB02_CHECKSUM: NONE
+      DB03_TYPE: redis
+      DB03_HOST: redis-node-2
+      DB03_CLEANUP_TIME: 10080
+      DB03_CHECKSUM: NONE
+      DB04_TYPE: redis
+      DB04_HOST: redis-node-3
+      DB04_CLEANUP_TIME: 10080
+      DB04_CHECKSUM: NONE
+      DB05_TYPE: redis
+      DB05_HOST: redis-node-4
+      DB05_CLEANUP_TIME: 10080
+      DB05_CHECKSUM: NONE
+      DB06_TYPE: redis
+      DB06_HOST: redis-node-5
+      DB06_CLEANUP_TIME: 10080
+      DB06_CHECKSUM: NONE
+      DB07_TYPE: redis
+      DB07_HOST: redis-node-6
+      DB07_CLEANUP_TIME: 10080
+      DB07_CHECKSUM: NONE
+    restart: always
+  networks:
+    - internal
 
 networks:
   caddy:
@@ -181,4 +212,3 @@ volumes:
   caddy_data:
   portainer:
   grafana:
-  db-backup:
