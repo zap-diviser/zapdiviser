@@ -14,6 +14,7 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 const ProductEvents = Loadable(lazy(() => import('pages/panel/products-events/index')));
 const Redirects = Loadable(lazy(() => import('pages/panel/redirects/index')));
 const Products = Loadable(lazy(() => import('pages/panel/products/index')));
+const Chat = Loadable(lazy(() => import('pages/panel/chat/index')));
 const Whatsapps = Loadable(lazy(() => import('pages/panel/whatsapps/index')));
 
 // ==============================|| MAIN ROUTES ||============================== //
@@ -31,6 +32,10 @@ const MainRoutes = {
         </AuthGuard>
       ),
       children: [
+        {
+          path: 'whatsapp/chat',
+          element: <Chat />
+        },
         {
           path: 'funil/produtos',
           element: <Products />

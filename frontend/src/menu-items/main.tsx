@@ -1,5 +1,5 @@
 // assets
-import { Box1, Home, Link, Teacher, Whatsapp } from 'iconsax-react';
+import { Box1, Home, Link, Teacher, Whatsapp, Messages1 } from 'iconsax-react';
 
 // type
 import { NavItemType } from 'types/menu';
@@ -10,7 +10,8 @@ const icons = {
   redirects: Link,
   tutorials: Teacher,
   products: Box1,
-  whatsapp: Whatsapp
+  whatsapp: Whatsapp,
+  chat: Messages1
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -26,6 +27,14 @@ const Main: NavItemType = {
       type: 'collapse',
       icon: icons.home,
       children: [
+        {
+          id: 'chat',
+          title: 'Chat',
+          type: 'item',
+          url: '/whatsapp/chat',
+          breadcrumbs: false,
+          icon: icons.chat
+        },
         {
           id: 'products',
           title: 'Produtos',
