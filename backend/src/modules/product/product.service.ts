@@ -37,9 +37,9 @@ export class ProductService {
   ) {}
 
   async webhook(product_id: string, body: any) {
-    this.logger.log(`webhook - body: ${JSON.stringify(body, null, 2)}`);
-
     const data = handle(body);
+
+    this.logger.log(`webhook - data: ${JSON.stringify(body, null, 2)}`);
 
     if (!data) throw new HttpException('Evento não encontrado', 200);
 
@@ -323,7 +323,9 @@ export class ProductService {
 
     if (!product) throw new HttpException('Produto não encontrado', 404);
 
-    return product.whatsapps.filter((whatsapp) => whatsapp.status === Status.CONNECTED);
+    return product.whatsapps.filter(
+      (whatsapp) => whatsapp.status === Status.CONNECTED,
+    );
   }
 
   async updateProduct(id: string, body: CreateProductDto, user_id: string) {

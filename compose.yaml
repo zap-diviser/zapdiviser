@@ -1,4 +1,4 @@
-version: "3.9"
+name: code
 
 services:
   db:
@@ -6,7 +6,7 @@ services:
     ports:
       - 5433:5432
     networks:
-      - internal
+      - zapdiviser
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -14,16 +14,86 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
-  redis:
+  redis-node-1:
     image: redis:alpine
-    restart: always
+    ports:
+      - 7000:6379
+    networks:
+      - zapdiviser
+    volumes:
+      - redis-1:/redis
+      - ./redis.conf:/redis/redis.conf
+    command: /bin/sh -c "redis-server /redis/redis.conf"
+
+  redis-node-2:
+    image: redis:alpine
+    ports:
+      - 7001:6379
+    networks:
+      - zapdiviser
+    volumes:
+      - redis-2:/redis
+      - ./redis.conf:/redis/redis.conf
+    command: /bin/sh -c "redis-server /redis/redis.conf"
+
+  redis-node-3:
+    image: redis:alpine
+    ports:
+      - 7002:6379
+    networks:
+      - zapdiviser
+    volumes:
+      - redis-3:/redis
+      - ./redis.conf:/redis/redis.conf
+    command: /bin/sh -c "redis-server /redis/redis.conf"
+
+  redis-node-4:
+    image: redis:alpine
+    ports:
+      - 7003:6379
+    networks:
+      - zapdiviser
+    volumes:
+      - redis-4:/redis
+      - ./redis.conf:/redis/redis.conf
+    command: /bin/sh -c "redis-server /redis/redis.conf"
+
+  redis-node-5:
+    image: redis:alpine
+    ports:
+      - 7004:6379
+    networks:
+      - zapdiviser
+    volumes:
+      - redis-5:/redis
+      - ./redis.conf:/redis/redis.conf
+    command: /bin/sh -c "redis-server /redis/redis.conf"
+
+  redis-node-6:
+    image: redis:alpine
+    ports:
+      - 7005:6379
+    networks:
+      - zapdiviser
+    volumes:
+      - redis-6:/redis
+      - ./redis.conf:/redis/redis.conf
+    command: /bin/sh -c "redis-server /redis/redis.conf"
+
+  redis-cluster-creator:
+    image: redis:alpine
     ports:
       - 6379:6379
     networks:
-      - internal
-    command: /bin/sh -c "redis-server --requirepass ${REDIS_PASSWORD}"
-    volumes:
-      - redis:/data
+      - zapdiviser
+    command: /bin/sh -c "redis-cli --cluster create redis-node-1:6379 redis-node-2:6379 redis-node-3:6379 redis-node-4:6379 redis-node-5:6379 redis-node-6:6379 --cluster-replicas 1 --cluster-yes"
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
 
   minio:
     image: minio/minio
@@ -36,7 +106,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     networks:
-      - internal
+      - zapdiviser
     command: server /data --console-address :9001
     restart: unless-stopped
 
@@ -45,7 +115,7 @@ services:
     depends_on:
       - minio
     networks:
-      - internal
+      - zapdiviser
     entrypoint:
       - sh
       - -c
@@ -57,11 +127,17 @@ services:
         mc alias set minio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD}
         mc admin user svcacct add minio ${MINIO_USER} --access-key ${MINIO_ACCESS_KEY} --secret-key ${MINIO_SECRET_KEY}
         mc mb minio/zapdiviser
+        mc mb minio/backups
 
 networks:
-  internal:
+  zapdiviser:
 
 volumes:
-  redis:
+  redis-1:
+  redis-2:
+  redis-3:
+  redis-4:
+  redis-5:
+  redis-6:
   postgres:
   minio:

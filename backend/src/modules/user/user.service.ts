@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { EmailService } from '../email/email.service';
-import { RedisService } from '@liaoliaots/nestjs-redis';
+import { RedisService } from 'nestjs-redis-cluster';
 import { CheckCodeDto } from './dto/check-code.dto';
 import { JwtService } from '@nestjs/jwt';
 

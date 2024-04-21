@@ -28,7 +28,7 @@ services:
     depends_on:
       - db
     networks:
-      - internal
+      - zapdiviser
     command: ["sh", "-c", "node ./node_modules/typeorm/cli -d ./dist/ormconfig.js migration:run"]
     environment:
       POSTGRES_HOST: db
@@ -42,7 +42,7 @@ services:
       context: ./frontend
     command: --brotli
     networks:
-      - internal
+      - zapdiviser
       - caddy
     depends_on:
       - backend
@@ -63,7 +63,7 @@ services:
     build:
       context: ./backend
     networks:
-      - internal
+      - zapdiviser
       - caddy
     depends_on:
       - db
@@ -103,9 +103,112 @@ services:
       caddy_3.redir: "/ /admin-br"
       caddy_3.reverse_proxy: "{{upstreams 8000}}"
 
+  portainer:
+    image: portainer/portainer-ce
+    restart: unless-stopped
+    environment:
+      - VIRTUAL_HOST=portainer.${HOST}
+    networks:
+      - caddy
+    volumes:
+      - portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      caddy: portainer.${HOST}
+      caddy.reverse_proxy: "{{upstreams 9000}}"
+
+  loki:
+    image: grafana/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - zapdiviser
+
+  grafana:
+    image: grafana/grafana
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    volumes:
+      - grafana:/var/lib/grafana
+    networks:
+      - caddy
+      - zapdiviser
+    labels:
+      caddy: grafana.${HOST}
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+
+  backup:
+    image: tiredofit/db-backup
+    environment:
+      TIMEZONE: America/Sao_Paulo
+      CONTAINER_ENABLE_MONITORING: FALSE
+      DEFAULT_COMPRESSION_LEVE: 19
+      DEFAULT_S3_BUCKET: zapdiviser
+      DEFAULT_S3_KEY_ID: ${MINIO_ACCESS_KEY}
+      DEFAULT_S3_KEY_SECRET: ${MINIO_SECRET_KEY}
+      DEFAULT_S3_HOST: minio:9000
+      DB01_TYPE: postgres
+      DB01_HOST: db
+      DB01_NAME: ${POSTGRES_DB}
+      DB01_USER: ${POSTGRES_USER}
+      DB01_PASS: ${POSTGRES_PASSWORD}
+      DB01_CLEANUP_TIME: 10080
+      DB01_CHECKSUM: NONE
+      DB02_TYPE: redis
+      DB02_HOST: redis-node-1
+      DB02_CLEANUP_TIME: 10080
+      DB02_CHECKSUM: NONE
+      DB03_TYPE: redis
+      DB03_HOST: redis-node-2
+      DB03_CLEANUP_TIME: 10080
+      DB03_CHECKSUM: NONE
+      DB04_TYPE: redis
+      DB04_HOST: redis-node-3
+      DB04_CLEANUP_TIME: 10080
+      DB04_CHECKSUM: NONE
+      DB05_TYPE: redis
+      DB05_HOST: redis-node-4
+      DB05_CLEANUP_TIME: 10080
+      DB05_CHECKSUM: NONE
+      DB06_TYPE: redis
+      DB06_HOST: redis-node-5
+      DB06_CLEANUP_TIME: 10080
+      DB06_CHECKSUM: NONE
+      DB07_TYPE: redis
+      DB07_HOST: redis-node-6
+      DB07_CLEANUP_TIME: 10080
+      DB07_CHECKSUM: NONE
+    restart: always
+  networks:
+    - internal
+
 networks:
   caddy:
+    external: true
+  zapdiviser:
     external: true
 
 volumes:
   caddy_data:
+  portainer:
+  grafana:

@@ -12,11 +12,11 @@ import {
 } from 'typeorm';
 
 export enum Status {
-  PENDING,
-  CONNECTING,
-  CONNECTED,
-  PAUSED,
-  BANNED,
+  PENDING = 'PENDING',
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED',
+  PAUSED = 'PAUSED',
+  BANNED = 'BANNED',
 }
 
 @Entity('whatsapp')
@@ -29,7 +29,7 @@ export class WhatsappEntity extends DefaultEntity {
   profileUrl: string | null;
 
   @Column({
-    type: 'enum',
+    type: String,
     enum: Status,
     default: Status.PENDING,
   })

@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   Redirect,
+  Logger,
 } from '@nestjs/common';
 import { RedirectsService } from './redirects.service';
 import { CreateRedirectDto } from './dto/create-redirect.dto';
@@ -21,6 +22,8 @@ import { RedirectEntity } from './entities/redirect.entity';
 @Controller('redirects')
 @ApiTags('Redirects')
 export class RedirectsController {
+  private readonly logger = new Logger(RedirectsController.name);
+
   constructor(private readonly redirectsService: RedirectsService) {}
 
   @Get(':slug')
@@ -28,7 +31,7 @@ export class RedirectsController {
   @Redirect()
   async redirect(@Param('slug') slug: string) {
     const url = await this.redirectsService.redirect(slug);
-    console.log(url);
+    this.logger.log(url);
 
     return {
       url,

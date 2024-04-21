@@ -32,7 +32,7 @@ function streamToBuffer(stream: Readable): Promise<Buffer> {
 }
 
 const minio = new Client({
-  endPoint: "localhost",
+  endPoint: "minio",
   port: 9000,
   useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY!,
@@ -70,8 +70,6 @@ class Whatsapp {
       browser: ["Zapdivizer", "Zapdivizer", "1.0.0"],
     })
 
-    let qrQuantity = 0
-
     this.sock.ev.process(
       async (events) => {
         if (events["connection.update"]) {
@@ -79,13 +77,7 @@ class Whatsapp {
           const { connection, lastDisconnect, qr } = update
 
           if (qr) {
-            qrQuantity++
-
-            if (qrQuantity > 120) {
-              this.emmiter.emit("stop")
-            } else {
-              this.emmiter.emit("qr", qr)
-            }
+            this.emmiter.emit("qr", qr)
           }
 
           if (connection === "close") {
@@ -102,7 +94,6 @@ class Whatsapp {
               this.startSock()
             }
           } else if (connection === "connecting") {
-            qrQuantity = 0
             this.emmiter.emit("connecting")
           } else if (connection === "open") {
             this.emmiter.emit("connected")

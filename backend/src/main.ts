@@ -3,13 +3,24 @@ import { AppModule } from './app.module';
 // import configSwagger from './common/config/swagger';
 import { HttpExceptionFilter } from './common/exceptions/HttpExceptionFilter';
 import { ValidationPipe } from './common/pipes/validation.pipe';
-import cors from 'cors';
 import configSwagger from './common/config/swagger';
 import './common/commands/create-database';
 import configBullBoard from './common/config/bull-board';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import Promise from 'bluebird';
+
+// @ts-expect-error promise type
+globalThis.Promise = Promise;
+// @ts-expect-error promise type
+global.Promise.config({ longStackTraces: true });
 
 export async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    bufferLogs: true,
+  });
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   app.setGlobalPrefix('api');
 
@@ -18,12 +29,6 @@ export async function bootstrap() {
 
   configBullBoard(app);
   configSwagger(app);
-
-  app.use(
-    cors({
-      origin: '*',
-    }),
-  );
 
   await app.listen(8000, '0.0.0.0');
 }
