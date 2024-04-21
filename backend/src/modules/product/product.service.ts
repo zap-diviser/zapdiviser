@@ -99,7 +99,7 @@ export class ProductService {
 
     const redis = this.redisService.getClient();
 
-    await redis.set(data.phone, newId, 'EX', 60 * 60 * 24 * 30);
+    await redis.set(`flow:${data.phone}`, newId, 'EX', 60 * 60 * 24 * 30);
 
     const flowData = {
       id: newId,
