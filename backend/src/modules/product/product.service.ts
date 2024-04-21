@@ -16,6 +16,7 @@ import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
 import { Status } from '../whatsapp/entities/whatsapp.entity';
 import { Logger } from '@nestjs/common';
+import { RedisService } from 'nestjs-redis-cluster';
 
 @Injectable()
 export class ProductService {
@@ -34,6 +35,7 @@ export class ProductService {
     private readonly flowEventQueue: Queue,
     private readonly whatsappService: WhatsappService,
     @InjectMinio() private readonly minioClient: Client,
+    private readonly redisService: RedisService,
   ) {}
 
   async webhook(product_id: string, body: any) {
@@ -93,7 +95,14 @@ export class ProductService {
       instanceId = whatsapps[Math.floor(Math.random() * whatsapps.length)].id;
     }
 
+    const newId = `${product_id}/${data.phone}/${new Date().getTime()}`;
+
+    const redis = this.redisService.getClient();
+
+    await redis.set(data.phone, newId, 'EX', 60 * 60 * 24 * 30);
+
     const flowData = {
+      id: newId,
       product_id,
       instanceId,
       events: productFlowEvents.events,

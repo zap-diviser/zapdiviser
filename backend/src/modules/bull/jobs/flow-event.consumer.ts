@@ -5,8 +5,10 @@ import { Logger } from '@nestjs/common';
 import { FlowEventEntity } from '@/modules/product/entities/flow-event.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RedisService } from 'nestjs-redis-cluster';
 
 interface IFlowEvent {
+  id: string;
   product_id: string;
   events: Array<
     FlowEventEntity & {
@@ -29,6 +31,7 @@ export class FlowEventConsumer {
     private readonly configService: ConfigService,
     @InjectRepository(FlowEventEntity)
     private flowEventRepository: Repository<FlowEventEntity>,
+    private readonly redisService: RedisService,
   ) {}
 
   @Process('data-event-process')
@@ -42,6 +45,15 @@ export class FlowEventConsumer {
     const queue = new Queue(`MessagesSender:${data.instanceId}`, {
       redis: this.configService.get<string>('REDIS_URL'),
     });
+
+    const redis = this.redisService.getClient();
+
+    const lastId = await redis.get(`flow:${data.phone}`);
+
+    if (lastId && lastId !== data.id) {
+      this.logger.log(`Event cancelled: ${lastId} - ${data.phone}`);
+      return;
+    }
 
     const restQueue = data.events.slice(1);
 
