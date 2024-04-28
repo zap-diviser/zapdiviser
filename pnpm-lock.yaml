@@ -393,6 +393,9 @@ importers:
       date-fns:
         specifier: ^2.30.0
         version: 2.30.0
+      emoji-picker-react:
+        specifier: ^4.9.2
+        version: 4.9.2(react@18.2.0)
       formik:
         specifier: ^2.4.5
         version: 2.4.5(react@18.2.0)
@@ -12156,6 +12159,16 @@ packages:
     resolution: {integrity: sha512-uDfvUjVrfGJJhymx/kz6prltenw1u7WrCg1oa94zYY8xxVpLLUu045LAT0dhDZdXG58/EpPL/5kA180fQ/qudg==}
     engines: {node: '>=10'}
 
+  /emoji-picker-react@4.9.2(react@18.2.0):
+    resolution: {integrity: sha512-pdvLKpto0DMrjE+/8V9QeYjrMcOkJmqBn3GyCSG2zanY32rN2cnWzBUmzArvapAjzBvgf7hNmJP8xmsdu0cmJA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      flairup: 0.0.38
+      react: 18.2.0
+    dev: false
+
   /emoji-regex@10.3.0:
     resolution: {integrity: sha512-QpLs9D9v9kArv4lfDEgg1X/gN5XLnf/A6l9cs8SPZLRZR3ZkY9+kwIQTxm+fsSej5UMYGE8fdoaZVIBlqG0XTw==}
     dev: true
@@ -13443,6 +13456,10 @@ packages:
       micromatch: 4.0.5
       resolve-dir: 1.0.1
     dev: true
+
+  /flairup@0.0.38:
+    resolution: {integrity: sha512-W9QA5TM7eYNlGoBYwfVn/o6v4yWBCxfq4+EJ5w774oFeyWvVWnYq6Dgt4CJltjG9y/lPwbOqz3jSSr8K66ToGg==}
+    dev: false
 
   /flat-cache@3.2.0:
     resolution: {integrity: sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==}
@@ -24747,7 +24764,7 @@ packages:
       lodash.isequal: 4.5.0
       validator: 10.11.0
     optionalDependencies:
-      commander: 2.11.0
+      commander: 2.20.3
     dev: false
 
   /zen-observable-ts@1.2.5:
