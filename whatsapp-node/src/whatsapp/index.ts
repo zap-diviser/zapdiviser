@@ -14,7 +14,6 @@ import makeWASocket, {
 import MAIN_LOGGER from "@whiskeysockets/baileys/lib/Utils/logger"
 import { useRedisAuthState } from "./auth"
 import EventEmitter from "node:events"
-// import { fileTypeFromBuffer } from "file-type"
 import { Client } from "minio"
 import { Readable } from "stream"
 
@@ -217,55 +216,7 @@ class Whatsapp {
     await this.sock.sendMessage(jid, msg)
   }
 
-  async sendAudio(url: string, phone: string) {
-    minio.getObject("zapdiviser", url, async (err, stream) => {
-      if (err) {
-        return console.log(err)
-      }
-
-      const buffer = await streamToBuffer(stream)
-      // const data = await fileTypeFromBuffer(buffer)
-
-      // if (data) {
-        await this.sendMessage(
-          phone,
-          { audio: buffer, mimetype: 'audio/mp3', ptt: true } // data.mime, ptt: true }
-        )
-      // }
-    })
-  }
-
-  async sendVideo(url: string, phone: string) {
-    minio.getObject("zapdiviser", url, async (err, stream) => {
-      if (err) {
-        return console.log(err)
-      }
-
-      const buffer = await streamToBuffer(stream)
-
-      await this.sendMessage(
-        phone,
-        { video: buffer }
-      )
-    })
-  }
-
-  async sendImage(url: string, phone: string) {
-    minio.getObject("zapdiviser", url, async (err, stream) => {
-      if (err) {
-        return console.log(err)
-      }
-
-      const buffer = await streamToBuffer(stream)
-
-      await this.sendMessage(
-        phone,
-        { image: buffer }
-      )
-    })
-  }
-
-  private async sendMessage(phone: string, content: AnyMessageContent) {
+  private async sendMessageBase(msg: AnyMessageContent, phone: string) {
     const result = await this.sock.onWhatsApp(phone).catch(() => null)
 
     if (result === null || result.length === 0 || !result[0].jid) {
@@ -274,10 +225,31 @@ class Whatsapp {
 
     const jid = result[0].jid
 
-    await this.sock.sendMessage(
-      jid,
-      content
-    )
+    await this.sock.sendMessage(jid, msg)
+  }
+
+  private async sendMediaMessageBase(url: string, msg: (buffer: Buffer) => AnyMessageContent, phone: string) {
+    minio.getObject("zapdiviser", url, async (err, stream) => {
+      if (err) {
+        return console.log(err)
+      }
+
+      const buffer = await streamToBuffer(stream)
+
+      await this.sendMessageBase(msg(buffer), phone)
+     })
+  }
+
+  async sendAudio(url: string, phone: string) {
+    await this.sendMediaMessageBase(url, (buffer) => ({ audio: buffer, mimetype: 'audio/mp3', ptt: true }), phone)
+  }
+
+  async sendVideo(url: string, phone: string) {
+    await this.sendMediaMessageBase(url, (buffer) => ({ video: buffer }), phone)
+  }
+
+  async sendImage(url: string, phone: string) {
+    await this.sendMediaMessageBase(url, (buffer) => ({ image: buffer }), phone)
   }
 
   async getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {

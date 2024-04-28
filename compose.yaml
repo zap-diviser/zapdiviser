@@ -1,4 +1,4 @@
-name: code
+name: zapdiviser
 
 services:
   db:

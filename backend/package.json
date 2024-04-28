@@ -20,7 +20,8 @@
     "migration:run": "pnpm build && ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:run",
     "migration:revert": "pnpm build && ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:revert",
     "menu": "ts-node ./src/common/commands/menu/index.ts",
-    "create:database": "ts-node ./src/common/commands/create-database/index.ts"
+    "create:database": "ts-node ./src/common/commands/create-database/index.ts",
+    "whatsapp-node": "workspace:*"
   },
   "dependencies": {
     "@adminjs/express": "^6.1.0",
@@ -80,6 +81,7 @@
     "rxjs": "^7.8.1",
     "socket.io": "^4.7.4",
     "tslib": "^2.6.2",
+    "typed-rpc": "^5.0.2",
     "typeorm": "^0.3.20",
     "typeorm-extension": "^3.5.0",
     "typia": "^5.5.4",

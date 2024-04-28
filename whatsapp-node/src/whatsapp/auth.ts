@@ -19,7 +19,7 @@ export const useRedisAuthState = async(instanceid: string): Promise<{ state: Aut
 	const removeData = async(id: string) => {
 		try {
 			await redis.del(`auth:${instanceid}:${id}`)
-		} catch{
+		} catch {
 
 		}
 	}

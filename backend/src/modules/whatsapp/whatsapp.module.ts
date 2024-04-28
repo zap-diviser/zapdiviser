@@ -6,6 +6,7 @@ import { WhatsappEntity } from './entities/whatsapp.entity';
 import { BullModule } from '@nestjs/bull';
 import { WhatsappGateway } from './whatsapp.gateway';
 import { WhatsappConsumer } from './whatsapp.processor';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { WhatsappConsumer } from './whatsapp.processor';
     BullModule.registerQueueAsync({
       name: 'FlowTriggers',
     }),
+    ChatModule,
   ],
   exports: [WhatsappService],
   controllers: [WhatsappController],

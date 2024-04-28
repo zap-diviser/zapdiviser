@@ -8,8 +8,10 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   Relation,
 } from 'typeorm';
+import { ChatEntity } from '../../chat/entities/chat.entity';
 
 export enum Status {
   PENDING = 'PENDING',
@@ -44,4 +46,7 @@ export class WhatsappEntity extends DefaultEntity {
 
   @ManyToMany(() => ProductEntity, (product) => product.whatsapps)
   products: ProductEntity[];
+
+  @OneToMany(() => ChatEntity, (chat) => chat.currentWhatsapp)
+  chats: ChatEntity[];
 }
