@@ -56,6 +56,8 @@
     "react18-input-otp": "^1.1.4",
     "reactflow": "^11.10.3",
     "redux": "^5.0.1",
+    "rxdb": "^15.19.0",
+    "rxjs": "^7.8.1",
     "simplebar": "^6.2.5",
     "simplebar-react": "^3.2.4",
     "slick-carousel": "^1.8.1",

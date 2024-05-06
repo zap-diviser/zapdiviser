@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { RedirectEntity } from './entities/redirect.entity';
 import { RedirectLinkEntity } from './entities/redirect-link.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RedisService } from 'nestjs-redis-cluster';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 
 @Injectable()
 export class RedirectsService {

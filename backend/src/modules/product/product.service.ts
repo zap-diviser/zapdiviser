@@ -16,7 +16,7 @@ import { InjectMinio } from 'nestjs-minio';
 import { Client } from 'minio';
 import { Status } from '../whatsapp/entities/whatsapp.entity';
 import { Logger } from '@nestjs/common';
-import { RedisService } from 'nestjs-redis-cluster';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 
 @Injectable()
 export class ProductService {

@@ -9,7 +9,6 @@ import {
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { LoginUserDto } from '../user/dto/login-user.dto';
 import CreateUserDto from '../user/dto/create-user.dto';
 
 @Controller('auth')
@@ -26,8 +25,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: 'Rota para realizar o login' })
   @Post('login')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  login(@Request() req: any, @Body() b: LoginUserDto) {
+  login(@Request() req: any) {
     return this.authService.login(req.user);
   }
 }

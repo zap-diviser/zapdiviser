@@ -2,7 +2,7 @@ import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
 import { WhatsappGateway } from './whatsapp.gateway';
 import { WhatsappService } from './whatsapp.service';
-import { RedisService } from 'nestjs-redis-cluster';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status } from './entities/whatsapp.entity';
 
 @Processor('FlowTriggers')

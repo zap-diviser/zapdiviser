@@ -17,6 +17,7 @@
   "workspaces": [
     "frontend",
     "backend",
-    "whatsapp-node"
+    "whatsapp-node",
+    "universal-types"
   ]
 }

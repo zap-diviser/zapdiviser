@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Delete, Req, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Delete,
+  Req,
+  Post,
+  Body,
+  Headers,
+} from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
 import { WhatsappEntity } from './entities/whatsapp.entity';
 import { UserIsAuthenticated } from '@/common/decorators/userIsAuthenticated.decorator';
@@ -42,5 +51,10 @@ export class WhatsappController {
   @UserIsAuthenticated()
   remove(@Param('id') id: string, @Req() req) {
     return this.whatsappService.remove(id, req.user.id);
+  }
+
+  @Post('webhook')
+  webhook(@Headers() headers: Record<string, string>, @Body() body: any) {
+    return this.whatsappService.webhook(body, headers['X-Hub-Signature-256']);
   }
 }

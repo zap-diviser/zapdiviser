@@ -13,9 +13,9 @@ import makeWASocket, {
 } from "@whiskeysockets/baileys"
 import MAIN_LOGGER from "@whiskeysockets/baileys/lib/Utils/logger"
 import { useRedisAuthState } from "./auth"
-import EventEmitter from "node:events"
 import { Client } from "minio"
 import { Readable } from "stream"
+import ServerClient from "../client"
 
 function streamToBuffer(stream: Readable): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -43,10 +43,11 @@ class Whatsapp {
   sock: ReturnType<typeof makeWASocket>
   logger = MAIN_LOGGER.child({})
   msgRetryCounterCache = new NodeCache()
-  emmiter = new EventEmitter()
   hasStarted = false
+  client: ServerClient
 
-  constructor(instanceId: string) {
+  constructor(instanceId: string, client: ServerClient) {
+    this.client = client
     this.instanceId = instanceId
 
     this.logger.level = "trace"
@@ -76,26 +77,26 @@ class Whatsapp {
           const { connection, lastDisconnect, qr } = update
 
           if (qr) {
-            this.emmiter.emit("qr", qr)
+            this.client.sendQrCode(qr)
           }
 
           if (connection === "close") {
             if ([403, DisconnectReason.forbidden].includes((lastDisconnect?.error as Boom)?.output?.statusCode)) {
               await clearData()
-              this.emmiter.emit("banned")
+              this.client.onBanned(this.getSelfPhone())
             } else {
               if ([401, DisconnectReason.loggedOut].includes((lastDisconnect?.error as Boom)?.output?.statusCode)) {
                 await clearData()
-                this.emmiter.emit("logout")
+                this.client.onLogout(this.getSelfPhone())
               } else {
-                this.emmiter.emit("disconnected")
+                this.client.onDisconnected(this.getSelfPhone())
               }
               this.startSock()
             }
           } else if (connection === "connecting") {
-            this.emmiter.emit("connecting")
+            this.client.onConnecting()
           } else if (connection === "open") {
-            this.emmiter.emit("connected")
+            this.client.onConnected(this.getSelfPhone())
           }
         }
 
@@ -127,7 +128,9 @@ class Whatsapp {
           if (upsert.type === "notify") {
             for (const msg of upsert.messages) {
               if (!msg.key.fromMe) {
-                this.emmiter.emit("new-message", msg)
+                if (msg.message.audioMessage) {}
+
+                this.client.sendMessage(msg.message.conversation, msg.key.remoteJid, this.getSelfPhone())
               }
             }
           }
@@ -199,6 +202,8 @@ class Whatsapp {
   async sendMessageTyping(msg: AnyMessageContent, phone: string) {
     const result = await this.sock.onWhatsApp(phone).catch(() => null)
 
+    const text = (msg as { text: string }).text ?? (msg as { caption: string }).caption ?? ""
+
     if (result === null || result.length === 0 || !result[0].jid) {
       return
     }
@@ -206,10 +211,10 @@ class Whatsapp {
     const jid = result[0].jid
 
     await this.sock.presenceSubscribe(jid)
-    await delay(500)
+    await delay(100 * Math.random())
 
     await this.sock.sendPresenceUpdate("composing", jid)
-    await delay(2000)
+    await delay(text.length * 10 * Math.random())
 
     await this.sock.sendPresenceUpdate("paused", jid)
 
@@ -254,38 +259,6 @@ class Whatsapp {
 
   async getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {
     return proto.Message.fromObject({})
-  }
-
-  async onNewMessage(cb: (msg: proto.IWebMessageInfo) => void) {
-    this.emmiter.on("new-message", cb)
-  }
-
-  async onQrCode(cb: (qr: string) => void) {
-    this.emmiter.on("qr", cb)
-  }
-
-  async onConnecting(cb: () => void) {
-    this.emmiter.on("connecting", cb)
-  }
-
-  async onConnected(cb: () => void) {
-    this.emmiter.on("connected", cb)
-  }
-
-  async onBanned(cb: () => void) {
-    this.emmiter.on("banned", cb)
-  }
-
-  async onDisconnected(cb: () => void) {
-    this.emmiter.on("disconnected", cb)
-  }
-
-  async onStop(cb: () => void) {
-    this.emmiter.on("stop", cb)
-  }
-
-  async onLogout(cb: () => void) {
-    this.emmiter.on("logout", cb)
   }
 }
 

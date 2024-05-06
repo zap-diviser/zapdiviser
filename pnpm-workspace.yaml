@@ -2,3 +2,4 @@ packages:
   - backend
   - frontend
   - whatsapp-node
+  - universal-types

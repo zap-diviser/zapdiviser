@@ -8,7 +8,7 @@ import { MessageEntity } from './entities/message.entity';
 export class ChatService {
   constructor(
     @InjectRepository(ChatEntity)
-    protected readonly repository: Repository<ChatEntity>,
+    protected readonly charRepository: Repository<ChatEntity>,
     @InjectRepository(MessageEntity)
     protected readonly messageRepository: Repository<MessageEntity>,
   ) {}
@@ -19,5 +19,28 @@ export class ChatService {
       fromMe: true,
       chat: { id: chatId },
     });
+  }
+
+  async receiveMessage(content: any, chatId: string) {
+    await this.messageRepository.save({
+      content,
+      fromMe: false,
+      chat: { id: chatId },
+    });
+  }
+
+  async createChat() {
+    return await this.charRepository.save({});
+  }
+
+  async getChat(id: string) {
+    return await this.charRepository.findOne({
+      where: { id },
+      relations: ['messages'],
+    });
+  }
+
+  async getChats() {
+    return await this.charRepository.find({});
   }
 }

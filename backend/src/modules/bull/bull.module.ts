@@ -5,36 +5,14 @@ import { ProductModule } from '../product/product.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FlowEventEntity } from '../product/entities/flow-event.entity';
-import Redis from 'ioredis';
 
 @Module({
   imports: [
     BullModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        const client = new Redis.Cluster(
-          configService
-            .get<string>('REDIS_URLS')!
-            .split(';')
-            .map((url) => {
-              const [host, port] = url.split(':');
-
-              return {
-                host,
-                port: parseInt(port),
-              };
-            }),
-          {
-            enableReadyCheck: false,
-          },
-        );
-
-        return {
-          createClient: () => {
-            return client;
-          },
-        };
-      },
+      useFactory: (configService: ConfigService) => ({
+        url: configService.get('REDIS_URL'),
+      }),
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([FlowEventEntity]),

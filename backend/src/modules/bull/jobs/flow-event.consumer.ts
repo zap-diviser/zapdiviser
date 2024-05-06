@@ -5,7 +5,7 @@ import { Logger } from '@nestjs/common';
 import { FlowEventEntity } from '@/modules/product/entities/flow-event.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RedisService } from 'nestjs-redis-cluster';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 
 interface IFlowEvent {
   id: string;

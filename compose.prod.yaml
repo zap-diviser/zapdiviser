@@ -175,29 +175,9 @@ services:
       DB01_CLEANUP_TIME: 10080
       DB01_CHECKSUM: NONE
       DB02_TYPE: redis
-      DB02_HOST: redis-node-1
+      DB02_HOST: redis
+      DB02_PASS: ${REDIS_PASSWORD}
       DB02_CLEANUP_TIME: 10080
-      DB02_CHECKSUM: NONE
-      DB03_TYPE: redis
-      DB03_HOST: redis-node-2
-      DB03_CLEANUP_TIME: 10080
-      DB03_CHECKSUM: NONE
-      DB04_TYPE: redis
-      DB04_HOST: redis-node-3
-      DB04_CLEANUP_TIME: 10080
-      DB04_CHECKSUM: NONE
-      DB05_TYPE: redis
-      DB05_HOST: redis-node-4
-      DB05_CLEANUP_TIME: 10080
-      DB05_CHECKSUM: NONE
-      DB06_TYPE: redis
-      DB06_HOST: redis-node-5
-      DB06_CLEANUP_TIME: 10080
-      DB06_CHECKSUM: NONE
-      DB07_TYPE: redis
-      DB07_HOST: redis-node-6
-      DB07_CLEANUP_TIME: 10080
-      DB07_CHECKSUM: NONE
     restart: always
   networks:
     - internal

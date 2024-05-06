@@ -13,12 +13,13 @@ import { UserIsAuthenticated } from '@/common/decorators/userIsAuthenticated.dec
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateFlowEventDto } from './dto/create-flow-event.dto';
 import { UpdateFlowEventDto } from './dto/update-flow-event.dto';
-import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { setWhatsappsDto } from './dto/set-whatsapps.dto';
 import { ProductEntity } from './entities/product.entity';
 import { RemoveWhatsappDto } from './dto/remove-whatsapp.dto';
 
 @Controller('product')
+@ApiTags('Product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 

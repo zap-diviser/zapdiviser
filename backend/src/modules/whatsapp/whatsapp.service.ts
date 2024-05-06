@@ -1,16 +1,18 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RedisService } from 'nestjs-redis-cluster';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
-import { OnModuleDestroy } from '@nestjs/common';
+import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import crypto from 'crypto';
 
 const docker = new Docker();
 
 @Injectable()
-export class WhatsappService implements OnModuleDestroy {
+export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @InjectRepository(WhatsappEntity)
     protected readonly repository: Repository<WhatsappEntity>,
@@ -18,11 +20,33 @@ export class WhatsappService implements OnModuleDestroy {
     private readonly configService: ConfigService,
   ) {}
 
+  @Cron(CronExpression.EVERY_MINUTE)
+  async onModuleInit() {
+    const whatsapps = await this.repository.find({
+      where: { status: Status.CONNECTED },
+    });
+    const containers = await docker.listContainers();
+    const containersToStart = containers.filter(
+      (container) =>
+        container.State === 'exited' &&
+        whatsapps.some((whatsapp) =>
+          container.Names.includes(`/zapdiviser-node-${whatsapp.id}`),
+        ),
+    );
+    await Promise.all(
+      containersToStart.map((container) =>
+        docker.getContainer(container.Id).start(),
+      ),
+    );
+  }
+
   async onModuleDestroy() {
     if (this.configService.get('NODE_ENV') !== 'production') {
       const containers = await docker.listContainers();
-      const containersToStop = containers.filter((container) =>
-        container.Names.some((name) => name.startsWith('/zapdiviser-node')),
+      const containersToStop = containers.filter(
+        (container) =>
+          container.Names.some((name) => name.startsWith('/zapdiviser-node')) &&
+          container.State === 'running',
       );
       await Promise.all(
         containersToStop.map((container) =>
@@ -142,5 +166,39 @@ export class WhatsappService implements OnModuleDestroy {
     });
 
     return whatsapp;
+  }
+
+  async webhook(payload: any, signature: string) {
+    if (!this.verifySignature(payload, signature)) {
+      throw new HttpException('Invalid signature', 401);
+    }
+
+    const data = JSON.parse(payload);
+
+    if (data.action === 'created') {
+      const whatsapp = await this.repository.findOne({
+        where: {
+          phone: data.issue.title,
+        },
+      });
+
+      if (whatsapp) {
+        await this.repository.update(whatsapp.id, {
+          status: Status.CONNECTED,
+        });
+      }
+    }
+  }
+
+  private verifySignature(payload: string, signatureHeader: string): boolean {
+    const secret = this.configService.get('GITHUB_WEBHOOK_SECRET');
+    const hmac = crypto.createHmac('sha256', secret);
+    hmac.update(payload);
+
+    const expectedSignature = `sha256=${hmac.digest('hex')}`;
+    return crypto.timingSafeEqual(
+      Buffer.from(expectedSignature),
+      Buffer.from(signatureHeader),
+    );
   }
 }

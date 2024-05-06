@@ -182,6 +182,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             },
             auth: {
               authenticate: async (email: string, password: string) => {
+                console.log(configService.get<string>('ADMIN_PASSWORD'));
                 if (
                   email === configService.get('ADMIN_EMAIL')! &&
                   (await compare(

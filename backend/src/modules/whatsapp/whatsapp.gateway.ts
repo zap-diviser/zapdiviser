@@ -1,4 +1,4 @@
-import { RedisService } from 'nestjs-redis-cluster';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import {
   SubscribeMessage,
   WebSocketGateway,
