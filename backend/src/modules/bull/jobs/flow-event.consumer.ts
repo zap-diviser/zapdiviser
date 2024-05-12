@@ -59,7 +59,7 @@ export class FlowEventConsumer {
 
     switch (firstEvent.type) {
       case 'message': {
-        await queue.add('send-message', {
+        await queue.add('sendMessage', {
           to: data.phone,
           content: firstEvent.metadata.message,
         });
@@ -74,7 +74,7 @@ export class FlowEventConsumer {
         break;
       }
       case 'file': {
-        await queue.add('send-file', {
+        await queue.add('sendFile', {
           to: data.phone,
           file: firstEvent.metadata.file,
           file_type: firstEvent.metadata.file_type,

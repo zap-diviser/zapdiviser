@@ -5,6 +5,8 @@ import { WhatsappService } from './whatsapp.service';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status } from './entities/whatsapp.entity';
 
+type Event<T> = Job<{ instanceId: string; data: T }>;
+
 @Processor('FlowTriggers')
 export class WhatsappConsumer {
   constructor(
@@ -13,46 +15,48 @@ export class WhatsappConsumer {
     private readonly redisService: RedisService,
   ) {}
 
-  @Process('Whatsapp')
-  async transcode(job: Job<{ instanceId: string; event: string; data: any }>) {
-    const { data } = job;
+  @Process('qr')
+  async onQr({ data: { instanceId, data } }: Event<string>) {
     const redis = this.redisService.getClient();
+    await redis.set(`whatsapp-${instanceId}-qr`, data, 'EX', 60);
+    this.gateway.io.to(instanceId).emit('qr', data);
+  }
 
-    switch (data.event) {
-      case 'qr':
-        await redis.set(`whatsapp-${data.instanceId}-qr`, data.data, 'EX', 60);
-        this.gateway.io.to(data.instanceId).emit('qr', data.data);
-        break;
-      case 'connecting':
-        await this.whatsappService.setStatus(
-          data.instanceId,
-          Status.CONNECTING,
-        );
-        this.gateway.io.to(data.instanceId).emit('whatsapp-connecting');
-        break;
-      case 'connected':
-        const updatedWhatsapp = await this.whatsappService.setWhatsappPhone(
-          data.instanceId,
-          data.data.phone,
-        );
+  @Process('connecting')
+  async onConnecting({ data: { instanceId } }: Event<void>) {
+    await this.whatsappService.setStatus(instanceId, Status.CONNECTING);
+    this.gateway.io.to(instanceId).emit('whatsapp-connecting');
+  }
 
-        if (!updatedWhatsapp) return;
+  @Process('connected')
+  async onConnected({ data: { instanceId, data } }: Event<{ phone: string }>) {
+    const updatedWhatsapp = await this.whatsappService.setWhatsappPhone(
+      instanceId,
+      data.phone,
+    );
 
-        this.gateway.io
-          .to(data.instanceId)
-          .emit('whatsapp-connected', updatedWhatsapp);
-        break;
-      case 'banned':
-        await this.whatsappService.setStatus(data.instanceId, Status.BANNED);
-      case 'disconnected':
-        await this.whatsappService.setStatus(
-          data.instanceId,
-          Status.CONNECTING,
-        );
-      case 'stopped':
-        await this.whatsappService.setStatus(data.instanceId, Status.PAUSED);
-      case 'logout':
-        await this.whatsappService.setWhatsappPhone(data.instanceId, null);
-    }
+    if (!updatedWhatsapp) return;
+
+    this.gateway.io.to(instanceId).emit('whatsapp-connected', updatedWhatsapp);
+  }
+
+  @Process('banned')
+  async onBanned({ data: { instanceId } }: Event<void>) {
+    await this.whatsappService.setStatus(instanceId, Status.BANNED);
+  }
+
+  @Process('disconnected')
+  async onDisconnected({ data: { instanceId } }: Event<void>) {
+    await this.whatsappService.setStatus(instanceId, Status.CONNECTING);
+  }
+
+  @Process('stopped')
+  async onStop({ data: { instanceId } }: Event<void>) {
+    await this.whatsappService.setStatus(instanceId, Status.PAUSED);
+  }
+
+  @Process('logout')
+  async onLogout({ data: { instanceId } }: Event<void>) {
+    await this.whatsappService.setWhatsappPhone(instanceId, null);
   }
 }

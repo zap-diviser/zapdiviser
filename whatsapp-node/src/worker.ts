@@ -24,8 +24,8 @@ export default class Worker {
     console.log(`${job.id} has completed!`)
   }
 
-  async failed(job: Job, err: Error) {
-    console.log(`${job?.id} has failed with ${err.message}`)
+  async failed(job?: Job, err?: Error) {
+    console.log(`${job?.id} has failed with ${err?.message}`)
   }
 
   async handle_sendMessage(text: string, to: string) {

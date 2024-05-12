@@ -128,9 +128,9 @@ class Whatsapp {
           if (upsert.type === "notify") {
             for (const msg of upsert.messages) {
               if (!msg.key.fromMe) {
-                if (msg.message.audioMessage) {}
+                if (msg.message?.audioMessage) {}
 
-                this.client.sendMessage(msg.message.conversation, msg.key.remoteJid, this.getSelfPhone())
+                this.client.sendMessage(msg.message?.conversation ?? "", msg.key.remoteJid ?? "", this.getSelfPhone())
               }
             }
           }
@@ -234,6 +234,7 @@ class Whatsapp {
   }
 
   private async sendMediaMessageBase(url: string, msg: (buffer: Buffer) => AnyMessageContent, phone: string) {
+    // @ts-ignore
     minio.getObject("zapdiviser", url, async (err, stream) => {
       if (err) {
         return console.log(err)

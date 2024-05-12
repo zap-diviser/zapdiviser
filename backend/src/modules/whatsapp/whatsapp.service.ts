@@ -114,6 +114,13 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       ],
     });
 
+    console.log([
+      `INSTANCE_ID=${id}`,
+      `REDIS_URL=${this.configService.get('REDIS_URL')}`,
+      `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
+      `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
+    ]);
+
     await container.start();
 
     return whatsapp;

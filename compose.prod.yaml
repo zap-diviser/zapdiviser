@@ -39,7 +39,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: .
+      target: frontend
     command: --brotli
     networks:
       - zapdiviser
@@ -61,7 +62,8 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ..
+      target: backend
     networks:
       - zapdiviser
       - caddy

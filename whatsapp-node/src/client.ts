@@ -12,12 +12,16 @@ class Client {
     redis.set(`whatsapp:${instanceId}:ready`, "true")
   }
 
+  async sendError(error: string) {
+    await this.queue.add("error", { instanceId, data: { error } })
+  }
+
   async sendMessage(text: string, to: string, from: string) {
-    await this.queue.add("message", { event: "message", instanceId, data: { from, to, content: text } })
+    await this.queue.add("message", { instanceId, data: { from, to, content: text } })
   }
 
   async sendFile(file: string, to: string, file_type: 'image' | 'document' | 'video' | 'audio', from) {
-    await this.queue.add("file", { event: "file", instanceId, data: { from, to, file, file_type } })
+    await this.queue.add("file", { instanceId, data: { from, to, file, file_type } })
   }
 
   async sendQrCode(qr: string) {
