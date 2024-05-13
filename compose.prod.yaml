@@ -181,8 +181,8 @@ services:
       DB02_PASS: ${REDIS_PASSWORD}
       DB02_CLEANUP_TIME: 10080
     restart: always
-  networks:
-    - internal
+    networks:
+      - internal
 
 networks:
   caddy:
