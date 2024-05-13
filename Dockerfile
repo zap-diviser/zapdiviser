@@ -5,13 +5,8 @@ RUN corepack enable
 
 FROM base AS build
 WORKDIR /usr/src/app/
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY backend/package.json backend/package.json
-COPY frontend/package.json frontend/package.json
-COPY whatsapp-node/package.json whatsapp-node/package.json
-COPY universal-types/package.json universal-types/package.json
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run -r build
 RUN pnpm deploy --filter=backend --prod /prod/backend
 RUN pnpm deploy --filter=frontend --prod /prod/frontend
