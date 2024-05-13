@@ -7,14 +7,14 @@ FROM base AS build
 WORKDIR /usr/src/app/
 COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run -r build
+RUN pnpm run -r build && mkdir prod
 RUN pnpm deploy --filter=backend --prod /prod/backend
 RUN pnpm deploy --filter=frontend --prod /prod/frontend
 RUN pnpm deploy --filter=whatsapp-node --prod /prod/whatsapp-node
 
 FROM base AS backend
-COPY --from=build /prod/backend /prod/backend
-WORKDIR /prod/backend/
+WORKDIR /code/
+COPY --from=build /prod/backend .
 EXPOSE 8000
 CMD [ "pnpm", "start" ]
 
@@ -22,6 +22,6 @@ FROM devforth/spa-to-http AS frontend
 COPY --from=build /prod/frontend .
 
 FROM base AS whatsapp-node
-COPY --from=build /prod/whatsapp-node /prod/whatsapp-node
-WORKDIR /prod/whatsapp-node/
+WORKDIR /code/
+COPY --from=build /prod/whatsapp-node .
 CMD [ "pnpm", "start" ]
