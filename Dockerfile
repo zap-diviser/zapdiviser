@@ -12,18 +12,18 @@ RUN pnpm deploy --filter=backend --prod /backend
 RUN pnpm deploy --filter=frontend --prod /frontend
 RUN pnpm deploy --filter=whatsapp-node --prod /whatsapp-node
 
-FROM base AS backend
-COPY --from=build /backend /code
+FROM build AS backend
+COPY /backend /code
 WORKDIR /code
 EXPOSE 8000
 CMD [ "pnpm", "start:prod" ]
 
 FROM devforth/spa-to-http AS frontend
-COPY --from=build /frontend .
+COPY /frontend .
 EXPOSE 8080
 CMD [ "pnpm", "start" ]
 
-FROM base AS whatsapp-node
-COPY --from=build /whatsapp-node /code
+FROM build AS whatsapp-node
+COPY /whatsapp-node /code
 WORKDIR /code
 CMD [ "pnpm", "start" ]
