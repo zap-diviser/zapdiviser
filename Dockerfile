@@ -19,7 +19,7 @@ EXPOSE 8000
 CMD [ "pnpm", "start" ]
 
 FROM devforth/spa-to-http AS frontend
-COPY --from=build /prod/frontend .
+COPY --from=build /prod/frontend/dist .
 
 FROM base AS whatsapp-node
 WORKDIR /code/
