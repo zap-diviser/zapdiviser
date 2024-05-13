@@ -14,7 +14,6 @@ import { ProductFlowEntity } from './product-flow.entity';
 import { WhatsappEntity } from '@/modules/whatsapp/entities/whatsapp.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { EventsHistoryEntity } from './events-history.entity';
-import { ChatEntity } from '@/modules/chat/entities/chat.entity';
 
 @Entity('product')
 export class ProductEntity extends DefaultEntity {
@@ -38,7 +37,4 @@ export class ProductEntity extends DefaultEntity {
 
   @OneToMany(() => EventsHistoryEntity, (item) => item.product)
   eventsHistory: EventsHistoryEntity[];
-
-  @OneToMany(() => ChatEntity, (chat) => chat.product)
-  chats: ChatEntity[];
 }

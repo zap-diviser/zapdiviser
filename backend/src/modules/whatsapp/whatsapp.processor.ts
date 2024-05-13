@@ -4,6 +4,7 @@ import { WhatsappGateway } from './whatsapp.gateway';
 import { WhatsappService } from './whatsapp.service';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status } from './entities/whatsapp.entity';
+import { ChatService } from '../chat/chat.service';
 
 type Event<T> = Job<{ instanceId: string; data: T }>;
 
@@ -13,6 +14,7 @@ export class WhatsappConsumer {
     private readonly gateway: WhatsappGateway,
     private readonly whatsappService: WhatsappService,
     private readonly redisService: RedisService,
+    private readonly chatService: ChatService,
   ) {}
 
   @Process('qr')
@@ -58,5 +60,20 @@ export class WhatsappConsumer {
   @Process('logout')
   async onLogout({ data: { instanceId } }: Event<void>) {
     await this.whatsappService.setWhatsappPhone(instanceId, null);
+  }
+
+  @Process('message')
+  async onMessage({
+    data: {
+      instanceId,
+      data: { to, content, fromMe },
+    },
+  }: Event<{ from: string; to: string; content: string; fromMe: boolean }>) {
+    await this.chatService.handleMessage(
+      { type: 'text', content },
+      to,
+      instanceId,
+      fromMe,
+    );
   }
 }

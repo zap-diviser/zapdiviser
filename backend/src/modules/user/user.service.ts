@@ -303,4 +303,14 @@ export class UserService {
 
     return user;
   }
+
+  async getByInstanceId(instanceId: string) {
+    return this.repository.findOneOrFail({
+      where: {
+        whatsapps: {
+          id: instanceId,
+        },
+      },
+    });
+  }
 }

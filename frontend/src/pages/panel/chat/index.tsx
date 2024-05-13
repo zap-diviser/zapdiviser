@@ -39,14 +39,10 @@ import { getUser, getUserChats, insertChat } from 'store/reducers/chat';
 
 // assets
 import {
-  Add,
-  Call,
-  Camera,
   DocumentDownload,
   EmojiHappy,
   HambergerMenu,
   Image,
-  InfoCircle,
   More,
   Paperclip,
   Send,
@@ -274,15 +270,6 @@ const Chat = () => {
                     </Grid>
                     <Grid item>
                       <Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={1}>
-                        <IconButton size="large" color="secondary">
-                          <Call />
-                        </IconButton>
-                        <IconButton size="large" color="secondary">
-                          <Camera />
-                        </IconButton>
-                        <IconButton onClick={handleUserChange} size="large" color={emailDetails ? 'error' : 'secondary'}>
-                          {emailDetails ? <Add style={{ transform: 'rotate(45deg)' }} /> : <InfoCircle />}
-                        </IconButton>
                         <IconButton onClick={handleClickSort} size="large" color="secondary">
                           <More />
                         </IconButton>
@@ -342,7 +329,7 @@ const Chat = () => {
                       fullWidth
                       multiline
                       rows={4}
-                      placeholder="Your Message..."
+                      placeholder="Digite algo..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value.length <= 1 ? e.target.value.trim() : e.target.value)}
                       onKeyPress={handleEnter}

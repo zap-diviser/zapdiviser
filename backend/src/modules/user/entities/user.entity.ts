@@ -4,6 +4,7 @@ import DefaultEntity from '../../../common/defaults/entities/base.entity';
 import { RedirectEntity } from '@/modules/redirects/entities/redirect.entity';
 import { WhatsappEntity } from '@/modules/whatsapp/entities/whatsapp.entity';
 import { ProductEntity } from '@/modules/product/entities/product.entity';
+import { ChatEntity } from '@/modules/chat/entities/chat.entity';
 
 @Entity('users')
 export class UserEntity extends DefaultEntity {
@@ -36,4 +37,7 @@ export class UserEntity extends DefaultEntity {
 
   @OneToMany(() => WhatsappEntity, (whatsapp) => whatsapp.user)
   whatsapps: WhatsappEntity[];
+
+  @OneToMany(() => ChatEntity, (chat) => chat.user)
+  chats: ChatEntity[];
 }

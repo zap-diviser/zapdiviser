@@ -112,7 +112,7 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerPro
           <Stack spacing={2}>
             <Stack direction="row" spacing={0.5} alignItems="center">
               <Typography variant="h5" color="inherit">
-                Messages
+                Mensagens
               </Typography>
               <Chip
                 label="9"
@@ -161,7 +161,7 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerPro
           </Box>
         </SimpleBar>
         <Box sx={{ px: 3 }}>
-          <List sx={{ '& .MuiListItemIcon-root': { minWidth: 32 } }}>
+          <List sx={{ '& .MuiListItemIcon-root': { minWidth: 32 } }} style={{ opacity: "0" }}>
             <ListItemButton>
               <ListItemIcon>
                 <Logout variant="Bulk" />
@@ -180,7 +180,7 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerPro
         <Box sx={{ p: 3, pt: 1, pl: 5 }}>
           <Grid container>
             <Grid item xs={12}>
-              <Grid container spacing={1} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
+              <Grid container spacing={1} alignItems="center" sx={{ flexWrap: 'nowrap' }} style={{ opacity: "0" }}>
                 <Grid item>
                   <UserAvatar user={{ online_status: status, avatar: 'avatar-1.png', name: 'User 1' }} />
                 </Grid>

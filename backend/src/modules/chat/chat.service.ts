@@ -3,44 +3,77 @@ import { ChatEntity } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MessageEntity } from './entities/message.entity';
+import { UserService } from '../user/user.service';
+import { ConfigService } from '@nestjs/config';
+import Queue from 'bull';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(ChatEntity)
-    protected readonly charRepository: Repository<ChatEntity>,
+    protected readonly chatRepository: Repository<ChatEntity>,
     @InjectRepository(MessageEntity)
     protected readonly messageRepository: Repository<MessageEntity>,
+    protected readonly userService: UserService,
+    private readonly configService: ConfigService,
   ) {}
 
-  async sendMessage(content: any, chatId: string) {
+  async handleMessage(
+    content: any,
+    phone: string,
+    instanceId: string,
+    fromMe = false,
+  ) {
+    const user = await this.userService.getByInstanceId(instanceId);
+
+    let chat = await this.chatRepository.findOne({
+      where: {
+        phone,
+        user: {
+          id: user.id,
+        },
+      },
+    });
+
+    if (!chat) {
+      chat = await this.chatRepository.save({
+        phone,
+        currentWhatsapp: { id: instanceId },
+        user: { id: user.id },
+      });
+    }
+
     await this.messageRepository.save({
       content,
-      fromMe: true,
-      chat: { id: chatId },
+      fromMe,
+      chat,
     });
   }
 
-  async receiveMessage(content: any, chatId: string) {
-    await this.messageRepository.save({
-      content,
-      fromMe: false,
-      chat: { id: chatId },
+  async sendMessage(userId: string, to: string, content: string) {
+    const chat = await this.chatRepository.findOneOrFail({
+      where: { phone: to, user: { id: userId } },
+    });
+
+    const queue = new Queue(`MessagesSender:${chat.currentWhatsapp.id}`, {
+      redis: this.configService.get<string>('REDIS_URL'),
+    });
+
+    await queue.add('sendMessage', {
+      to,
+      content: content,
     });
   }
 
-  async createChat() {
-    return await this.charRepository.save({});
-  }
-
-  async getChat(id: string) {
-    return await this.charRepository.findOne({
-      where: { id },
-      relations: ['messages'],
+  async getChats(userId: string) {
+    return await this.chatRepository.findOne({
+      where: { user: { id: userId } },
     });
   }
 
-  async getChats() {
-    return await this.charRepository.find({});
+  async getMessages(userId: string, chatId: string) {
+    return await this.messageRepository.find({
+      where: { chat: { id: chatId, user: { id: userId } } },
+    });
   }
 }

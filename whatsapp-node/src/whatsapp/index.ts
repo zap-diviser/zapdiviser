@@ -127,11 +127,9 @@ class Whatsapp {
 
           if (upsert.type === "notify") {
             for (const msg of upsert.messages) {
-              if (!msg.key.fromMe) {
-                if (msg.message?.audioMessage) {}
+              if (msg.message?.audioMessage) {}
 
-                this.client.sendMessage(msg.message?.conversation ?? "", msg.key.remoteJid ?? "", this.getSelfPhone())
-              }
+              this.client.sendMessage(msg.message?.conversation ?? "", msg.key.remoteJid ?? "", this.getSelfPhone(), msg.key.fromMe ?? false)
             }
           }
         }

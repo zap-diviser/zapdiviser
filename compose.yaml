@@ -22,7 +22,7 @@ services:
       - zapdiviser
     volumes:
       - redis:/redis
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --bind redis --port 6379 --requirepass ${REDIS_PASSWORD}
 
   minio:
     image: minio/minio

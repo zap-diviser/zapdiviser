@@ -18,7 +18,7 @@ const ChatMessageSend = ({ message, setMessage, handleEnter }: Props) => {
       fullWidth
       multiline
       rows={4}
-      placeholder="Your Message..."
+      placeholder="Digite algo..."
       value={message}
       onChange={(e) => setMessage(e.target.value)}
       onKeyPress={handleEnter}
