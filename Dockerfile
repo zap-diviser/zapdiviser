@@ -5,12 +5,16 @@ RUN corepack enable
 
 FROM base AS build
 WORKDIR /usr/src/app/
+COPY pnpm-lock.yaml .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm fetch
 COPY . .
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile && mkdir prod
+RUN pnpm install -r --frozen-lockfile
+RUN pnpm run -r build
 RUN pnpm deploy --filter=backend --prod /prod/backend
-RUN pnpm deploy --filter=frontend --prod /prod/frontend
 RUN pnpm deploy --filter=whatsapp-node --prod /prod/whatsapp-node
-RUN cd prod && pnpm run -r build
+RUN cp -r whatsapp-node/dist /prod/whatsapp-node \
+  && cp -r backend/dist /prod/whatsapp-node \
+  && cp -r frontend/dist /prod/frontend
 
 FROM base AS backend
 WORKDIR /code/
