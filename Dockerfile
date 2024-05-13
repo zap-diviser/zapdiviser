@@ -18,7 +18,7 @@ WORKDIR /code/
 COPY --from=build /prod/backend .
 COPY --from=build /usr/src/app/backend/dist dist
 EXPOSE 8000
-CMD [ "pnpm", "start" ]
+CMD [ "pnpm", "start:prod" ]
 
 FROM devforth/spa-to-http AS frontend
 COPY --from=build /usr/src/app/frontend/dist .
