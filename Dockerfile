@@ -20,8 +20,6 @@ CMD [ "pnpm", "start:prod" ]
 
 FROM devforth/spa-to-http AS frontend
 COPY /frontend .
-EXPOSE 8080
-CMD [ "pnpm", "start" ]
 
 FROM build AS whatsapp-node
 COPY /whatsapp-node /code
