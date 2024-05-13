@@ -12,9 +12,6 @@ RUN pnpm install -r --frozen-lockfile
 RUN pnpm run -r build
 RUN pnpm deploy --filter=backend --prod /prod/backend
 RUN pnpm deploy --filter=whatsapp-node --prod /prod/whatsapp-node
-RUN cp -r whatsapp-node/dist /prod/whatsapp-node \
-  && cp -r backend/dist /prod/whatsapp-node \
-  && cp -r frontend/dist /prod/frontend
 
 FROM base AS backend
 WORKDIR /code/
@@ -23,9 +20,9 @@ EXPOSE 8000
 CMD [ "pnpm", "start" ]
 
 FROM devforth/spa-to-http AS frontend
-COPY --from=build /prod/frontend/dist .
+COPY --from=build /usr/src/app/frontend/dist .
 
 FROM base AS whatsapp-node
 WORKDIR /code/
-COPY --from=build /prod/whatsapp-node .
+COPY --from=build /usr/src/app/whatsapp-node .
 CMD [ "pnpm", "start" ]
