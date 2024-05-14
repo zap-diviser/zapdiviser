@@ -6,6 +6,7 @@ import { MessageEntity } from './entities/message.entity';
 import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import Queue from 'bull';
+import { WhatsappEntity } from '../whatsapp/entities/whatsapp.entity';
 
 @Injectable()
 export class ChatService {
@@ -21,38 +22,39 @@ export class ChatService {
   async handleMessage(
     content: any,
     phone: string,
-    instanceId: string,
-    fromMe = false,
+    instance: WhatsappEntity,
+    fromMe: boolean,
   ) {
-    const user = await this.userService.getByInstanceId(instanceId);
-
     let chat = await this.chatRepository.findOne({
       where: {
         phone,
         user: {
-          id: user.id,
+          id: instance.user_id,
         },
       },
     });
 
+    console.log(content);
+
     if (!chat) {
       chat = await this.chatRepository.save({
         phone,
-        currentWhatsapp: { id: instanceId },
-        user: { id: user.id },
+        currentWhatsapp: instance,
+        user: instance.user,
       });
     }
 
-    await this.messageRepository.save({
+    this.messageRepository.save({
       content,
       fromMe,
       chat,
     });
   }
 
-  async sendMessage(userId: string, to: string, content: string) {
+  async sendMessage(userId: string, to: string, content: any) {
     const chat = await this.chatRepository.findOneOrFail({
-      where: { phone: to, user: { id: userId } },
+      where: { id: to, user: { id: userId } },
+      relations: { currentWhatsapp: true },
     });
 
     const queue = new Queue(`MessagesSender:${chat.currentWhatsapp.id}`, {
@@ -60,13 +62,13 @@ export class ChatService {
     });
 
     await queue.add('sendMessage', {
-      to,
-      content: content,
+      to: chat.phone,
+      content: content.text,
     });
   }
 
   async getChats(userId: string) {
-    return await this.chatRepository.findOne({
+    return await this.chatRepository.find({
       where: { user: { id: userId } },
     });
   }

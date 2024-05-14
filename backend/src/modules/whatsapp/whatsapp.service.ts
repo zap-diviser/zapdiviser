@@ -139,6 +139,13 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
+  async getInstance(instanceId: string) {
+    return await this.repository.findOneOrFail({
+      where: { id: instanceId },
+      relations: { user: true },
+    });
+  }
+
   async remove(id: string, user_id: string) {
     const whatsapp = await this.repository.findOne({
       where: {

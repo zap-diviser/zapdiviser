@@ -132,7 +132,7 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerPro
             <OutlinedInput
               fullWidth
               id="input-search-header"
-              placeholder="Search"
+              placeholder="Pesquisar"
               value={search}
               onChange={handleSearch}
               sx={{

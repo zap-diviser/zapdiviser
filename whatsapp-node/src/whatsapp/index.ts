@@ -123,22 +123,25 @@ class Whatsapp {
 
         if (events["messages.upsert"]) {
           const upsert = events["messages.upsert"]
-          console.log("recv messages ", JSON.stringify(upsert, undefined, 2))
 
-          if (upsert.type === "notify") {
-            for (const msg of upsert.messages) {
+          for (const msg of upsert.messages) {
+            if (msg.key.remoteJid !== "status@broadcast") {
               if (msg.message?.audioMessage) {}
-
-              this.client.sendMessage(msg.message?.conversation ?? "", msg.key.remoteJid ?? "", this.getSelfPhone(), msg.key.fromMe ?? false)
+              let message = msg.message?.conversation
+              if (!message) {
+                message = msg.message?.extendedTextMessage?.text
+              }
+              this.client.sendMessage(
+                message ?? "",
+                `+${msg.key.remoteJid?.split("@")[0]}` ?? "",
+                this.getSelfPhone(),
+                msg.key.fromMe ?? false
+              )
             }
           }
         }
 
         if (events["messages.update"]) {
-          console.log(
-            JSON.stringify(events["messages.update"], undefined, 2)
-          )
-
           for (const { key, update } of events["messages.update"]) {
             if (update.pollUpdates) {
               const pollCreation = await this.getMessage(key)

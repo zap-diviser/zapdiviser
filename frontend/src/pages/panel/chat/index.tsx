@@ -35,7 +35,7 @@ import { PopupTransition } from 'components/@extended/Transitions';
 import { dispatch, useSelector } from 'store';
 import { openDrawer } from 'store/reducers/menu';
 import { openSnackbar } from 'store/reducers/snackbar';
-import { getUser, getUserChats, insertChat } from 'store/reducers/chat';
+import { getUser } from 'store/reducers/chat';
 
 // assets
 import {
@@ -53,8 +53,8 @@ import {
 
 // types
 import { ThemeMode } from 'types/config';
-import { History as HistoryProps } from 'types/chat';
 import { UserProfile } from 'types/user-profile';
+import { useChatControllerSendMessage } from 'hooks/api/zapdiviserComponents';
 
 const drawerWidth = 320;
 
@@ -93,9 +93,10 @@ const Chat = () => {
   const [emailDetails, setEmailDetails] = useState(false);
   const [user, setUser] = useState<UserProfile>({});
 
-  const [data, setData] = useState<HistoryProps[]>([]);
   const chatState = useSelector((state) => state.chat);
   const [anchorEl, setAnchorEl] = useState<Element | (() => Element) | null | undefined>(null);
+
+  const { mutateAsync } = useChatControllerSendMessage()
 
   const handleClickSort = (event: MouseEvent<HTMLButtonElement> | undefined) => {
     setAnchorEl(event?.currentTarget);
@@ -129,7 +130,7 @@ const Chat = () => {
       dispatch(
         openSnackbar({
           open: true,
-          message: 'Message required',
+          message: 'Digite algo!',
           variant: 'alert',
           alert: {
             color: 'error'
@@ -138,15 +139,7 @@ const Chat = () => {
         })
       );
     } else {
-      const d = new Date();
-      const newMessage = {
-        from: 'User1',
-        to: user.name,
-        text: message,
-        time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setData((prevState) => [...prevState, newMessage]);
-      dispatch(insertChat(newMessage));
+      mutateAsync({ body: { content: { text: message }, to: user.id! } })
     }
     setMessage('');
   };
@@ -180,21 +173,12 @@ const Chat = () => {
   }, [chatState.user]);
 
   useEffect(() => {
-    setData(chatState.chats);
-  }, [chatState.chats]);
-
-  useEffect(() => {
     // hide left drawer when email app opens
     const drawerCall = dispatch(openDrawer(false));
     const userCall = dispatch(getUser(1));
     Promise.all([drawerCall, userCall]).then(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    dispatch(getUserChats(user.name));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   if (loading) return <Loader />;
 
@@ -314,7 +298,7 @@ const Chat = () => {
                     }}
                   >
                     <Box sx={{ pl: 1, pt: 1, pr: 3 }}>
-                      <ChatHistory theme={theme} user={user} data={data} />
+                      <ChatHistory theme={theme} user={user} />
                     </Box>
                   </SimpleBar>
                 </Grid>

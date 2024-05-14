@@ -12,35 +12,36 @@ import IconButton from 'components/@extended/IconButton';
 import { Edit } from 'iconsax-react';
 
 // types
-import { History } from 'types/chat';
 import { ThemeMode } from 'types/config';
 import { UserProfile } from 'types/user-profile';
+import { useChatControllerGetMessages } from 'hooks/api/zapdiviserComponents';
 
 // ==============================|| CHAT - HISTORY ||============================== //
 
 interface ChatHistoryProps {
-  data: History[];
   theme: Theme;
   user: UserProfile;
 }
 
-const ChatHistory = ({ data, theme, user }: ChatHistoryProps) => {
+const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
   // scroll to bottom when new message is sent or received
   const wrapper = useRef(document.createElement('div'));
   const el = wrapper.current;
   const scrollToBottom = useCallback(() => {
     el.scrollIntoView(false);
-  }, [el]);
+  }, [el])
+
+  const { data } = useChatControllerGetMessages({ pathParams: { id: user.id! } }, { refetchInterval: 1000 })
 
   useEffect(() => {
     scrollToBottom();
-  }, [data.length, scrollToBottom]);
+  }, [data?.length, scrollToBottom]);
 
   return (
     <Grid container spacing={2.5} ref={wrapper}>
-      {data.map((history, index) => (
+      {data?.map((history, index) => (
         <Grid item xs={12} key={index}>
-          {history.from !== user.name ? (
+          {history.fromMe ? (
             <Stack spacing={1.25} direction="row">
               <Grid container spacing={1} justifyContent="flex-end">
                 <Grid item xs={2} md={3} xl={4} />
@@ -64,7 +65,7 @@ const ChatHistory = ({ data, theme, user }: ChatHistoryProps) => {
                         <Grid container spacing={1}>
                           <Grid item xs={12}>
                             <Typography variant="h6" color={theme.palette.common.white} sx={{ overflowWrap: 'anywhere' }}>
-                              {history.text}
+                              {history.content.text ?? "<i>Conteúdo desconhecido</i>"}
                             </Typography>
                           </Grid>
                         </Grid>
@@ -74,7 +75,7 @@ const ChatHistory = ({ data, theme, user }: ChatHistoryProps) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography align="right" variant="subtitle2" color="textSecondary">
-                    {history.time}
+                    {history.created_at}
                   </Typography>
                 </Grid>
               </Grid>
@@ -98,7 +99,7 @@ const ChatHistory = ({ data, theme, user }: ChatHistoryProps) => {
                       <Grid container spacing={1}>
                         <Grid item xs={12}>
                           <Typography variant="h6" color="textPrimary" sx={{ overflowWrap: 'anywhere' }}>
-                            {history.text}
+                            {history.content.content}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -107,7 +108,7 @@ const ChatHistory = ({ data, theme, user }: ChatHistoryProps) => {
                 </Grid>
                 <Grid item xs={12} sx={{ mt: 1 }}>
                   <Typography align="left" variant="subtitle2" color="textSecondary">
-                    {history.time}
+                    {history.created_at}
                   </Typography>
                 </Grid>
               </Grid>

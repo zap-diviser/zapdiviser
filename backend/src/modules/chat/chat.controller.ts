@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { SendMessageDTO } from './dto/send-message.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { UserIsAuthenticated } from '@/common/decorators/userIsAuthenticated.decorator';
 
 @Controller('chat')
 @ApiTags('Chat')
@@ -9,17 +9,24 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post('send-message')
-  async sendMessage(@Req() req, @Body() { to, content }: SendMessageDTO) {
-    return await this.chatService.sendMessage(req.user.id, content, to);
+  @UserIsAuthenticated()
+  async sendMessage(
+    @Req() req: any,
+    @Body('to') to: string,
+    @Body('content') content: any,
+  ) {
+    return await this.chatService.sendMessage(req.user.id, to, content);
   }
 
   @Get('chats')
-  async getChats(@Req() req) {
+  @UserIsAuthenticated()
+  async getChats(@Req() req: any) {
     return await this.chatService.getChats(req.user.id);
   }
 
   @Get('chat/:id/messages')
-  async getMessages() {
-    return [];
+  @UserIsAuthenticated()
+  async getMessages(@Req() req: any, @Param('id') chatId: string) {
+    return await this.chatService.getMessages(req.user.id, chatId);
   }
 }

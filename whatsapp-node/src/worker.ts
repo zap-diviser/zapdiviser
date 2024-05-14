@@ -28,11 +28,11 @@ export default class Worker {
     console.log(`${job?.id} has failed with ${err?.message}`)
   }
 
-  async handle_sendMessage(text: string, to: string) {
-    await this.whatsapp.sendMessageTyping({ text }, to)
+  async handle_sendMessage({ content, to }: { content: string, to: string }) {
+    await this.whatsapp.sendMessageTyping({ text: content }, to)
   }
 
-  async handle_sendFile(file: string, to: string, file_type: 'image' | 'document' | 'video' | 'audio') {
+  async handle_sendFile({ file, to, file_type }: { file: string, to: string, file_type: 'image' | 'document' | 'video' | 'audio' }) {
     switch (file_type) {
       case 'audio':
         await this.whatsapp.sendAudio(file, to)

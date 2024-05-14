@@ -60,8 +60,8 @@ export function getUser(id: number) {
 export function getUserChats(user: string | undefined) {
   return async () => {
     try {
-      const response = await axios.post('/api/chat/filter', { user });
-      dispatch(chat.actions.getUserChatsSuccess(response.data));
+      //const response = await axios.post('/api/chat/filter', { user });
+      dispatch(chat.actions.getUserChatsSuccess([{ name: "Teste" }]));
     } catch (error) {
       dispatch(chat.actions.hasError(error));
     }
@@ -81,8 +81,8 @@ export function insertChat(chat: any) {
 export function getUsers() {
   return async () => {
     try {
-      const response = await axios.get('/api/chat/users');
-      dispatch(chat.actions.getUsersSuccess(response.data.users));
+      //const response = await axios.get('/api/chat/users');
+      dispatch(chat.actions.getUsersSuccess([{ name: "Teste" }]));
     } catch (error) {
       dispatch(chat.actions.hasError(error));
     }

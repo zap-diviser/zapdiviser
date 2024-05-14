@@ -1,26 +1,13 @@
-import { Fragment, useEffect, useState } from 'react';
-
-// material-ui
+import { Fragment } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Divider, List, ListItemAvatar, ListItemButton, ListItemText, Stack, Typography } from '@mui/material';
-
-// third-party
 import { Chance } from 'chance';
-
-// project-imports
 import UserAvatar from './UserAvatar';
 import Loader from 'components/Loader';
 import Dot from 'components/@extended/Dot';
-
-import { dispatch, useSelector } from 'store';
-import { getUsers } from 'store/reducers/chat';
-
-// assets
 import { TickCircle } from 'iconsax-react';
-
-// types
-import { KeyedObject } from 'types/root';
 import { UserProfile } from 'types/user-profile';
+import { useChatControllerGetChats } from 'hooks/api/zapdiviserComponents';
 
 const chance = new Chance();
 
@@ -34,52 +21,13 @@ interface UserListProps {
 function UserList({ setUser, search }: UserListProps) {
   const theme = useTheme();
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [data, setData] = useState<UserProfile[]>([]);
-
-  const { users } = useSelector((state) => state.chat);
-
-  useEffect(() => {
-    dispatch(getUsers()).then(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    setData(users);
-  }, [users]);
-
-  useEffect(() => {
-    if (search) {
-      const results = users.filter((row: KeyedObject) => {
-        let matches = true;
-
-        const properties: string[] = ['name'];
-        let containsQuery = false;
-
-        properties.forEach((property) => {
-          if (row[property].toString().toLowerCase().includes(search.toString().toLowerCase())) {
-            containsQuery = true;
-          }
-        });
-
-        if (!containsQuery) {
-          matches = false;
-        }
-        return matches;
-      });
-
-      setData(results);
-    } else {
-      setData(users);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  const { data, isLoading: loading } = useChatControllerGetChats({ }, { refetchInterval: 1000 })
 
   if (loading) return <Loader />;
 
   return (
     <List component="nav">
-      {data.map((user) => (
+      {data?.map((user: any) => (
         <Fragment key={user.id}>
           <ListItemButton
             sx={{ pl: 1 }}
@@ -102,7 +50,7 @@ function UserList({ setUser, search }: UserListProps) {
                       whiteSpace: 'nowrap'
                     }}
                   >
-                    {user.name}
+                    {user.phone}
                   </Typography>
                   <Typography color="text.secondary" variant="caption">
                     {user.lastMessage}

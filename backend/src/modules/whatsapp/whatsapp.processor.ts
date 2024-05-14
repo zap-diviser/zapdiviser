@@ -72,7 +72,7 @@ export class WhatsappConsumer {
     await this.chatService.handleMessage(
       { type: 'text', content },
       to,
-      instanceId,
+      await this.whatsappService.getInstance(instanceId),
       fromMe,
     );
   }

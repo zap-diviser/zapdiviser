@@ -131,6 +131,45 @@ export type RedirectEntity = {
   user: UserEntity;
 };
 
+export type MessageEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  chat: ChatEntity;
+  content: Record<string, any>;
+  fromMe: boolean;
+};
+
+export type ChatEntity = {
+  id: string;
+  /**
+   * @format date-time
+   */
+  deleted_at: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @format date-time
+   */
+  updated_at: string;
+  phone: string | null;
+  user: ChatEntity;
+  currentWhatsapp: WhatsappEntity;
+  messages: MessageEntity[];
+};
+
 export type UserEntity = {
   id: string;
   /**
@@ -153,6 +192,7 @@ export type UserEntity = {
   products: ProductEntity[];
   redirects: RedirectEntity[];
   whatsapps: WhatsappEntity[];
+  chats: ChatEntity[];
 };
 
 export type WhatsappEntity = {
@@ -171,20 +211,26 @@ export type WhatsappEntity = {
   updated_at: string;
   phone: string | null;
   profileUrl: string | null;
-  status: 0 | 1 | 2 | 3;
+  status: "PENDING" | "CONNECTING" | "CONNECTED" | "PAUSED" | "BANNED";
   user: UserEntity;
   user_id: string;
   products: ProductEntity[];
+  chats: ChatEntity[];
 };
 
 export type CreateFlowEventDto = {
-  flow_name: 'card_approved' | 'card_declined' | 'pix_generated' | 'pix_approved' | 'cart_abandoned';
+  flow_name:
+    | "card_approved"
+    | "card_declined"
+    | "pix_generated"
+    | "pix_approved"
+    | "cart_abandoned";
   product_id: string;
   metadata: {
     message?: string;
     delay?: number;
   };
-  type: 'message' | 'delay' | 'file';
+  type: "message" | "delay" | "file";
   sort: number;
 };
 
@@ -192,7 +238,7 @@ export type UpdateFlowEventDto = {
   metadata: {
     message?: string;
   };
-  type: 'message' | 'delay' | 'file';
+  type: "message" | "delay" | "file";
 };
 
 export type SetWhatsappsDto = {
@@ -200,6 +246,14 @@ export type SetWhatsappsDto = {
 };
 
 export type Object = {};
+
+export type SendMessageDTO = {
+  /**
+   * Message content
+   */
+  content: Record<string, any>;
+  to: string;
+};
 
 export type ForgetPasswordDto = {
   email: string;
@@ -238,18 +292,10 @@ export type CreateUserDto = {
   costumer: Costumer;
 };
 
-export type LoginUserDto = {
-  /**
-   * @default string@email.com
-   */
-  email: Record<string, any>;
-  password: string;
-};
-
 export type CreateRedirectDto = {
   name: string;
   slug: string;
-  links: Record<string, any>;
+  links: Record<string, any>[];
 };
 
 export type CreateRedirectLinkDto = {
@@ -259,7 +305,7 @@ export type CreateRedirectLinkDto = {
 export type UpdateRedirectDto = {
   name?: string;
   slug?: string;
-  links?: Record<string, any>;
+  links?: Record<string, any>[];
 };
 
 export type UpdateRedirectLinkDto = {
