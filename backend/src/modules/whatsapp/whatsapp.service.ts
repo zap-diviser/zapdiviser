@@ -114,6 +114,13 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       ],
     });
 
+    container.attach(
+      { stream: true, stdout: true, stderr: true },
+      function (err, stream) {
+        container.modem.demuxStream(stream, process.stdout, process.stderr);
+      },
+    );
+
     await container.start();
 
     return whatsapp;

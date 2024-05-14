@@ -25,6 +25,6 @@ COPY --from=build /usr/src/app/frontend/dist .
 
 FROM base AS whatsapp-node
 WORKDIR /code/
-COPY --from=build /usr/src/app/whatsapp-node .
+COPY --from=build /prod/whatsapp-node .
 COPY --from=build /usr/src/app/whatsapp-node/dist dist
 CMD [ "pnpm", "start" ]

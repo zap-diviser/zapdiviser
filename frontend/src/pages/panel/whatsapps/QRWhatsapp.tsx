@@ -38,11 +38,9 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
 
     (async () => {
       if (data?.id) {
-        console.log('instanceId', data.id);
         socket.emit('createWhatsapp', { instanceId: data.id });
       } else {
         const data = await mutateAsync({});
-        console.log('instanceId', data.instanceId);
         socket.emit('createWhatsapp', { instanceId: data.id });
 
         const queryKey = queryKeyFn({ path: '/api/whatsapp', operationId: 'whatsappControllerFindAll', variables: {} });
@@ -58,7 +56,6 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
     })();
 
     socket.on('qr', (data: string) => {
-      console.log('qr', data);
       setQrCode(data);
     });
 
