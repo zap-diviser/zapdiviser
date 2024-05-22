@@ -16,6 +16,8 @@ import { ThemeMode } from 'types/config';
 import { UserProfile } from 'types/user-profile';
 import { useChatControllerGetMessages } from 'hooks/api/zapdiviserComponents';
 
+import { format } from 'date-fns';
+
 // ==============================|| CHAT - HISTORY ||============================== //
 
 interface ChatHistoryProps {
@@ -75,7 +77,7 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography align="right" variant="subtitle2" color="textSecondary">
-                    {history.created_at}
+                    {format(new Date(history.created_at), 'dd/MM/yyyy HH:mm')}
                   </Typography>
                 </Grid>
               </Grid>
@@ -108,7 +110,7 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
                 </Grid>
                 <Grid item xs={12} sx={{ mt: 1 }}>
                   <Typography align="left" variant="subtitle2" color="textSecondary">
-                    {history.created_at}
+                    {format(new Date(history.created_at), 'dd/MM/yyyy HH:mm')}
                   </Typography>
                 </Grid>
               </Grid>
