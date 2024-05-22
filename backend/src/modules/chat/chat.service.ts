@@ -95,6 +95,15 @@ export class ChatService {
     });
   }
 
+  async unlinkWhatsapp(userId: string, chatId: string) {
+    const chat = await this.chatRepository.findOneOrFail({
+      where: { id: chatId, user: { id: userId } },
+    });
+
+    chat.currentWhatsapp = null;
+    await chat.save();
+  }
+
   async updateLastInteraction(
     instance: WhatsappEntity,
     phone: string,

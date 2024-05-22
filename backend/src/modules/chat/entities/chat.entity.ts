@@ -16,7 +16,7 @@ export class ChatEntity extends DefaultEntity {
   user: Relation<UserEntity>;
 
   @ManyToOne(() => WhatsappEntity, (whatsapp) => whatsapp.chats)
-  currentWhatsapp: Relation<WhatsappEntity>;
+  currentWhatsapp: Relation<WhatsappEntity> | null;
 
   @ManyToOne(() => MessageEntity, (message) => message.chat)
   messages: MessageEntity[];

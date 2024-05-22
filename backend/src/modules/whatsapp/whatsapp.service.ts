@@ -9,6 +9,7 @@ import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import crypto from 'crypto';
 import BluePromise from 'bluebird';
+import { ChatService } from '../chat/chat.service';
 
 const docker = new Docker();
 
@@ -19,6 +20,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     protected readonly repository: Repository<WhatsappEntity>,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
+    private readonly chatService: ChatService,
   ) {}
 
   @Cron(CronExpression.EVERY_10_MINUTES)
@@ -204,16 +206,12 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       },
     });
 
+    await this.chatService.unlinkWhatsapp(user_id, id);
+
     if (!whatsapp) throw new HttpException('Whatsapp não encontrado', 404);
 
-    const containers = await docker.listContainers();
-    const containerId = containers.find((container) =>
-      container.Names.includes(`/zapdiviser-node-${id}`),
-    )?.Id;
-    if (containerId) {
-      const container = docker.getContainer(containerId);
-      await container.stop();
-    }
+    const container = docker.getContainer(`zapdiviser-node-${whatsapp.id}`);
+    await container.stop();
 
     whatsapp.products = [];
     await whatsapp.save();
