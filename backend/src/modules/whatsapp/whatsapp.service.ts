@@ -6,7 +6,7 @@ import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
 import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-// import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import crypto from 'crypto';
 import BluePromise from 'bluebird';
 
@@ -21,7 +21,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     private readonly configService: ConfigService,
   ) {}
 
-  // @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async onModuleInit() {
     const whatsapps = await this.repository.find({
       where: { status: Status.CONNECTED },
