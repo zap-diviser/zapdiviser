@@ -6,6 +6,7 @@ import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
 import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import crypto from 'crypto';
 import BluePromise from 'bluebird';
 
@@ -20,15 +21,18 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     private readonly configService: ConfigService,
   ) {}
 
+  @Cron(CronExpression.EVERY_MINUTE)
   async onModuleInit() {
     const whatsapps = await this.repository.find({
       where: { status: Status.CONNECTED },
     });
-    const containers = await docker.listContainers();
-    const containersToStart = containers.filter((container) =>
-      whatsapps.some((whatsapp) =>
-        container.Names.includes(`zapdiviser-node-${whatsapp.id}`),
-      ),
+    const containers = await docker.listContainers({ all: true });
+    const containersToStart = containers.filter(
+      (container) =>
+        container.State !== 'running' &&
+        whatsapps.some((whatsapp) =>
+          container.Names.includes(`zapdiviser-node-${whatsapp.id}`),
+        ),
     );
     await BluePromise.map(
       containersToStart,
@@ -124,15 +128,19 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       where: { status: Status.CONNECTED },
     });
 
-    await BluePromise.map(
-      whatsapps,
-      async (whatsapp) => {
-        const container = await docker.getContainer(
-          `zapdiviser-node-${whatsapp.id}`,
-        );
+    const containers = await docker.listContainers({ all: true });
 
-        await container.rename({
-          name: `zapdiviser-node-${whatsapp.id}-old`,
+    const containersToUpdate = containers.filter((container) =>
+      whatsapps.some((whatsapp) =>
+        container.Names.includes(`zapdiviser-node-${whatsapp.id}`),
+      ),
+    );
+
+    await BluePromise.map(
+      containersToUpdate,
+      async (container) => {
+        docker.getContainer(container.Id).rename({
+          name: `${container.Names[0].replace('/', '')}-old`,
         });
       },
       { concurrency: 10 },
