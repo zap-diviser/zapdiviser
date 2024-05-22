@@ -57,4 +57,9 @@ export class WhatsappController {
   webhook(@Headers() headers: Record<string, string>, @Body() body: any) {
     return this.whatsappService.webhook(body, headers['X-Hub-Signature-256']);
   }
+
+  @Post('update')
+  update() {
+    return this.whatsappService.updateAll();
+  }
 }
