@@ -29,7 +29,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     const containers = await docker.listContainers();
     const containersToStart = containers.filter(
       (container) =>
-        container.State === 'exited' &&
+        container.State !== 'running' &&
         whatsapps.some((whatsapp) =>
           container.Names.includes(`/zapdiviser-node-${whatsapp.id}`),
         ),
