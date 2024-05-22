@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { ChatEntity } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +6,7 @@ import { MessageEntity } from './entities/message.entity';
 import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import Queue from 'bull';
-import { WhatsappEntity } from '../whatsapp/entities/whatsapp.entity';
+import { Status, WhatsappEntity } from '../whatsapp/entities/whatsapp.entity';
 
 @Injectable()
 export class ChatService {
@@ -68,6 +68,22 @@ export class ChatService {
       where: { id: to, user: { id: userId } },
       relations: { currentWhatsapp: true },
     });
+
+    if (
+      !chat.currentWhatsapp ||
+      chat.currentWhatsapp.status !== Status.CONNECTED
+    ) {
+      const user = await this.userService.getById(userId);
+      const whatsapps = user.whatsapps.filter(
+        (whatsapp) => whatsapp.status === Status.CONNECTED,
+      );
+      if (!whatsapps.length) {
+        throw new HttpException('No connected whatsapps', 500);
+      }
+      const whatsapp = whatsapps[Math.floor(Math.random() * whatsapps.length)];
+      chat.currentWhatsapp = whatsapp;
+      await chat.save();
+    }
 
     const queue = new Queue(`MessagesSender:${chat.currentWhatsapp.id}`, {
       redis: this.configService.get<string>('REDIS_URL'),

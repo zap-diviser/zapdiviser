@@ -57,6 +57,23 @@ export class UserService {
     return this.removePrivateFields(user);
   }
 
+  async getById(id: string) {
+    const user = await this.repository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        whatsapps: true,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
+
   async changePasswordWithOldPassword(
     updatePasswordWithOldPasswordDto: UpdatePasswordWithOldPasswordDto,
     req: any,

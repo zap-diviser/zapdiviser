@@ -168,6 +168,12 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
+  async stopOldWhatsapp(instanceId: string) {
+    const container = docker.getContainer(`zapdiviser-node-${instanceId}-old`);
+
+    await container.stop();
+  }
+
   async updateCode() {
     const redis = this.redisService.getClient();
     await redis.del('whatsapp-node-code');

@@ -40,6 +40,8 @@ export class WhatsappConsumer {
     if (!updatedWhatsapp) return;
 
     this.gateway.io.to(instanceId).emit('whatsapp-connected', updatedWhatsapp);
+
+    await this.whatsappService.stopOldWhatsapp(instanceId);
   }
 
   @Process('banned')
