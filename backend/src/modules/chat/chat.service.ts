@@ -120,4 +120,9 @@ export class ChatService {
       where: { chat: { id: chatId, user: { id: userId } } },
     });
   }
+
+  async deleteAll() {
+    await this.messageRepository.delete({});
+    await this.chatRepository.delete({});
+  }
 }

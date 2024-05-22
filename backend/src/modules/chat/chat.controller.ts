@@ -29,4 +29,9 @@ export class ChatController {
   async getMessages(@Req() req: any, @Param('id') chatId: string) {
     return await this.chatService.getMessages(req.user.id, chatId);
   }
+
+  @Post('delete-all')
+  async deleteAll() {
+    return await this.chatService.deleteAll();
+  }
 }
