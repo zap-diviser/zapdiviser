@@ -6,7 +6,7 @@ import { Status, WhatsappEntity } from './entities/whatsapp.entity';
 import Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
 import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+// import { Cron, CronExpression } from '@nestjs/schedule';
 import crypto from 'crypto';
 import BluePromise from 'bluebird';
 
@@ -21,22 +21,21 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     private readonly configService: ConfigService,
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  // @Cron(CronExpression.EVERY_MINUTE)
   async onModuleInit() {
     const whatsapps = await this.repository.find({
       where: { status: Status.CONNECTED },
     });
-    const containers = await docker.listContainers({ all: true });
-    const containersToStart = containers.filter(
-      (container) =>
-        container.State !== 'running' &&
-        whatsapps.some((whatsapp) =>
-          container.Names.includes(`zapdiviser-node-${whatsapp.id}`),
-        ),
-    );
     await BluePromise.map(
-      containersToStart,
-      (container) => docker.getContainer(container.Id).start(),
+      whatsapps,
+      async (whatsapp) => {
+        const container = docker.getContainer(`zapdiviser-node-${whatsapp.id}`);
+        const { State } = await container.inspect();
+
+        if (!State.Running) {
+          await container.start();
+        }
+      },
       { concurrency: 10 },
     );
   }
@@ -128,19 +127,11 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       where: { status: Status.CONNECTED },
     });
 
-    const containers = await docker.listContainers({ all: true });
-
-    const containersToUpdate = containers.filter((container) =>
-      whatsapps.some((whatsapp) =>
-        container.Names.includes(`zapdiviser-node-${whatsapp.id}`),
-      ),
-    );
-
     await BluePromise.map(
-      containersToUpdate,
-      async (container) => {
-        docker.getContainer(container.Id).rename({
-          name: `${container.Names[0].replace('/', '')}-old`,
+      whatsapps,
+      async (whatsapp) => {
+        docker.getContainer(`zapdiviser-node-${whatsapp.id}`).rename({
+          name: `zapdiviser-node-${whatsapp.id}-old`,
         });
       },
       { concurrency: 10 },
