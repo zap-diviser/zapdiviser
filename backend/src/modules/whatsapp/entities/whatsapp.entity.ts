@@ -47,6 +47,8 @@ export class WhatsappEntity extends DefaultEntity {
   @ManyToMany(() => ProductEntity, (product) => product.whatsapps)
   products: ProductEntity[];
 
-  @OneToMany(() => ChatEntity, (chat) => chat.currentWhatsapp)
+  @OneToMany(() => ChatEntity, (chat) => chat.currentWhatsapp, {
+    onDelete: 'SET NULL',
+  })
   chats: ChatEntity[];
 }
