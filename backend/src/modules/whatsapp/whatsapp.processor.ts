@@ -66,14 +66,35 @@ export class WhatsappConsumer {
   async onMessage({
     data: {
       instanceId,
-      data: { to, content, fromMe },
+      data: { to, content, fromMe, name },
     },
-  }: Event<{ from: string; to: string; content: string; fromMe: boolean }>) {
+  }: Event<{
+    from: string;
+    to: string;
+    content: string;
+    name: string;
+    fromMe: boolean;
+  }>) {
     await this.chatService.handleMessage(
       { type: 'text', content },
       to,
       await this.whatsappService.getInstance(instanceId),
+      name,
       fromMe,
+    );
+  }
+
+  @Process('chat-last-interaction')
+  async onChatLastInteraction({
+    data: {
+      instanceId,
+      data: { phone, lastInteraction },
+    },
+  }: Event<{ phone: string; lastInteraction: number }>) {
+    await this.chatService.updateLastInteraction(
+      await this.whatsappService.getInstance(instanceId),
+      phone,
+      lastInteraction,
     );
   }
 }

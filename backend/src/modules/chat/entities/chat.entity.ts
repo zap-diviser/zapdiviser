@@ -9,12 +9,18 @@ export class ChatEntity extends DefaultEntity {
   @Column({ type: String, nullable: true })
   phone: string | null;
 
+  @Column({ type: String, nullable: true })
+  name: string | null;
+
   @ManyToOne(() => UserEntity, (user) => user.chats)
-  user: Relation<ChatEntity>;
+  user: Relation<UserEntity>;
 
   @ManyToOne(() => WhatsappEntity, (whatsapp) => whatsapp.chats)
   currentWhatsapp: Relation<WhatsappEntity>;
 
   @ManyToOne(() => MessageEntity, (message) => message.chat)
   messages: MessageEntity[];
+
+  @Column({ type: Date, nullable: true })
+  lastInteraction: Date | null;
 }

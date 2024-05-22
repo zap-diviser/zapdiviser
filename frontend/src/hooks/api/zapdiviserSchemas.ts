@@ -165,6 +165,7 @@ export type ChatEntity = {
    */
   updated_at: string;
   phone: string | null;
+  name: string | null;
   user: ChatEntity;
   currentWhatsapp: WhatsappEntity;
   messages: MessageEntity[];
@@ -246,14 +247,6 @@ export type SetWhatsappsDto = {
 };
 
 export type Object = {};
-
-export type SendMessageDTO = {
-  /**
-   * Message content
-   */
-  content: Record<string, any>;
-  to: string;
-};
 
 export type ForgetPasswordDto = {
   email: string;

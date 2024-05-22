@@ -12,5 +12,6 @@ export class MessageEntity extends DefaultEntity {
   })
   content: any;
 
+  @Column({ type: Boolean, default: false })
   fromMe: boolean;
 }

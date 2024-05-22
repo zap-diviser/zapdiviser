@@ -67,6 +67,7 @@ class Whatsapp {
       },
       msgRetryCounterCache: this.msgRetryCounterCache,
       generateHighQualityLinkPreview: true,
+      syncFullHistory: true,
       browser: ["Zapdivizer", "Zapdivizer", "1.0.0"],
     })
 
@@ -122,21 +123,26 @@ class Whatsapp {
         }
 
         if (events["messages.upsert"]) {
-          const upsert = events["messages.upsert"]
-
-          for (const msg of upsert.messages) {
-            if (msg.key.remoteJid !== "status@broadcast") {
+          for (const msg of events["messages.upsert"].messages) {
+            if (
+              msg.key.remoteJid !== "status@broadcast"
+              && msg.key.remoteJid?.includes("-") === false
+              && !msg.message?.productMessage
+            ) {
               if (msg.message?.audioMessage) {}
               let message = msg.message?.conversation
               if (!message) {
                 message = msg.message?.extendedTextMessage?.text
               }
-              this.client.sendMessage(
-                message ?? "",
-                `+${msg.key.remoteJid?.split("@")[0]}` ?? "",
-                this.getSelfPhone(),
-                msg.key.fromMe ?? false
-              )
+              if (message) {
+                this.client.sendMessage({
+                  text: message,
+                  to: `+${msg.key.remoteJid?.split("@")[0]}`,
+                  name: msg.key.fromMe ? null : msg.pushName ?? null,
+                  fromMe: msg.key.fromMe ?? false,
+                  from: msg.key.fromMe ? `+${msg.key.remoteJid?.split("@")[0]}` : this.getSelfPhone()
+                })
+              }
             }
           }
         }
@@ -171,20 +177,15 @@ class Whatsapp {
         }
 
         if (events["chats.update"]) {
-          console.log(events["chats.update"])
-        }
-
-        if (events["contacts.update"]) {
-          for (const contact of events["contacts.update"]) {
-            if (typeof contact.imgUrl !== "undefined") {
-              const newUrl = contact.imgUrl === null
-                ? null
-                : await this.sock!.profilePictureUrl(contact.id!).catch(() => null)
-              console.log(
-                `contact ${contact.id} has a new profile pic: ${newUrl}`,
-              )
+          for (const { id, conversationTimestamp } of events["chats.update"]) {
+            if (id && conversationTimestamp) {
+              this.client.lastInteraction(`+${id.split("@")[0]}`, conversationTimestamp)
             }
           }
+        }
+
+        if (events["chats.upsert"]) {
+          console.log("chats upsert ", events["chats.update"])
         }
 
         if (events["chats.delete"]) {

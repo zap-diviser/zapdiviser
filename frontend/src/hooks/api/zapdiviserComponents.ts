@@ -947,9 +947,8 @@ export const useWhatsappControllerWebhook = (
 
 export type ChatControllerSendMessageError = Fetcher.ErrorWrapper<undefined>;
 
-export type ChatControllerSendMessageVariables = {
-  body: Schemas.SendMessageDTO;
-} & ZapdiviserContext["fetcherOptions"];
+export type ChatControllerSendMessageVariables =
+  ZapdiviserContext["fetcherOptions"];
 
 export const fetchChatControllerSendMessage = (
   variables: ChatControllerSendMessageVariables,
@@ -958,7 +957,7 @@ export const fetchChatControllerSendMessage = (
   zapdiviserFetch<
     undefined,
     ChatControllerSendMessageError,
-    Schemas.SendMessageDTO,
+    undefined,
     {},
     {},
     {}

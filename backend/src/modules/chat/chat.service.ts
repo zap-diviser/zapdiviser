@@ -23,31 +23,43 @@ export class ChatService {
     content: any,
     phone: string,
     instance: WhatsappEntity,
+    name: string,
     fromMe: boolean,
   ) {
     let chat = await this.chatRepository.findOne({
       where: {
         phone,
-        user: {
-          id: instance.user_id,
-        },
+        user: { id: instance.user_id },
       },
     });
 
-    console.log(content);
-
-    if (!chat) {
-      chat = await this.chatRepository.save({
+    if (chat === null) {
+      const data: Partial<ChatEntity> = {
         phone,
-        currentWhatsapp: instance,
         user: instance.user,
-      });
+        currentWhatsapp: instance,
+        name: phone,
+      };
+
+      if (name !== null) {
+        data.name = name;
+      }
+
+      chat = await this.chatRepository.save(data);
+    } else {
+      if (name !== null) {
+        chat.name = name;
+        await chat.save();
+      } else if (chat.name === null) {
+        chat.name = phone;
+        await chat.save();
+      }
     }
 
     this.messageRepository.save({
       content,
       fromMe,
-      chat,
+      chat: chat!,
     });
   }
 
@@ -67,9 +79,23 @@ export class ChatService {
     });
   }
 
+  async updateLastInteraction(
+    instance: WhatsappEntity,
+    phone: string,
+    timestamp: number,
+  ) {
+    const chat = await this.chatRepository.findOneOrFail({
+      where: { phone, user: { id: instance.user_id } },
+    });
+
+    chat.lastInteraction = new Date(timestamp);
+    await chat.save();
+  }
+
   async getChats(userId: string) {
     return await this.chatRepository.find({
       where: { user: { id: userId } },
+      order: { lastInteraction: 'ASC' },
     });
   }
 

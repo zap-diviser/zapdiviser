@@ -16,8 +16,8 @@ class Client {
     await this.queue.add("error", { instanceId, data: { error } })
   }
 
-  async sendMessage(text: string, to: string, from: string, fromMe: boolean) {
-    await this.queue.add("message", { instanceId, data: { from, to, content: text, fromMe } })
+  async sendMessage({ text, to, from, name, fromMe }: { text: string, to: string, from?: string, name: string | null, fromMe: boolean }) {
+    await this.queue.add("message", { instanceId, data: { from, to, content: text, name, fromMe } })
   }
 
   async sendFile(file: string, to: string, file_type: 'image' | 'document' | 'video' | 'audio', from) {
@@ -50,6 +50,10 @@ class Client {
 
   async onLogout(phone: string) {
     await this.queue.add("logout", { instanceId, data: { phone } })
+  }
+
+  async lastInteraction(phone: string, lastInteraction: number) {
+    await this.queue.add("chat-last-interaction", { instanceId, data: { phone, lastInteraction } })
   }
 }
 

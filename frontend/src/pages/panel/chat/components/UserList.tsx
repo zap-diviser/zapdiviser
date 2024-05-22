@@ -50,7 +50,7 @@ function UserList({ setUser, search }: UserListProps) {
                       whiteSpace: 'nowrap'
                     }}
                   >
-                    {user.phone}
+                    {user.name}
                   </Typography>
                   <Typography color="text.secondary" variant="caption">
                     {user.lastMessage}

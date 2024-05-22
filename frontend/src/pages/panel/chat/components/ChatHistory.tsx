@@ -65,7 +65,7 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
                         <Grid container spacing={1}>
                           <Grid item xs={12}>
                             <Typography variant="h6" color={theme.palette.common.white} sx={{ overflowWrap: 'anywhere' }}>
-                              {history.content.text ?? "<i>Conteúdo desconhecido</i>"}
+                              {history.content.content ?? "<i>Conteúdo desconhecido</i>"}
                             </Typography>
                           </Grid>
                         </Grid>
