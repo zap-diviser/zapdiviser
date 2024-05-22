@@ -95,9 +95,9 @@ export class ChatService {
     });
   }
 
-  async unlinkWhatsapp(userId: string, chatId: string) {
+  async unlinkWhatsapp(userId: string, whatsappId: string) {
     const chat = await this.chatRepository.findOneOrFail({
-      where: { id: chatId, user: { id: userId } },
+      where: { currentWhatsapp: { id: whatsappId }, user: { id: userId } },
     });
 
     chat.currentWhatsapp = null;
