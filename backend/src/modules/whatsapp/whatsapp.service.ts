@@ -27,12 +27,10 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       where: { status: Status.CONNECTED },
     });
     const containers = await docker.listContainers();
-    const containersToStart = containers.filter(
-      (container) =>
-        container.State !== 'running' &&
-        whatsapps.some((whatsapp) =>
-          container.Names.includes(`/zapdiviser-node-${whatsapp.id}`),
-        ),
+    const containersToStart = containers.filter((container) =>
+      whatsapps.some((whatsapp) =>
+        container.Names.includes(`/zapdiviser-node-${whatsapp.id}`),
+      ),
     );
     await BluePromise.map(
       containersToStart,
