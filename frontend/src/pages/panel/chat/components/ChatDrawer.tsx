@@ -38,14 +38,6 @@ interface ChatDrawerProps {
 function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerProps) {
   const theme = useTheme();
 
-  const { data: whatapps } = useSuspenseQuery({
-    queryKey: ['whatsapp', 'all'],
-    queryFn: async () => {
-      const response = await fetch('/api/whatsapp');
-      return response.json();
-    },
-  })
-
   const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
   const drawerBG = theme.palette.mode === ThemeMode.DARK ? 'dark.main' : 'white';
 

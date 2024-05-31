@@ -6,7 +6,10 @@ export default () => {
   const serverConfig: ServerOptions = {
     port: 8080,
     strictPort: true,
-    host: true
+    host: true,
+    proxy: {
+      '/api': 'http://localhost:8000'
+    }
   };
 
   return defineConfig({
@@ -22,6 +25,6 @@ export default () => {
           }
         }
       }
-    }
+    },
   });
 };

@@ -93,6 +93,7 @@ const Chat = () => {
   const [emailDetails, setEmailDetails] = useState(false);
   const [user, setUser] = useState<UserProfile>({});
 
+
   const chatState = useSelector((state) => state.chat);
   const [anchorEl, setAnchorEl] = useState<Element | (() => Element) | null | undefined>(null);
 
@@ -307,22 +308,26 @@ const Chat = () => {
                   xs={12}
                   sx={{ pl: 3, pt: 3, mt: 3, bgcolor: theme.palette.background.paper, borderTop: `1px solid ${theme.palette.divider}` }}
                 >
-                  <Stack>
-                    <TextField
-                      inputRef={textInput}
-                      fullWidth
-                      multiline
-                      rows={4}
-                      placeholder="Digite algo..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value.length <= 1 ? e.target.value.trim() : e.target.value)}
-                      onKeyPress={handleEnter}
-                      variant="standard"
-                      sx={{
-                        pr: 2,
-                        '& .MuiInput-root:before': { borderBottomColor: theme.palette.divider }
-                      }}
-                    />
+                  {/* @ts-ignore */}
+                  {!user.currentWhatsapp || user.currentWhatsapp.status !== "CONNECTED" ? (
+                      <span>Whatsapp desconectado, selecione outro whatsapp caso deseje continuar a conversa.</span>
+                    ) : (
+                    <Stack>
+                      <TextField
+                        inputRef={textInput}
+                        fullWidth
+                        multiline
+                        rows={4}
+                        placeholder="Digite algo..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value.length <= 1 ? e.target.value.trim() : e.target.value)}
+                        onKeyPress={handleEnter}
+                        variant="standard"
+                        sx={{
+                          pr: 2,
+                          '& .MuiInput-root:before': { borderBottomColor: theme.palette.divider }
+                        }}
+                      />
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                       <Stack direction="row" sx={{ py: 2, ml: -1 }}>
                         <>
@@ -375,6 +380,7 @@ const Chat = () => {
                       </IconButton>
                     </Stack>
                   </Stack>
+                  )}
                 </Grid>
               </Grid>
             </MainCard>

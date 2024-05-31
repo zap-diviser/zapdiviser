@@ -39,6 +39,8 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
     scrollToBottom();
   }, [data?.length, scrollToBottom]);
 
+  console.log(data)
+
   return (
     <Grid container spacing={2.5} ref={wrapper}>
       {data?.map((history, index) => (

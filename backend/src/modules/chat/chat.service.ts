@@ -113,12 +113,16 @@ export class ChatService {
     return await this.chatRepository.find({
       where: { user: { id: userId } },
       order: { lastInteraction: 'ASC' },
+      relations: { currentWhatsapp: true },
     });
   }
 
   async getMessages(userId: string, chatId: string) {
     return await this.messageRepository.find({
       where: { chat: { id: chatId, user: { id: userId } } },
+      relations: {
+        chat: { currentWhatsapp: true },
+      },
     });
   }
 
