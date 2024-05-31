@@ -185,6 +185,11 @@ services:
     networks:
       - zapdiviser
 
+  soketi:
+    labels:
+      caddy_0: soketi.${HOST}
+      caddy_0.reverse_proxy: "{{upstreams 6001}}"
+
 networks:
   caddy:
     external: true

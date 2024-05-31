@@ -1,5 +1,4 @@
 import { useTheme, styled, Divider } from '@mui/material';
-import { Tooltip } from '@mui/material';
 import { Typography } from '@mui/material';
 import { useFunnel } from 'contexts/FunnelContext';
 import { Document } from 'iconsax-react';

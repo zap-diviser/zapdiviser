@@ -433,6 +433,9 @@ importers:
       pdfreader:
         specifier: ^3.0.2
         version: 3.0.2
+      pusher-js:
+        specifier: 8.4.0-rc2
+        version: 8.4.0-rc2
       qrcode.react:
         specifier: ^3.1.0
         version: 3.1.0(react@18.3.1)
@@ -11177,6 +11180,9 @@ packages:
 
   pure-rand@6.1.0:
     resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
+
+  pusher-js@8.4.0-rc2:
+    resolution: {integrity: sha512-d87GjOEEl9QgO5BWmViSqW0LOzPvybvX6WA9zLUstNdB57jVJuR27zHkRnrav2a3+zAMlHbP2Og8wug+rG8T+g==}
 
   q@1.5.1:
     resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
@@ -26192,6 +26198,10 @@ snapshots:
   punycode@2.3.1: {}
 
   pure-rand@6.1.0: {}
+
+  pusher-js@8.4.0-rc2:
+    dependencies:
+      tweetnacl: 1.0.3
 
   q@1.5.1: {}
 

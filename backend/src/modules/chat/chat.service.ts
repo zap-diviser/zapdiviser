@@ -73,16 +73,7 @@ export class ChatService {
       !chat.currentWhatsapp ||
       chat.currentWhatsapp.status !== Status.CONNECTED
     ) {
-      const user = await this.userService.getById(userId);
-      const whatsapps = user.whatsapps.filter(
-        (whatsapp) => whatsapp.status === Status.CONNECTED,
-      );
-      if (!whatsapps.length) {
-        throw new HttpException('No connected whatsapps', 500);
-      }
-      const whatsapp = whatsapps[Math.floor(Math.random() * whatsapps.length)];
-      chat.currentWhatsapp = whatsapp;
-      await chat.save();
+      throw new HttpException('Whatsapp no conected', 500);
     }
 
     const queue = new Queue(`MessagesSender:${chat.currentWhatsapp.id}`, {

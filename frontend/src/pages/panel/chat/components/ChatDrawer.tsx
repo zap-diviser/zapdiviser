@@ -1,5 +1,4 @@
 import { useState, ChangeEvent, MouseEvent } from 'react';
-import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -7,36 +6,26 @@ import {
   Box,
   Chip,
   Drawer,
-  Grid,
   InputAdornment,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
   OutlinedInput,
   Stack,
   Typography,
   useMediaQuery
 } from '@mui/material';
 
-// project-imports
-import UserAvatar from './UserAvatar';
 import UserList from './UserList';
-// import useAuth from 'hooks/useAuth';
 import MainCard from 'components/MainCard';
-import IconButton from 'components/@extended/IconButton';
 import SimpleBar from 'components/third-party/SimpleBar';
 
 // types
 import { UserProfile } from 'types/user-profile';
 
 // assets
-import { ArrowRight2, Clock, Logout, MinusCirlce, SearchNormal1, Setting3, TickCircle } from 'iconsax-react';
+import { SearchNormal1 } from 'iconsax-react';
 
 // types
 import { ThemeMode } from 'types/config';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 // ==============================|| CHAT - DRAWER ||============================== //
 
@@ -48,7 +37,14 @@ interface ChatDrawerProps {
 
 function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerProps) {
   const theme = useTheme();
-  const user = { name: 'User 1', role: 'Admin' };
+
+  const { data: whatapps } = useSuspenseQuery({
+    queryKey: ['whatsapp', 'all'],
+    queryFn: async () => {
+      const response = await fetch('/api/whatsapp');
+      return response.json();
+    },
+  })
 
   const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
   const drawerBG = theme.palette.mode === ThemeMode.DARK ? 'dark.main' : 'white';
@@ -103,7 +99,7 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerPro
         sx={{
           bgcolor: matchDownLG ? 'transparent' : drawerBG,
           borderRadius: '12px 0 0 12px',
-          borderRight: 'none'
+          borderRight: 'none',
         }}
         border={!matchDownLG}
         content={false}
@@ -160,110 +156,6 @@ function ChatDrawer({ handleDrawerOpen, openChatDrawer, setUser }: ChatDrawerPro
             <UserList setUser={setUser} search={search} />
           </Box>
         </SimpleBar>
-        <Box sx={{ px: 3 }}>
-          <List sx={{ '& .MuiListItemIcon-root': { minWidth: 32 } }} style={{ opacity: "0" }}>
-            <ListItemButton>
-              <ListItemIcon>
-                <Logout variant="Bulk" />
-              </ListItemIcon>
-              <ListItemText primary="LogOut" />
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemIcon>
-                <Setting3 variant="Bulk" />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItemButton>
-          </List>
-        </Box>
-
-        <Box sx={{ p: 3, pt: 1, pl: 5 }}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Grid container spacing={1} alignItems="center" sx={{ flexWrap: 'nowrap' }} style={{ opacity: "0" }}>
-                <Grid item>
-                  <UserAvatar user={{ online_status: status, avatar: 'avatar-1.png', name: 'User 1' }} />
-                </Grid>
-                <Grid item xs zeroMinWidth>
-                  <Stack sx={{ cursor: 'pointer', textDecoration: 'none' }} component={Link} to="/apps/profiles/user/personal">
-                    <Typography align="left" variant="h5" color="textPrimary">
-                      {user?.name}
-                    </Typography>
-                    <Typography align="left" variant="caption" color="textSecondary">
-                      {user?.role}
-                    </Typography>
-                  </Stack>
-                </Grid>
-                <Grid item>
-                  <IconButton onClick={handleClickRightMenu} size="small" color="secondary">
-                    <ArrowRight2 />
-                  </IconButton>
-                  <Menu
-                    id="simple-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleCloseRightMenu}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right'
-                    }}
-                    transformOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right'
-                    }}
-                    sx={{
-                      '& .MuiMenu-list': {
-                        p: 0
-                      },
-                      '& .MuiMenuItem-root': {
-                        pl: '6px',
-                        py: '3px'
-                      }
-                    }}
-                  >
-                    <MenuItem onClick={handleRightMenuItemClick('available')}>
-                      <IconButton
-                        size="small"
-                        sx={{
-                          color: theme.palette.success.main,
-                          '&:hover': { color: theme.palette.success.main, bgcolor: 'transparent', transition: 'none', padding: 0 }
-                        }}
-                      >
-                        <TickCircle variant="Bold" />
-                      </IconButton>
-                      <Typography>Active</Typography>
-                    </MenuItem>
-                    <MenuItem onClick={handleRightMenuItemClick('offline')}>
-                      <IconButton
-                        size="small"
-                        sx={{
-                          color: theme.palette.warning.main,
-                          '&:hover': { color: theme.palette.warning.main, bgcolor: 'transparent', transition: 'none', padding: 0 }
-                        }}
-                      >
-                        <Clock />
-                      </IconButton>
-                      <Typography>Away</Typography>
-                    </MenuItem>
-                    <MenuItem onClick={handleRightMenuItemClick('do_not_disturb')}>
-                      <IconButton
-                        size="small"
-                        sx={{
-                          color: theme.palette.secondary[400],
-                          '&:hover': { color: theme.palette.secondary[400], bgcolor: 'transparent', transition: 'none', padding: 0 }
-                        }}
-                      >
-                        <MinusCirlce />
-                      </IconButton>
-                      <Typography>Do not disturb</Typography>
-                    </MenuItem>
-                  </Menu>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Box>
       </MainCard>
     </Drawer>
   );
