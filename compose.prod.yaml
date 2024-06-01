@@ -23,20 +23,9 @@ services:
       caddy_1.reverse_proxy: "{{upstreams 9001}}"
 
   migrate:
-    build:
-      context: .
-      target: backend
-    depends_on:
-      - db
-    networks:
-      - zapdiviser
-    command: ["sh", "-c", "node ./node_modules/typeorm/cli -d ./dist/ormconfig.js migration:run"]
     environment:
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   frontend:
     build:

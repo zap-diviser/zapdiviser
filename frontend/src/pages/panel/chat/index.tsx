@@ -93,7 +93,6 @@ const Chat = () => {
   const [emailDetails, setEmailDetails] = useState(false);
   const [user, setUser] = useState<UserProfile>({});
 
-
   const chatState = useSelector((state) => state.chat);
   const [anchorEl, setAnchorEl] = useState<Element | (() => Element) | null | undefined>(null);
 

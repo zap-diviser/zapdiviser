@@ -67,6 +67,22 @@ services:
       SOKETI_DEFAULT_APP_KEY: ${SOKETI_APP_KEY}
       SOKETI_DEFAULT_APP_SECRET: ${SOKETI_APP_SECRET}
 
+  migrate:
+    build:
+      context: .
+      target: backend
+    depends_on:
+      - db
+    networks:
+      - zapdiviser
+    command: ["sh", "-c", "node ./node_modules/typeorm/cli -d ./dist/ormconfig.js migration:run"]
+    environment:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5433
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
 networks:
   zapdiviser:
 
