@@ -175,6 +175,10 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         });
 
         await container.start();
+
+        await docker
+          .getContainer(`zapdiviser-node-${whatsapp.id}-old`)
+          .remove();
       },
       { concurrency: 10 },
     );
