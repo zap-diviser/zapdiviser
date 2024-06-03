@@ -176,10 +176,6 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
           });
 
           await container.start();
-
-          await docker
-            .getContainer(`zapdiviser-node-${whatsapp.id}-old`)
-            .remove();
         } catch (e) {}
       },
       { concurrency: 10 },
@@ -187,9 +183,14 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   }
 
   async stopOldWhatsapp(instanceId: string) {
-    const container = docker.getContainer(`zapdiviser-node-${instanceId}-old`);
+    try {
+      const container = docker.getContainer(
+        `zapdiviser-node-${instanceId}-old`,
+      );
 
-    await container.stop();
+      await container.stop();
+      await container.remove();
+    } catch (e) {}
   }
 
   async updateCode() {
