@@ -54,7 +54,7 @@ import {
 // types
 import { ThemeMode } from 'types/config';
 import { UserProfile } from 'types/user-profile';
-import { useChatControllerSendMessage } from 'hooks/api/zapdiviserComponents';
+import { useChatControllerCreateMediaUploadUrl, useChatControllerSendMessage, useChatControllerSetWhatsapp, useWhatsappControllerFindAll } from 'hooks/api/zapdiviserComponents';
 
 const drawerWidth = 320;
 
@@ -88,6 +88,11 @@ const Chat = () => {
 
   const matchDownSM = useMediaQuery(theme.breakpoints.down('lg'));
   const matchDownMD = useMediaQuery(theme.breakpoints.down('md'));
+
+  const { data: whatsapps } = useWhatsappControllerFindAll({})
+
+  const { mutateAsync: setWhatsapp } = useChatControllerSetWhatsapp({})
+  const { mutateAsync: createUploadUrl } = useChatControllerCreateMediaUploadUrl({})
 
   const [loading, setLoading] = useState<boolean>(true);
   const [emailDetails, setEmailDetails] = useState(false);
@@ -179,6 +184,8 @@ const Chat = () => {
     Promise.all([drawerCall, userCall]).then(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [selectedWhatsapp, setSelectedWhatsapp] = useState<string>("")
 
   if (loading) return <Loader />;
 
@@ -309,8 +316,16 @@ const Chat = () => {
                 >
                   {/* @ts-ignore */}
                   {!user.currentWhatsapp || user.currentWhatsapp.status !== "CONNECTED" ? (
+                    <div>
                       <span>Whatsapp desconectado, selecione outro whatsapp caso deseje continuar a conversa.</span>
-                    ) : (
+                      <select value={selectedWhatsapp} onChange={(e) => setSelectedWhatsapp(e.currentTarget.value)}>
+                        {whatsapps?.filter(whatsapp => whatsapp.status === "CONNECTED").map((whatsapp) => (
+                          <option key={whatsapp.id} value={whatsapp.id}>{whatsapp.phone}</option>
+                        ))}
+                      </select>
+                      <button onClick={() => setWhatsapp({ body: { chatId: user.id, whatsappId: selectedWhatsapp } })}>Selecionar</button>
+                    </div>
+                  ) : (
                     <Stack>
                       <TextField
                         inputRef={textInput}
@@ -364,13 +379,94 @@ const Chat = () => {
                             </ClickAwayListener>
                           </Popper>
                         </>
-                        <IconButton sx={{ opacity: 0.5 }} size="medium" color="secondary">
+                        <IconButton
+                          sx={{ opacity: 0.5 }}
+                          size="medium"
+                          color="secondary"
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = '*';
+                            input.onchange = async (e) => {
+                              const file = (e.target as HTMLInputElement).files![0];
+                              const url = await createUploadUrl({})
+
+                              const formData = new FormData();
+                              formData.append('file', file);
+
+                              fetch((url as any).upload_url, {
+                                method: 'PUT',
+                                body: file
+                              })
+
+                              mutateAsync({ body: { content: { file: (url as any).id, file_type: 'document' }, to: user.id! } })
+
+                              input.remove();
+                            }
+
+                            input.click();
+                          }}
+                        >
                           <Paperclip />
                         </IconButton>
-                        <IconButton sx={{ opacity: 0.5 }} size="medium" color="secondary">
+                        <IconButton
+                          sx={{ opacity: 0.5 }}
+                          size="medium"
+                          color="secondary"
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = async (e) => {
+                              const file = (e.target as HTMLInputElement).files![0];
+                              const url = await createUploadUrl({})
+
+                              const formData = new FormData();
+                              formData.append('file', file);
+
+                              fetch((url as any).upload_url, {
+                                method: 'PUT',
+                                body: file
+                              })
+
+                              mutateAsync({ body: { content: { file: (url as any).id, file_type: 'image' }, to: user.id! } })
+
+                              input.remove();
+                            }
+
+                            input.click();
+                          }}
+                        >
                           <Image />
                         </IconButton>
-                        <IconButton sx={{ opacity: 0.5 }} size="medium" color="secondary">
+                        <IconButton
+                          sx={{ opacity: 0.5 }}
+                          size="medium"
+                          color="secondary"
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'audio/*';
+                            input.onchange = async (e) => {
+                              const file = (e.target as HTMLInputElement).files![0];
+                              const url = await createUploadUrl({})
+
+                              const formData = new FormData();
+                              formData.append('file', file);
+
+                              fetch((url as any).upload_url, {
+                                method: 'PUT',
+                                body: file
+                              })
+
+                              mutateAsync({ body: { content: { file: (url as any).id, file_type: 'audio' }, to: user.id! } })
+
+                              input.remove();
+                            }
+
+                            input.click();
+                          }}
+                        >
                           <VolumeHigh />
                         </IconButton>
                       </Stack>

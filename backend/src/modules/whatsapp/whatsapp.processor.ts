@@ -99,4 +99,10 @@ export class WhatsappConsumer {
       lastInteraction,
     );
   }
+
+  @Process('error')
+  async onError({ data: { instanceId, data } }: Event<{ error: string }>) {
+    await this.whatsappService.setStatus(instanceId, Status.PAUSED);
+    this.gateway.io.to(instanceId).emit('whatsapp-error', data.error);
+  }
 }

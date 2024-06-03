@@ -7,6 +7,8 @@ import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import Queue from 'bull';
 import { Status, WhatsappEntity } from '../whatsapp/entities/whatsapp.entity';
+import { InjectMinio } from 'nestjs-minio';
+import { Client } from 'minio';
 
 @Injectable()
 export class ChatService {
@@ -17,6 +19,7 @@ export class ChatService {
     protected readonly messageRepository: Repository<MessageEntity>,
     protected readonly userService: UserService,
     private readonly configService: ConfigService,
+    @InjectMinio() private readonly minioClient: Client,
   ) {}
 
   async handleMessage(
@@ -63,6 +66,18 @@ export class ChatService {
     });
   }
 
+  async setWhatsapp(userId: string, chatId: string, whatsappId: string) {
+    await this.chatRepository.update(
+      {
+        id: chatId,
+        user: { id: userId },
+      },
+      {
+        currentWhatsapp: { id: whatsappId },
+      },
+    );
+  }
+
   async sendMessage(userId: string, to: string, content: any) {
     const chat = await this.chatRepository.findOneOrFail({
       where: { id: to, user: { id: userId } },
@@ -80,10 +95,20 @@ export class ChatService {
       redis: this.configService.get<string>('REDIS_URL'),
     });
 
-    await queue.add('sendMessage', {
-      to: chat.phone,
-      content: content.text,
-    });
+    console.log(content);
+
+    if (content.file) {
+      await queue.add('sendFile', {
+        to: chat.phone,
+        file: content.file,
+        file_type: content.file_type,
+      });
+    } else {
+      await queue.add('sendMessage', {
+        to: chat.phone,
+        content: content.text,
+      });
+    }
   }
 
   async unlinkWhatsapp(userId: string, whatsappId: string) {
@@ -129,5 +154,20 @@ export class ChatService {
   async deleteAll() {
     await this.messageRepository.delete({});
     await this.chatRepository.delete({});
+  }
+
+  async createUploadUrl(user_id: string) {
+    const id = `${user_id}/${new Date().getTime()}`;
+
+    const upload_url = await this.minioClient.presignedPutObject(
+      'zapdiviser',
+      id,
+      60 * 60,
+    );
+
+    return {
+      upload_url,
+      id,
+    };
   }
 }

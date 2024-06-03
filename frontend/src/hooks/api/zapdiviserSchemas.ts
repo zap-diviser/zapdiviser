@@ -166,9 +166,13 @@ export type ChatEntity = {
   updated_at: string;
   phone: string | null;
   name: string | null;
-  user: ChatEntity;
+  user: UserEntity;
   currentWhatsapp: WhatsappEntity;
   messages: MessageEntity[];
+  /**
+   * @format date-time
+   */
+  lastInteraction: string | null;
 };
 
 export type UserEntity = {

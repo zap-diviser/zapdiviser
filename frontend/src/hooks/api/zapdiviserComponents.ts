@@ -945,6 +945,130 @@ export const useWhatsappControllerWebhook = (
   });
 };
 
+export type WhatsappControllerUpdateError = Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerUpdateVariables =
+  ZapdiviserContext["fetcherOptions"];
+
+export const fetchWhatsappControllerUpdate = (
+  variables: WhatsappControllerUpdateVariables,
+  signal?: AbortSignal,
+) =>
+  zapdiviserFetch<
+    undefined,
+    WhatsappControllerUpdateError,
+    undefined,
+    {},
+    {},
+    {}
+  >({ url: "/api/whatsapp/update", method: "post", ...variables, signal });
+
+export const useWhatsappControllerUpdate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      WhatsappControllerUpdateError,
+      WhatsappControllerUpdateVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<
+    undefined,
+    WhatsappControllerUpdateError,
+    WhatsappControllerUpdateVariables
+  >({
+    mutationFn: (variables: WhatsappControllerUpdateVariables) =>
+      fetchWhatsappControllerUpdate({ ...fetcherOptions, ...variables }),
+    ...options,
+  });
+};
+
+export type ChatControllerSetWhatsappError = Fetcher.ErrorWrapper<undefined>;
+
+export type ChatControllerSetWhatsappVariables =
+  ZapdiviserContext["fetcherOptions"];
+
+export const fetchChatControllerSetWhatsapp = (
+  variables: ChatControllerSetWhatsappVariables,
+  signal?: AbortSignal,
+) =>
+  zapdiviserFetch<
+    undefined,
+    ChatControllerSetWhatsappError,
+    undefined,
+    {},
+    {},
+    {}
+  >({ url: "/api/chat/set-whatsapp", method: "post", ...variables, signal });
+
+export const useChatControllerSetWhatsapp = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      ChatControllerSetWhatsappError,
+      ChatControllerSetWhatsappVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<
+    undefined,
+    ChatControllerSetWhatsappError,
+    ChatControllerSetWhatsappVariables
+  >({
+    mutationFn: (variables: ChatControllerSetWhatsappVariables) =>
+      fetchChatControllerSetWhatsapp({ ...fetcherOptions, ...variables }),
+    ...options,
+  });
+};
+
+export type ChatControllerCreateMediaUploadUrlError =
+  Fetcher.ErrorWrapper<undefined>;
+
+export type ChatControllerCreateMediaUploadUrlVariables =
+  ZapdiviserContext["fetcherOptions"];
+
+export const fetchChatControllerCreateMediaUploadUrl = (
+  variables: ChatControllerCreateMediaUploadUrlVariables,
+  signal?: AbortSignal,
+) =>
+  zapdiviserFetch<
+    undefined,
+    ChatControllerCreateMediaUploadUrlError,
+    undefined,
+    {},
+    {},
+    {}
+  >({ url: "/api/chat/upload-file", method: "post", ...variables, signal });
+
+export const useChatControllerCreateMediaUploadUrl = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      ChatControllerCreateMediaUploadUrlError,
+      ChatControllerCreateMediaUploadUrlVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<
+    undefined,
+    ChatControllerCreateMediaUploadUrlError,
+    ChatControllerCreateMediaUploadUrlVariables
+  >({
+    mutationFn: (variables: ChatControllerCreateMediaUploadUrlVariables) =>
+      fetchChatControllerCreateMediaUploadUrl({
+        ...fetcherOptions,
+        ...variables,
+      }),
+    ...options,
+  });
+};
+
 export type ChatControllerSendMessageError = Fetcher.ErrorWrapper<undefined>;
 
 export type ChatControllerSendMessageVariables =
@@ -1099,6 +1223,46 @@ export const useChatControllerGetMessages = <
       ),
     ...options,
     ...queryOptions,
+  });
+};
+
+export type ChatControllerDeleteAllError = Fetcher.ErrorWrapper<undefined>;
+
+export type ChatControllerDeleteAllVariables =
+  ZapdiviserContext["fetcherOptions"];
+
+export const fetchChatControllerDeleteAll = (
+  variables: ChatControllerDeleteAllVariables,
+  signal?: AbortSignal,
+) =>
+  zapdiviserFetch<
+    undefined,
+    ChatControllerDeleteAllError,
+    undefined,
+    {},
+    {},
+    {}
+  >({ url: "/api/chat/delete-all", method: "post", ...variables, signal });
+
+export const useChatControllerDeleteAll = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      ChatControllerDeleteAllError,
+      ChatControllerDeleteAllVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<
+    undefined,
+    ChatControllerDeleteAllError,
+    ChatControllerDeleteAllVariables
+  >({
+    mutationFn: (variables: ChatControllerDeleteAllVariables) =>
+      fetchChatControllerDeleteAll({ ...fetcherOptions, ...variables }),
+    ...options,
   });
 };
 

@@ -25,6 +25,28 @@ interface ChatHistoryProps {
   user: UserProfile;
 }
 
+const Content: React.FC<{ content: { content: any } }> = ({ content: { content } }) => {
+  switch (content.type) {
+    case 'text':
+      return <Typography variant="h6">{content.content}</Typography>;
+    case 'file':
+      switch (content.file_type) {
+        case 'image':
+          return <img src={content.file} alt="file" style={{ maxWidth: '100%' }} />;
+        case 'document':
+          return <Typography variant="h6">Documento: {content.file}</Typography>;
+        case 'video':
+          return <video src={content.file} controls style={{ maxWidth: '100%' }} />;
+        case 'audio':
+          return <audio src={content.file} controls style={{ maxWidth: '100%' }} />;
+        default:
+          return <Typography variant="h6">Este conteúdo não pode ser exibido</Typography>;
+      }
+    default:
+      return <Typography variant="h6">Este conteúdo não pode ser exibido</Typography>;
+  }
+}
+
 const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
   // scroll to bottom when new message is sent or received
   const wrapper = useRef(document.createElement('div'));
@@ -38,8 +60,6 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
   useEffect(() => {
     scrollToBottom();
   }, [data?.length, scrollToBottom]);
-
-  console.log(data)
 
   return (
     <Grid container spacing={2.5} ref={wrapper}>
@@ -68,9 +88,7 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
                       <CardContent sx={{ p: 1, pb: '8px !important', width: 'fit-content', ml: 'auto' }}>
                         <Grid container spacing={1}>
                           <Grid item xs={12}>
-                            <Typography variant="h6" color={theme.palette.common.white} sx={{ overflowWrap: 'anywhere' }}>
-                              {history.content.content ?? "<i>Conteúdo desconhecido</i>"}
-                            </Typography>
+                            <Content content={history.content} />
                           </Grid>
                         </Grid>
                       </CardContent>
@@ -102,9 +120,7 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
                     <CardContent sx={{ p: 1, pb: '8px !important' }}>
                       <Grid container spacing={1}>
                         <Grid item xs={12}>
-                          <Typography variant="h6" color="textPrimary" sx={{ overflowWrap: 'anywhere' }}>
-                            {history.content.content}
-                          </Typography>
+                          <Content content={history.content} />
                         </Grid>
                       </Grid>
                     </CardContent>

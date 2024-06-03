@@ -4,6 +4,7 @@ import makeWASocket, {
   AnyMessageContent,
   delay,
   DisconnectReason,
+  downloadMediaMessage,
   fetchLatestBaileysVersion,
   getAggregateVotesInPollMessage,
   makeCacheableSignalKeyStore,
@@ -31,8 +32,8 @@ function streamToBuffer(stream: Readable): Promise<Buffer> {
 }
 
 const minio = new Client({
-  endPoint: "minio",
-  port: 9000,
+  endPoint: process.env.MINIO_HOST!,
+  port: Number(process.env.MINIO_PORT),
   useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY!,
   secretKey: process.env.MINIO_SECRET_KEY!,
@@ -126,17 +127,31 @@ class Whatsapp {
           for (const msg of events["messages.upsert"].messages) {
             if (
               msg.key.remoteJid !== "status@broadcast"
-              && msg.key.remoteJid?.includes("-") === false
+              && !msg.key.participant
               && !msg.message?.productMessage
             ) {
-              if (msg.message?.audioMessage) {}
-              let message = msg.message?.conversation
-              if (!message) {
-                message = msg.message?.extendedTextMessage?.text
+              let content: any
+
+              if (msg.message?.audioMessage || msg.message?.imageMessage || msg.message?.videoMessage) {
+                const url = `received/${msg.key.remoteJid}/${new Date().toString()}`
+                await minio.putObject(
+                  "zapdiviser",
+                  url,
+                  await downloadMediaMessage(msg, "stream", {}, { logger: this.logger, reuploadRequest: this.sock.updateMediaMessage })
+                )
+
+                content = {
+                  type: "file",
+                  file: url,
+                  file_type: msg.message?.audioMessage ? "audio" : msg.message?.imageMessage ? "image" : "video"
+                }
+              } else if (msg.message?.conversation || msg.message?.extendedTextMessage) {
+                content = { type: "text", content: msg.message?.conversation ?? msg.message?.extendedTextMessage?.text }
               }
-              if (message) {
+
+              if (content) {
                 this.client.sendMessage({
-                  text: message,
+                  content,
                   to: `+${msg.key.remoteJid?.split("@")[0]}`,
                   name: msg.key.fromMe ? null : msg.pushName ?? null,
                   fromMe: msg.key.fromMe ?? false,

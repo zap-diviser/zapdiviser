@@ -8,6 +8,24 @@ import { UserIsAuthenticated } from '@/common/decorators/userIsAuthenticated.dec
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
+  @Post('set-whatsapp')
+  @UserIsAuthenticated()
+  async setWhatsapp(
+    @Req() req: any,
+    @Body('chatId') chatId: string,
+    @Body('whatsappId') whatsappId: string,
+  ) {
+    await this.chatService.setWhatsapp(req.user.id, chatId, whatsappId);
+
+    return { message: 'Whatsapp set' };
+  }
+
+  @Post('upload-file')
+  @UserIsAuthenticated()
+  createMediaUploadUrl(@Req() req: any) {
+    return this.chatService.createUploadUrl(req.user.id);
+  }
+
   @Post('send-message')
   @UserIsAuthenticated()
   async sendMessage(

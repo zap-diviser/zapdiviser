@@ -16,8 +16,8 @@ class Client {
     await this.queue.add("error", { instanceId, data: { error } })
   }
 
-  async sendMessage({ text, to, from, name, fromMe }: { text: string, to: string, from?: string, name: string | null, fromMe: boolean }) {
-    await this.queue.add("message", { instanceId, data: { from, to, content: text, name, fromMe } })
+  async sendMessage({ content, to, from, name, fromMe }: { content: string, to: string, from?: string, name: string | null, fromMe: boolean }) {
+    await this.queue.add("message", { instanceId, data: { from, to, content, name, fromMe } })
   }
 
   async sendFile(file: string, to: string, file_type: 'image' | 'document' | 'video' | 'audio', from) {
