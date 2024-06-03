@@ -157,28 +157,30 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     await BluePromise.map(
       whatsapps,
       async (whatsapp) => {
-        const container = await docker.createContainer({
-          Image: 'whatsapp',
-          name: `zapdiviser-node-${whatsapp.id}`,
-          HostConfig: {
-            NetworkMode:
-              this.configService.get('NODE_ENV') !== 'production'
-                ? 'default'
-                : 'zapdiviser',
-          },
-          Env: [
-            `INSTANCE_ID=${whatsapp.id}`,
-            `REDIS_URL=${this.configService.get('REDIS_URL')}`,
-            `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
-            `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
-          ],
-        });
+        try {
+          const container = await docker.createContainer({
+            Image: 'whatsapp',
+            name: `zapdiviser-node-${whatsapp.id}`,
+            HostConfig: {
+              NetworkMode:
+                this.configService.get('NODE_ENV') !== 'production'
+                  ? 'default'
+                  : 'zapdiviser',
+            },
+            Env: [
+              `INSTANCE_ID=${whatsapp.id}`,
+              `REDIS_URL=${this.configService.get('REDIS_URL')}`,
+              `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
+              `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
+            ],
+          });
 
-        await container.start();
+          await container.start();
 
-        await docker
-          .getContainer(`zapdiviser-node-${whatsapp.id}-old`)
-          .remove();
+          await docker
+            .getContainer(`zapdiviser-node-${whatsapp.id}-old`)
+            .remove();
+        } catch (e) {}
       },
       { concurrency: 10 },
     );
