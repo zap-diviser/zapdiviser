@@ -56,7 +56,11 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       );
       await BluePromise.map(
         containersToStop,
-        (container) => docker.getContainer(container.Id).stop(),
+        async (container) => {
+          try {
+            await docker.getContainer(container.Id).stop();
+          } catch (e) {}
+        },
         { concurrency: 10 },
       );
     }
@@ -221,28 +225,30 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   }
 
   async remove(id: string, user_id: string) {
-    const whatsapp = await this.repository.findOne({
-      where: {
-        id,
-        user_id,
-      },
-    });
+    try {
+      const whatsapp = await this.repository.findOne({
+        where: {
+          id,
+          user_id,
+        },
+      });
 
-    await this.chatService.unlinkWhatsapp(user_id, id);
+      await this.chatService.unlinkWhatsapp(user_id, id);
 
-    if (!whatsapp) throw new HttpException('Whatsapp não encontrado', 404);
+      if (!whatsapp) throw new HttpException('Whatsapp não encontrado', 404);
 
-    const container = docker.getContainer(`zapdiviser-node-${whatsapp.id}`);
-    await container.stop();
+      const container = docker.getContainer(`zapdiviser-node-${whatsapp.id}`);
+      await container.stop();
 
-    whatsapp.products = [];
-    await whatsapp.save();
+      whatsapp.products = [];
+      await whatsapp.save();
 
-    await this.repository.delete({
-      id: whatsapp.id,
-    });
+      await this.repository.delete({
+        id: whatsapp.id,
+      });
 
-    return whatsapp;
+      return whatsapp;
+    } catch (e) {}
   }
 
   async webhook(payload: any, signature: string) {
