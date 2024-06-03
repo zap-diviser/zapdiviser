@@ -95,8 +95,6 @@ export class ChatService {
       redis: this.configService.get<string>('REDIS_URL'),
     });
 
-    console.log(content);
-
     if (content.file) {
       await queue.add('sendFile', {
         to: chat.phone,
