@@ -37,19 +37,22 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       whatsapps,
       async (whatsapp) => {
         if (
-          containersNames.some((names) =>
-            names.some((name) => name === `/zapdiviser-node-${whatsapp.id}`),
+          !containersNames.some((names) =>
+            names.some((name) =>
+              name.includes(`zapdiviser-node-${whatsapp.id}`),
+            ),
           )
         ) {
           await this.create(whatsapp.user_id, whatsapp);
-          return;
-        }
+        } else {
+          const container = docker.getContainer(
+            `zapdiviser-node-${whatsapp.id}`,
+          );
+          const { State } = await container.inspect();
 
-        const container = docker.getContainer(`zapdiviser-node-${whatsapp.id}`);
-        const { State } = await container.inspect();
-
-        if (!State.Running) {
-          await container.start();
+          if (!State.Running) {
+            await container.start();
+          }
         }
       },
       { concurrency: 10 },
