@@ -54,7 +54,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         }
       },
       { concurrency: 10 },
-    );
+    ).catch(console.error);
   }
 
   async onModuleDestroy() {
@@ -73,7 +73,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
           } catch (e) {}
         },
         { concurrency: 10 },
-      );
+      ).catch(console.error);
     }
   }
 
@@ -193,7 +193,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         });
       },
       { concurrency: 10 },
-    );
+    ).catch(console.error);
 
     await BluePromise.map(
       whatsapps,
@@ -218,7 +218,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         await container.start();
       },
       { concurrency: 10 },
-    );
+    ).catch(console.error);
   }
 
   async stopOldWhatsapp(instanceId: string) {
