@@ -25,9 +25,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async onModuleInit() {
-    const whatsapps = await this.repository.find({
-      where: { status: Status.CONNECTED },
-    });
+    const whatsapps = await this.repository.find();
 
     const containersNames = (await docker.listContainers({ all: true })).map(
       (container) => container.Names,
