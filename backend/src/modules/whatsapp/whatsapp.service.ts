@@ -44,10 +44,14 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
           const container = docker.getContainer(
             `zapdiviser-node-${whatsapp.id}`,
           );
-          const { State } = await container.inspect();
+          try {
+            const { State } = await container.inspect();
 
-          if (!State.Running) {
-            await container.start();
+            if (!State.Running) {
+              await container.start();
+            }
+          } catch (error) {
+            console.error(`Error inspecting container ${whatsapp.id}:`, error);
           }
         }
       },
