@@ -128,18 +128,6 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
 
     const id = whatsapp.id;
 
-    const containersNames = (await docker.listContainers({ all: true })).map(
-      (container) => container.Names,
-    );
-
-    if (
-      containersNames.some((names) => names.some((name) => name.includes(id)))
-    ) {
-      const container = docker.getContainer(`zapdiviser-node-${id}`);
-      await container.stop();
-      await container.remove();
-    }
-
     const container = await docker.createContainer({
       Image: 'whatsapp',
       name: `zapdiviser-node-${id}`,
@@ -176,17 +164,31 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     await BluePromise.map(
       whatsapps,
       async (whatsapp) => {
-        if (containersNames.some((names) => names.includes(whatsapp.id))) {
-          const container = docker.getContainer(
-            `zapdiviser-node-${whatsapp.id}-old`,
-          );
-          await container.stop();
-          await container.remove();
-        }
+        if (
+          containersNames.some((names) =>
+            names.some((name) =>
+              name.startsWith(`/zapdiviser-node-${whatsapp.id}`),
+            ),
+          )
+        ) {
+          if (
+            containersNames.some((names) =>
+              names.some((name) =>
+                name.startsWith(`/zapdiviser-node-${whatsapp.id}-old`),
+              ),
+            )
+          ) {
+            const container = docker.getContainer(
+              `zapdiviser-node-${whatsapp.id}-old`,
+            );
+            await container.stop();
+            await container.remove();
+          }
 
-        await docker.getContainer(`zapdiviser-node-${whatsapp.id}`).rename({
-          name: `zapdiviser-node-${whatsapp.id}-old`,
-        });
+          await docker.getContainer(`zapdiviser-node-${whatsapp.id}`).rename({
+            name: `zapdiviser-node-${whatsapp.id}-old`,
+          });
+        }
       },
       { concurrency: 10 },
     );
@@ -218,10 +220,24 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   }
 
   async stopOldWhatsapp(instanceId: string) {
-    const container = docker.getContainer(`zapdiviser-node-${instanceId}-old`);
+    const containersNames = (await docker.listContainers({ all: true })).map(
+      (container) => container.Names,
+    );
 
-    await container.stop();
-    await container.remove();
+    if (
+      containersNames.some((names) =>
+        names.some((name) =>
+          name.startsWith(`/zapdiviser-node-${instanceId}-old`),
+        ),
+      )
+    ) {
+      const container = docker.getContainer(
+        `zapdiviser-node-${instanceId}-old`,
+      );
+
+      await container.stop();
+      await container.remove();
+    }
   }
 
   async updateCode() {
