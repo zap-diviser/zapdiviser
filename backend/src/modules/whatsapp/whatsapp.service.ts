@@ -34,25 +34,26 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     await BluePromise.map(
       whatsapps,
       async (whatsapp) => {
-        if (
-          !containersNames.some((name) =>
-            name.some((n) => n.includes(whatsapp.id)),
-          )
-        ) {
-          await this.create(whatsapp.user_id, whatsapp);
-        } else {
-          const container = docker.getContainer(
-            `zapdiviser-node-${whatsapp.id}`,
-          );
-          try {
+        try {
+          if (
+            !containersNames.some((name) =>
+              name.some((n) => n.includes(whatsapp.id)),
+            )
+          ) {
+            await this.create(whatsapp.user_id, whatsapp);
+          } else {
+            const container = docker.getContainer(
+              `zapdiviser-node-${whatsapp.id}`,
+            );
+
             const { State } = await container.inspect();
 
             if (!State.Running) {
               await container.start();
             }
-          } catch (error) {
-            console.error(`Error inspecting container ${whatsapp.id}:`, error);
           }
+        } catch (e) {
+          console.log(e);
         }
       },
       { concurrency: 10 },
@@ -72,7 +73,9 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         async (container) => {
           try {
             await docker.getContainer(container.Id).stop();
-          } catch (e) {}
+          } catch (e) {
+            console.log(e);
+          }
         },
         { concurrency: 10 },
       );
@@ -164,30 +167,37 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     await BluePromise.map(
       whatsapps,
       async (whatsapp) => {
-        if (
-          containersNames.some((names) =>
-            names.some((name) =>
-              name.startsWith(`/zapdiviser-node-${whatsapp.id}`),
-            ),
-          )
-        ) {
+        try {
           if (
             containersNames.some((names) =>
               names.some((name) =>
-                name.startsWith(`/zapdiviser-node-${whatsapp.id}-old`),
+                name.startsWith(`/zapdiviser-node-${whatsapp.id}`),
               ),
             )
           ) {
-            const container = docker.getContainer(
-              `zapdiviser-node-${whatsapp.id}-old`,
-            );
-            await container.stop();
-            await container.remove();
-          }
+            if (
+              containersNames.some((names) =>
+                names.some((name) =>
+                  name.startsWith(`/zapdiviser-node-${whatsapp.id}-old`),
+                ),
+              )
+            ) {
+              const container = docker.getContainer(
+                `zapdiviser-node-${whatsapp.id}-old`,
+              );
 
-          await docker.getContainer(`zapdiviser-node-${whatsapp.id}`).rename({
-            name: `zapdiviser-node-${whatsapp.id}-old`,
-          });
+              if ((await container.inspect()).State.Running) {
+                await container.stop();
+                await container.remove();
+              }
+            }
+
+            await docker.getContainer(`zapdiviser-node-${whatsapp.id}`).rename({
+              name: `zapdiviser-node-${whatsapp.id}-old`,
+            });
+          }
+        } catch (e) {
+          console.log(e);
         }
       },
       { concurrency: 10 },
@@ -196,24 +206,28 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     await BluePromise.map(
       whatsapps,
       async (whatsapp) => {
-        const container = await docker.createContainer({
-          Image: 'whatsapp',
-          name: `zapdiviser-node-${whatsapp.id}`,
-          HostConfig: {
-            NetworkMode:
-              this.configService.get('NODE_ENV') !== 'production'
-                ? 'default'
-                : 'zapdiviser',
-          },
-          Env: [
-            `INSTANCE_ID=${whatsapp.id}`,
-            `REDIS_URL=${this.configService.get('REDIS_URL')}`,
-            `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
-            `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
-          ],
-        });
+        try {
+          const container = await docker.createContainer({
+            Image: 'whatsapp',
+            name: `zapdiviser-node-${whatsapp.id}`,
+            HostConfig: {
+              NetworkMode:
+                this.configService.get('NODE_ENV') !== 'production'
+                  ? 'default'
+                  : 'zapdiviser',
+            },
+            Env: [
+              `INSTANCE_ID=${whatsapp.id}`,
+              `REDIS_URL=${this.configService.get('REDIS_URL')}`,
+              `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
+              `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
+            ],
+          });
 
-        await container.start();
+          await container.start();
+        } catch (e) {
+          console.log(e);
+        }
       },
       { concurrency: 10 },
     );
