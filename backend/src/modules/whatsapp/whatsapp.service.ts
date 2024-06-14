@@ -61,6 +61,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
+    /*
     if (this.configService.get('NODE_ENV') !== 'production') {
       const containers = await docker.listContainers({ all: true });
       const containersToStop = containers.filter(
@@ -80,6 +81,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         { concurrency: 10 },
       );
     }
+    */
   }
 
   async findAll(user_id: string) {

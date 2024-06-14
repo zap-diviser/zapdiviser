@@ -399,7 +399,7 @@ const Chat = () => {
                                 body: file
                               })
 
-                              mutateAsync({ body: { content: { file: (url as any).id, file_type: 'document' }, to: user.id! } })
+                              mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'document' }, to: user.id! } })
 
                               input.remove();
                             }
@@ -429,7 +429,7 @@ const Chat = () => {
                                 body: file
                               })
 
-                              mutateAsync({ body: { content: { file: (url as any).id, file_type: 'image' }, to: user.id! } })
+                              mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'image' }, to: user.id! } })
 
                               input.remove();
                             }
@@ -459,7 +459,7 @@ const Chat = () => {
                                 body: file
                               })
 
-                              mutateAsync({ body: { content: { file: (url as any).id, file_type: 'audio' }, to: user.id! } })
+                              mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'audio' }, to: user.id! } })
 
                               input.remove();
                             }
