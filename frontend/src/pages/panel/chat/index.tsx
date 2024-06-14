@@ -185,7 +185,7 @@ const Chat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [selectedWhatsapp, setSelectedWhatsapp] = useState<string>("")
+  const [selectedWhatsapp, setSelectedWhatsapp] = useState<string>(whatsapps?.[0].id ?? "")
 
   if (loading) return <Loader />;
 

@@ -282,30 +282,35 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   }
 
   async remove(id: string, user_id: string) {
+    const whatsapp = await this.repository.findOne({
+      where: {
+        id,
+        user_id,
+      },
+    });
+
+    await this.chatService.unlinkWhatsapp(user_id, id);
+
+    if (!whatsapp) throw new HttpException('Whatsapp não encontrado', 404);
+
     try {
-      const whatsapp = await this.repository.findOne({
-        where: {
-          id,
-          user_id,
-        },
-      });
-
-      await this.chatService.unlinkWhatsapp(user_id, id);
-
-      if (!whatsapp) throw new HttpException('Whatsapp não encontrado', 404);
-
       const container = docker.getContainer(`zapdiviser-node-${whatsapp.id}`);
-      await container.stop();
+      if ((await container.inspect()).State.Running) {
+        await container.stop();
+      }
+      await container.remove();
+    } catch (e) {
+      console.log(e);
+    }
 
-      whatsapp.products = [];
-      await whatsapp.save();
+    whatsapp.products = [];
+    await whatsapp.save();
 
-      await this.repository.delete({
-        id: whatsapp.id,
-      });
+    await this.repository.delete({
+      id: whatsapp.id,
+    });
 
-      return whatsapp;
-    } catch (e) {}
+    return whatsapp;
   }
 
   async webhook(payload: any, signature: string) {
