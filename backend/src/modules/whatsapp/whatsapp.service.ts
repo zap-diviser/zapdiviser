@@ -143,6 +143,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
             : 'zapdiviser',
       },
       Env: [
+        `NODE_ENV=${this.configService.get('NODE_ENV')}`,
         `INSTANCE_ID=${id}`,
         `REDIS_URL=${this.configService.get('REDIS_URL')}`,
         `MINIO_HOST=${this.configService.get('MINIO_HOST')}`,
