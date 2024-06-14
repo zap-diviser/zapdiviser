@@ -25,7 +25,7 @@ interface ChatHistoryProps {
   user: UserProfile;
 }
 
-const Content: React.FC<{ content: { content: any } }> = ({ content: { content } }) => {
+const Content: React.FC<{ content: any }> = ({ content }) => {
   switch (content.type) {
     case 'text':
       return <Typography variant="h6">{content.content}</Typography>;
