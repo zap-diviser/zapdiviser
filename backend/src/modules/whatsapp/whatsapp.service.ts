@@ -223,6 +223,8 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
               `REDIS_URL=${this.configService.get('REDIS_URL')}`,
               `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
               `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
+              `MINIO_HOST=${this.configService.get('MINIO_HOST')}`,
+              `MINIO_PORT=${this.configService.get('MINIO_PORT')}`,
             ],
           });
 

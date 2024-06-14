@@ -146,7 +146,7 @@ class Whatsapp {
                   file_type: msg.message?.audioMessage ? "audio" : msg.message?.imageMessage ? "image" : "video"
                 }
               } else if (msg.message?.conversation || msg.message?.extendedTextMessage) {
-                content = { type: "text", content: msg.message?.conversation ?? msg.message?.extendedTextMessage?.text }
+                content = { type: "text", content: msg.message?.conversation || msg.message?.extendedTextMessage?.text }
               }
 
               if (content) {
