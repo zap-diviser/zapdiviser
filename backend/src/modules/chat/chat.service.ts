@@ -95,17 +95,20 @@ export class ChatService {
       redis: this.configService.get<string>('REDIS_URL'),
     });
 
-    if (content.file) {
-      await queue.add('sendFile', {
-        to: chat.phone,
-        file: content.file,
-        file_type: content.file_type,
-      });
-    } else {
-      await queue.add('sendMessage', {
-        to: chat.phone,
-        content: content.text,
-      });
+    switch (content.type) {
+      case 'file':
+        await queue.add('sendFile', {
+          to: chat.phone,
+          file: content.file,
+          file_type: content.file_type,
+        });
+        break;
+      case 'text':
+        await queue.add('sendMessage', {
+          to: chat.phone,
+          content: content.content,
+        });
+        break;
     }
   }
 
