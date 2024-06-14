@@ -144,7 +144,7 @@ const Chat = () => {
         })
       );
     } else {
-      mutateAsync({ body: { content: { text: message }, to: user.id! } })
+      mutateAsync({ body: { content: { type: "text", content: message }, to: user.id! } })
     }
     setMessage('');
   };

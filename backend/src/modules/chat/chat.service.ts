@@ -146,6 +146,7 @@ export class ChatService {
       relations: {
         chat: { currentWhatsapp: true },
       },
+      order: { created_at: 'ASC' },
     });
   }
 

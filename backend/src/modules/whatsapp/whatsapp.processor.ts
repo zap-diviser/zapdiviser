@@ -78,7 +78,7 @@ export class WhatsappConsumer {
     fromMe: boolean;
   }>) {
     await this.chatService.handleMessage(
-      { type: 'text', content },
+      content,
       to,
       await this.whatsappService.getInstance(instanceId),
       name,
