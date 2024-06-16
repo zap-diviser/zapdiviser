@@ -48,6 +48,7 @@ export default class Worker {
         await this.whatsapp.sendImage(file, to)
 
         break
+
     }
   }
 }

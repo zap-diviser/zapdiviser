@@ -141,12 +141,11 @@ export class ProductController {
     );
   }
 
-  //WEBHOOK
   @Post('webhook/:id')
   @ApiBody({
     type: Object,
   })
-  webhook(@Param('id') id: string, @Req() req: any) {
-    return this.productService.webhook(id, req.body);
+  webhook(@Param('id') id: string, @Body() body: any) {
+    return this.productService.webhook(id, body);
   }
 }

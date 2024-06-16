@@ -43,15 +43,22 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     TypeOrmModule.forRoot(configOptions),
     WinstonModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        transports: [
-          configService.get('NODE_ENV') === 'production'
-            ? new LokiTransport({
-                host: 'http://loki:3100',
-              })
-            : new winston.transports.Console(),
-        ],
-      }),
+      useFactory: (configService: ConfigService) => {
+        const transports: winston.transport[] = [
+          new winston.transports.Console(),
+        ];
+
+        if (configService.get('NODE_ENV') === 'production') {
+          transports.push(
+            new LokiTransport({
+              host: 'http://loki:3100',
+            }),
+          );
+        }
+        return {
+          transports,
+        };
+      },
       inject: [ConfigService],
     }),
     AdminJsModule,

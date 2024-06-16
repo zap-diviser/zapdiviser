@@ -34,7 +34,6 @@ export async function bootstrap() {
     bodyParser: true,
   });
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.text({ type: 'text/html' }));
   app.use(bodyParser.json());
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));

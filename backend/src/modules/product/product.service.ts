@@ -39,6 +39,7 @@ export class ProductService {
   ) {}
 
   async webhook(product_id: string, body: any) {
+    console.log(body);
     const data = handle(body);
 
     if (!data) throw new HttpException('Evento não encontrado', 200);
