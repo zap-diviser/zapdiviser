@@ -389,9 +389,7 @@ const Chat = () => {
                               const file = (e.target as HTMLInputElement).files![0];
                               const url = await createUploadUrl({})
 
-                              const filename = file.name;
-
-                              const fileType = mimetypes.lookup(filename) || "other"
+                              const fileType = file.type;
 
                               const formData = new FormData();
                               formData.append('file', file);
