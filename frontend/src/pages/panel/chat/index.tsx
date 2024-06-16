@@ -391,7 +391,7 @@ const Chat = () => {
 
                               const filename = file.name;
 
-                              const fileType = mimetypes.lookup(filename);
+                              const fileType = mimetypes.lookup(filename) || "other"
 
                               const formData = new FormData();
                               formData.append('file', file);
