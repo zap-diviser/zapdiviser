@@ -385,11 +385,11 @@ const Chat = () => {
                             input.type = 'file';
                             input.accept = '*';
                             input.onchange = async (e) => {
-                              const { fileTypeFromBuffer } = await import('file-type');
+                              const { fileTypeFromBlob } = await import('file-type');
                               const file = (e.target as HTMLInputElement).files![0];
                               const url = await createUploadUrl({})
 
-                              const fileType = await fileTypeFromBuffer(await file.arrayBuffer())
+                              const fileType = await fileTypeFromBlob(file);
 
                               const formData = new FormData();
                               formData.append('file', file);
