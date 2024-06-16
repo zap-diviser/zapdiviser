@@ -19,6 +19,7 @@ import {
 
 // third-party
 import EmojiPicker, { SkinTones, EmojiClickData } from 'emoji-picker-react';
+import mimetypes from 'mime-types';
 
 // project-imports
 import ChatDrawer from './components/ChatDrawer';
@@ -385,11 +386,12 @@ const Chat = () => {
                             input.type = 'file';
                             input.accept = '*';
                             input.onchange = async (e) => {
-                              const { fileTypeFromBlob } = await import('file-type');
                               const file = (e.target as HTMLInputElement).files![0];
                               const url = await createUploadUrl({})
 
-                              const fileType = await fileTypeFromBlob(file);
+                              const filename = file.name;
+
+                              const fileType = mimetypes.lookup(filename);
 
                               const formData = new FormData();
                               formData.append('file', file);
@@ -399,13 +401,13 @@ const Chat = () => {
                                 body: file
                               })
 
-                              if (fileType?.mime?.includes('image')) {
+                              if (fileType.includes('image')) {
                                 mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'image' }, to: user.id! } })
-                              } else if (fileType?.mime?.includes('audio')) {
+                              } else if (fileType.includes('audio')) {
                                 mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'audio' }, to: user.id! } })
-                              } else if (fileType?.mime?.includes('video')) {
+                              } else if (fileType.includes('video')) {
                                 mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'video' }, to: user.id! } })
-                              } else if (fileType?.mime?.includes('document')) {
+                              } else if (fileType.includes('document')) {
                                 mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'document' }, to: user.id! } })
                               }
                               input.remove();
