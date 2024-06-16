@@ -1,5 +1,4 @@
-// assets
-import { Card, MoneySend, ShoppingCart } from 'iconsax-react';
+import { Card, MoneySend, ShoppingCart, ClipboardText } from 'iconsax-react';
 
 // type
 import { NavItemType } from 'types/menu';
@@ -10,7 +9,8 @@ import { NavItemType } from 'types/menu';
 const icons = {
   card: Card,
   pix: MoneySend,
-  cart: ShoppingCart
+  cart: ShoppingCart,
+  form: ClipboardText
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -81,6 +81,23 @@ const getMainItems = (product_id: string) => {
             title: 'Carrinho Abandonado',
             type: 'item',
             url: `/funil/produtos/${product_id}/editar-eventos/cart_abandoned`,
+            breadcrumbs: false
+          }
+        ]
+      },
+      {
+        id: 'form_submitted',
+        title: 'Formulário',
+        breadcrumbs: false,
+        type: 'collapse',
+        icon: icons.form,
+        url: `/funil/produtos/${product_id}/editar-eventos/form_submitted`,
+        children: [
+          {
+            id: 'form_submitted',
+            title: 'Formulário Enviado',
+            type: 'item',
+            url: `/funil/produtos/${product_id}/editar-eventos/form_submitted`,
             breadcrumbs: false
           }
         ]

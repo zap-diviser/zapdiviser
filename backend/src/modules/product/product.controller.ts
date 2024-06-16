@@ -146,7 +146,7 @@ export class ProductController {
   @ApiBody({
     type: Object,
   })
-  webhook(@Param('id') id: string, @Body() body = {}) {
-    return this.productService.webhook(id, body);
+  webhook(@Param('id') id: string, @Req() req: any) {
+    return this.productService.webhook(id, req.body);
   }
 }

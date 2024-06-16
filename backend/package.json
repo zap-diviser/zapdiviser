@@ -99,6 +99,7 @@
     "@swc/core": "^1.5.5",
     "@types/bcrypt": "^5.0.2",
     "@types/bluebird": "^3.5.42",
+    "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/dockerode": "^3.3.29",
     "@types/dotenv": "^8.2.0",

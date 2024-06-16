@@ -8,6 +8,7 @@ import './common/commands/create-database';
 import configBullBoard from './common/config/bull-board';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import Promise from 'bluebird';
+import * as bodyParser from 'body-parser';
 
 process.on('unhandledRejection', (e) => {
   console.log(e);
@@ -29,7 +30,12 @@ export async function bootstrap() {
       credentials: true,
     },
     bufferLogs: true,
+    rawBody: true,
+    bodyParser: true,
   });
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.text({ type: 'text/html' }));
+  app.use(bodyParser.json());
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 

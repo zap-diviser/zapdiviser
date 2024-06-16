@@ -41,8 +41,6 @@ export class ProductService {
   async webhook(product_id: string, body: any) {
     const data = handle(body);
 
-    this.logger.log(`webhook - data: ${JSON.stringify(body, null, 2)}`);
-
     if (!data) throw new HttpException('Evento não encontrado', 200);
 
     const productFlowEvents = await this.productFlowRepository.findOne({
@@ -58,8 +56,9 @@ export class ProductService {
       },
     });
 
-    if (!productFlowEvents)
+    if (!productFlowEvents) {
       throw new HttpException('Evento não encontrado para este produto', 200);
+    }
 
     const lastInstanceOccurrence = await this.eventsHistoryRepository.findOne({
       where: {

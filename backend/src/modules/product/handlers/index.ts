@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 type Events =
+  | 'form_submitted'
   | 'card_approved'
   | 'card_declined'
   | 'pix_generated'
@@ -405,6 +406,22 @@ const handlers: Handler[] = [
           );
         },
         mapTo: 'pix_approved',
+      },
+    ],
+  },
+  {
+    name: 'elementor',
+    detect: (data) => {
+      return _.has(data, 'form_id');
+    },
+    eventPath: 'form_id',
+    namePath: 'name',
+    phonePath: 'phone',
+    eventMap: [
+      {
+        type: 'function',
+        fn: () => true,
+        mapTo: 'form_submitted',
       },
     ],
   },

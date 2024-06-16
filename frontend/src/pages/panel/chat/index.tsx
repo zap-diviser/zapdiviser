@@ -42,12 +42,9 @@ import {
   DocumentDownload,
   EmojiHappy,
   HambergerMenu,
-  Image,
   More,
   Paperclip,
-  Send,
   Trash,
-  VolumeHigh,
   VolumeMute
 } from 'iconsax-react';
 
@@ -388,8 +385,11 @@ const Chat = () => {
                             input.type = 'file';
                             input.accept = '*';
                             input.onchange = async (e) => {
+                              const { fileTypeFromBuffer } = await import('file-type');
                               const file = (e.target as HTMLInputElement).files![0];
                               const url = await createUploadUrl({})
+
+                              const fileType = await fileTypeFromBuffer(await file.arrayBuffer())
 
                               const formData = new FormData();
                               formData.append('file', file);
@@ -399,8 +399,15 @@ const Chat = () => {
                                 body: file
                               })
 
-                              mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'document' }, to: user.id! } })
-
+                              if (fileType?.mime?.includes('image')) {
+                                mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'image' }, to: user.id! } })
+                              } else if (fileType?.mime?.includes('audio')) {
+                                mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'audio' }, to: user.id! } })
+                              } else if (fileType?.mime?.includes('video')) {
+                                mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'video' }, to: user.id! } })
+                              } else if (fileType?.mime?.includes('document')) {
+                                mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'document' }, to: user.id! } })
+                              }
                               input.remove();
                             }
 
@@ -409,70 +416,7 @@ const Chat = () => {
                         >
                           <Paperclip />
                         </IconButton>
-                        <IconButton
-                          sx={{ opacity: 0.5 }}
-                          size="medium"
-                          color="secondary"
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.onchange = async (e) => {
-                              const file = (e.target as HTMLInputElement).files![0];
-                              const url = await createUploadUrl({})
-
-                              const formData = new FormData();
-                              formData.append('file', file);
-
-                              fetch((url as any).upload_url, {
-                                method: 'PUT',
-                                body: file
-                              })
-
-                              mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'image' }, to: user.id! } })
-
-                              input.remove();
-                            }
-
-                            input.click();
-                          }}
-                        >
-                          <Image />
-                        </IconButton>
-                        <IconButton
-                          sx={{ opacity: 0.5 }}
-                          size="medium"
-                          color="secondary"
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'audio/*';
-                            input.onchange = async (e) => {
-                              const file = (e.target as HTMLInputElement).files![0];
-                              const url = await createUploadUrl({})
-
-                              const formData = new FormData();
-                              formData.append('file', file);
-
-                              fetch((url as any).upload_url, {
-                                method: 'PUT',
-                                body: file
-                              })
-
-                              mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'audio' }, to: user.id! } })
-
-                              input.remove();
-                            }
-
-                            input.click();
-                          }}
-                        >
-                          <VolumeHigh />
-                        </IconButton>
                       </Stack>
-                      <IconButton color="primary" onClick={handleOnSend} size="large" sx={{ mr: 1.5 }}>
-                        <Send />
-                      </IconButton>
                     </Stack>
                   </Stack>
                   )}
