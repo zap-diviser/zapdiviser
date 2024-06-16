@@ -20,7 +20,7 @@ class Client {
     await this.queue.add("message", { instanceId, data: { from, to, content, name, fromMe } })
   }
 
-  async sendFile(file: string, to: string, file_type: 'image' | 'document' | 'video' | 'audio', from) {
+  async sendFile(file: string, to: string, file_type: 'image' | 'document' | 'video' | 'audio', from: string) {
     await this.queue.add("file", { instanceId, data: { from, to, file, file_type } })
   }
 

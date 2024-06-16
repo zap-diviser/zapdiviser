@@ -17,6 +17,7 @@ import { useRedisAuthState } from "./auth"
 import { Client } from "minio"
 import { Readable } from "stream"
 import ServerClient from "../client"
+import redis from "../redis"
 
 function streamToBuffer(stream: Readable): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -44,6 +45,9 @@ class Whatsapp {
   sock: ReturnType<typeof makeWASocket>
   logger = MAIN_LOGGER.child({})
   msgRetryCounterCache = new NodeCache()
+  mediaCache = new NodeCache()
+  callOfferCache = new NodeCache()
+  userDevicesCache = new NodeCache()
   hasStarted = false
   client: ServerClient
 
@@ -52,12 +56,77 @@ class Whatsapp {
     this.instanceId = instanceId
 
     this.logger.level = "trace"
+
+    this.msgRetryCounterCache.on("set", async (key, value) => {
+      await redis.set(`whatsapp:${this.instanceId}:msgRetryCounter:${key}`, value)
+    })
+    this.msgRetryCounterCache.on("del", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:msgRetryCounter:${key}`)
+    })
+    this.msgRetryCounterCache.on("expired", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:msgRetryCounter:${key}`)
+    })
+    this.msgRetryCounterCache.on("flush", async () => {
+      await redis.del(`whatsapp:${this.instanceId}:msgRetryCounter`)
+    })
+
+    this.mediaCache.on("set", async (key, value) => {
+      await redis.set(`whatsapp:${this.instanceId}:media:${key}`, value)
+    })
+    this.mediaCache.on("del", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:media:${key}`)
+    })
+    this.mediaCache.on("expired", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:media:${key}`)
+    })
+    this.mediaCache.on("flush", async () => {
+      await redis.del(`whatsapp:${this.instanceId}:media`)
+    })
+
+    this.callOfferCache.on("set", async (key, value) => {
+      await redis.set(`whatsapp:${this.instanceId}:callOffer:${key}`, value)
+    })
+    this.callOfferCache.on("del", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:callOffer:${key}`)
+    })
+    this.callOfferCache.on("expired", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:callOffer:${key}`)
+    })
+    this.callOfferCache.on("flush", async () => {
+      await redis.del(`whatsapp:${this.instanceId}:callOffer`)
+    })
+
+    this.userDevicesCache.on("set", async (key, value) => {
+      await redis.set(`whatsapp:${this.instanceId}:userDevices:${key}`, value)
+    })
+    this.userDevicesCache.on("del", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:userDevices:${key}`)
+    })
+    this.userDevicesCache.on("expired", async (key) => {
+      await redis.del(`whatsapp:${this.instanceId}:userDevices:${key}`)
+    })
+    this.userDevicesCache.on("flush", async () => {
+      await redis.del(`whatsapp:${this.instanceId}:userDevices`)
+    })
   }
 
   async startSock() {
     const { state, saveCreds, clearData } = await useRedisAuthState(this.instanceId)
     const { version, isLatest } = await fetchLatestBaileysVersion()
     console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}`)
+
+    Object.entries(await redis.hgetall(`whatsapp:${this.instanceId}:msgRetryCounter`)).forEach(([key, value]) => {
+      this.msgRetryCounterCache.set(key, value)
+    })
+    Object.entries(await redis.hgetall(`whatsapp:${this.instanceId}:media`)).forEach(([key, value]) => {
+      this.mediaCache.set(key, value)
+    })
+    Object.entries(await redis.hgetall(`whatsapp:${this.instanceId}:callOffer`)).forEach(([key, value]) => {
+      this.callOfferCache.set(key, value)
+    })
+    Object.entries(await redis.hgetall(`whatsapp:${this.instanceId}:userDevices`)).forEach(([key, value]) => {
+      this.userDevicesCache.set(key, value)
+    })
 
     this.sock = makeWASocket({
       version,
@@ -67,6 +136,9 @@ class Whatsapp {
         keys: makeCacheableSignalKeyStore(state.keys, this.logger)
       },
       msgRetryCounterCache: this.msgRetryCounterCache,
+      mediaCache: this.mediaCache,
+      callOfferCache: this.callOfferCache,
+      userDevicesCache: this.userDevicesCache,
       generateHighQualityLinkPreview: true,
       syncFullHistory: true,
       browser: ["Zapdivizer", "Zapdivizer", "1.0.0"],
@@ -153,9 +225,9 @@ class Whatsapp {
                 this.client.sendMessage({
                   content,
                   to: `+${msg.key.remoteJid?.split("@")[0]}`,
-                  name: msg.key.fromMe ? null : msg.pushName ?? null,
+                  name: msg.key.fromMe ? null : msg.pushName ?? `+${msg.key.remoteJid?.split("@")[0]}`,
                   fromMe: msg.key.fromMe ?? false,
-                  from: msg.key.fromMe ? `+${msg.key.remoteJid?.split("@")[0]}` : this.getSelfPhone()
+                  from: msg.key.fromMe ? this.getSelfPhone() : `+${msg.key.remoteJid?.split("@")[0]}`
                 })
               }
             }
@@ -260,11 +332,11 @@ class Whatsapp {
       const buffer = await streamToBuffer(stream)
 
       await this.sendMessageBase(msg(buffer), phone)
-     })
+    })
   }
 
   async sendAudio(url: string, phone: string) {
-    await this.sendMediaMessageBase(url, (buffer) => ({ audio: buffer, mimetype: 'audio/mp3', ptt: true }), phone)
+    await this.sendMediaMessageBase(url, (buffer) => ({ audio: buffer, mimetype: 'audio/mp4', ptt: true }), phone)
   }
 
   async sendVideo(url: string, phone: string) {
@@ -273,6 +345,10 @@ class Whatsapp {
 
   async sendImage(url: string, phone: string) {
     await this.sendMediaMessageBase(url, (buffer) => ({ image: buffer }), phone)
+  }
+
+  async sendDocument(url: string, phone: string) {
+    await this.sendMediaMessageBase(url, (buffer) => ({ document: buffer, fileName: "test.pdf", mimetype: "application/pdf" }), phone)
   }
 
   async getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {

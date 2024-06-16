@@ -8,13 +8,15 @@ export class CreateFlowEventDto {
     'pix_generated',
     'pix_approved',
     'cart_abandoned',
+    'form_submitted',
   ])
   flow_name:
     | 'card_approved'
     | 'card_declined'
     | 'pix_generated'
     | 'pix_approved'
-    | 'cart_abandoned';
+    | 'cart_abandoned'
+    | 'form_submitted';
 
   @IsString()
   product_id: string;
