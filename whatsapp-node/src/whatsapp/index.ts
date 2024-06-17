@@ -57,6 +57,7 @@ class Whatsapp {
 
     this.logger.level = "trace"
 
+    /*
     this.msgRetryCounterCache.on("set", async (key, value) => {
       await redis.set(`whatsapp:${this.instanceId}:msgRetryCounter:${key}`, value)
     })
@@ -108,6 +109,7 @@ class Whatsapp {
     this.userDevicesCache.on("flush", async () => {
       await redis.del(`whatsapp:${this.instanceId}:userDevices`)
     })
+    */
   }
 
   async startSock() {
@@ -115,6 +117,7 @@ class Whatsapp {
     const { version, isLatest } = await fetchLatestBaileysVersion()
     console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}`)
 
+    /*
     Object.entries(await redis.hgetall(`whatsapp:${this.instanceId}:msgRetryCounter`)).forEach(([key, value]) => {
       this.msgRetryCounterCache.set(key, value)
     })
@@ -127,6 +130,7 @@ class Whatsapp {
     Object.entries(await redis.hgetall(`whatsapp:${this.instanceId}:userDevices`)).forEach(([key, value]) => {
       this.userDevicesCache.set(key, value)
     })
+    */
 
     this.sock = makeWASocket({
       version,
