@@ -81,8 +81,6 @@ services:
       - traefik
     depends_on:
       - backend
-    environment:
-      VITE_BACKEND_URL: backend.${HOST}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`app.${HOST}`)"
