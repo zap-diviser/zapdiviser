@@ -57,10 +57,12 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
+
       - "traefik.http.routers.minio.rule=Host(`minio.${HOST}`)"
       - "traefik.http.routers.minio.entrypoints=websecure"
       - "traefik.http.services.minio.loadbalancer.server.port=9001"
       - "traefik.http.routers.minio-api.service=minio-api"
+
       - "traefik.http.routers.minio-api.rule=Host(`minio-api.${HOST}`)"
       - "traefik.http.routers.minio-api.entrypoints=websecure"
       - "traefik.http.services.minio-api.loadbalancer.server.port=9000"
@@ -121,26 +123,30 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - "traefik.enable=true"
+
       - "traefik.http.routers.backend.rule=Host(`app.${HOST}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.service=backend"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
-      - "traefik.http.routers.webhook.rule=Host(`webhook.${HOST}`)"
+
+      - "traefik.http.routers.webhook.rule=Host(`webhook.${HOST}`) || Host(`webhook.vitordaniel.dev`)"
       - "traefik.http.routers.webhook.entrypoints=websecure"
-      - "traefik.http.services.webhook.loadbalancer.server.port=8000"
       - "traefik.http.routers.webhook.service=webhook"
-      - "traefik.http.routers.redirect.middlewares=webhook-rewrite"
+      - "traefik.http.services.webhook.loadbalancer.server.port=8000"
+      - "traefik.http.routers.webhook.middlewares=webhook-rewrite"
       - "traefik.http.middlewares.webhook-rewrite.addprefix.prefix=/api/product/webhook"
+
       - "traefik.http.routers.redirect.rule=Host(`redirect.${HOST}`)"
       - "traefik.http.routers.redirect.entrypoints=websecure"
-      - "traefik.http.services.redirect.loadbalancer.server.port=8000"
       - "traefik.http.routers.redirect.service=redirect"
+      - "traefik.http.services.redirect.loadbalancer.server.port=8000"
       - "traefik.http.routers.redirect.middlewares=redirect-rewrite"
       - "traefik.http.middlewares.redirect-rewrite.addprefix.prefix=/api/redirects"
+
       - "traefik.http.routers.admin.rule=Host(`admin.${HOST}`)"
       - "traefik.http.routers.admin.entrypoints=websecure"
-      - "traefik.http.services.admin.loadbalancer.server.port=8000"
       - "traefik.http.routers.admin.service=admin"
+      - "traefik.http.services.admin.loadbalancer.server.port=8000"
       - "traefik.http.routers.admin.middlewares=redirect-admin"
       - "traefik.http.middlewares.redirect-admin.addprefix.prefix=/admin-br"
 
