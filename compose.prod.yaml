@@ -60,9 +60,11 @@ services:
       - "traefik.http.routers.minio.rule=Host(`minio.${HOST}`)"
       - "traefik.http.routers.minio.entrypoints=websecure"
       - "traefik.http.services.minio.loadbalancer.server.port=9001"
+      - "traefik.http.routers.minio-api.service=minio-api"
       - "traefik.http.routers.minio-api.rule=Host(`minio-api.${HOST}`)"
       - "traefik.http.routers.minio-api.entrypoints=websecure"
       - "traefik.http.services.minio-api.loadbalancer.server.port=9000"
+      - "traefik.http.routers.minio.service=minio"
 
   migrate:
     environment:
