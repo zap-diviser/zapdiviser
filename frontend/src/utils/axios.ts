@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // @ts-ignore
-const axiosServices = axios.create({ baseURL: "https://zapdiviser.com/api" });
+const axiosServices = axios.create({ baseURL: `${window.location.origin}/api` });
 
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
 
