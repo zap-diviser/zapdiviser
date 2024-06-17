@@ -48,7 +48,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.vitordaniel.com`)"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${HOST}`)"
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 
@@ -89,6 +89,7 @@ services:
       - "traefik.http.routers.site.rule=Host(`${HOST}`)"
       - "traefik.http.routers.site.entrypoints=websecure"
       - "traefik.http.services.site.loadbalancer.server.url=https://contingenciainfinita.com"
+      - "traefik.http.routers.site.tls=false"
       - "traefik.http.middlewares.set-site-headers.headers.customrequestheaders.Alt-Used=contingenciainfinita.com"
       - "traefik.http.middlewares.set-site-headers.headers.customrequestheaders.Host=contingenciainfinita.com"
       - "traefik.http.routers.site.middlewares=set-site-headers"
@@ -145,7 +146,7 @@ services:
       - "traefik.http.routers.redirect.rule=Host(`redirect.${HOST}`)"
       - "traefik.http.routers.redirect.entrypoints=websecure"
       - "traefik.http.services.redirect.loadbalancer.server.port=8000"
-      - "traefik.http.routes.redirect.middlewares=redirect-rewrite"
+      - "traefik.http.routers.redirect.middlewares=redirect-rewrite"
       - "traefik.http.middlewares.redirect-rewrite.redirectregex.regex=^/api/redirects(.*)"
       - "traefik.http.middlewares.redirect-rewrite.redirectregex.replacement=/api/redirects$${1}"
       - "traefik.http.middlewares.redirect-rewrite.redirectregex.permanent=true"
