@@ -1,26 +1,68 @@
 services:
-  caddy:
-    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+  traefik:
+    image: "traefik:latest"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.${HOST}`)"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+      - "traefik.http.routers.dashboard.service=api@internal"
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.network=traefik"
+      - "--providers.docker.exposedbydefault=false"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=vitor036daniel@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http3=true"
+      - "--entrypoints.websecure.asdefault=true"
+      - "--entrypoints.websecure.http.tls.certresolver=myresolver"
+      - "--entrypoints.web.address=:80"
+      - "--accesslog"
+      - "--log"
+      - "--api"
     ports:
-      - 80:80
-      - 443:443
-    environment:
-      - CADDY_INGRESS_NETWORKS=caddy
-    networks:
-      - caddy
+      - target: 80
+        published: 80
+        mode: host
+      - target: 443
+        published: 443
+        mode: host
+      - target: 443
+        published: 443
+        protocol: udp
+        mode: host
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - caddy_data:/data
-    restart: unless-stopped
+      - "traefik-public-certificates:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - traefik
+
+  portainer:
+    image: "portainer/portainer-ce:latest"
+    volumes:
+      - "portainer:/data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.vitordaniel.com`)"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 
   minio:
     networks:
-      - caddy
+      - traefik
     labels:
-      caddy_0: minio-api.${HOST}
-      caddy_0.reverse_proxy: "{{upstreams 9000}}"
-      caddy_1: minio.${HOST}
-      caddy_1.reverse_proxy: "{{upstreams 9001}}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`minio.${HOST}`)"
+      - "traefik.http.routers.minio.entrypoints=websecure"
+      - "traefik.http.services.minio.loadbalancer.server.port=9001"
+      - "traefik.http.routers.minio-api.rule=Host(`minio-api.${HOST}`)"
+      - "traefik.http.routers.minio-api.entrypoints=websecure"
+      - "traefik.http.services.minio-api.loadbalancer.server.port=9000"
 
   migrate:
     environment:
@@ -34,21 +76,27 @@ services:
     command: --brotli
     networks:
       - zapdiviser
-      - caddy
+      - traefik
     depends_on:
       - backend
     environment:
       VITE_BACKEND_URL: backend.${HOST}
     labels:
-      caddy_0: app.${HOST}
-      caddy_0.reverse_proxy: "{{upstreams 8080}}"
-      caddy_1: ${HOST}
-      caddy_1.rewrite: "* /zapdiviser{uri}"
-      caddy_1.reverse_proxy: https://contingenciainfinita.com
-      caddy_1.reverse_proxy.0_header_up: Host contingenciainfinita.com
-      caddy_1.reverse_proxy.1_header_up: Alt-Used contingenciainfinita.com
-      caddy_2: www.${HOST}
-      caddy_2.redir: https://${HOST}{uri}
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`app.${HOST}`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.services.app.loadbalancer.server.port=8080"
+      - "traefik.http.routers.site.rule=Host(`${HOST}`)"
+      - "traefik.http.routers.site.entrypoints=websecure"
+      - "traefik.http.services.site.loadbalancer.server.url=https://contingenciainfinita.com"
+      - "traefik.http.middlewares.set-site-headers.headers.customrequestheaders.Alt-Used=contingenciainfinita.com"
+      - "traefik.http.middlewares.set-site-headers.headers.customrequestheaders.Host=contingenciainfinita.com"
+      - "traefik.http.routers.site.middlewares=set-site-headers"
+      - "traefik.http.routers.www.entrypoints=websecure"
+      - "traefik.http.routers.www.middlewares=redirect-to-site"
+      - "traefik.http.middlewares.redirect-to-site.redirectregex.regex=^https://www.${HOST}(.*)"
+      - "traefik.http.middlewares.redirect-to-site.redirectregex.replacement=https://${HOST}$${1}"
+      - "traefik.http.middlewares.redirect-to-site.redirectregex.permanent=true"
 
   backend:
     build:
@@ -56,7 +104,7 @@ services:
       target: backend
     networks:
       - zapdiviser
-      - caddy
+      - traefik
     depends_on:
       - db
       - redis
@@ -83,31 +131,31 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      caddy_0: backend.${HOST}
-      caddy_0.reverse_proxy: "{{upstreams 8000}}"
-      caddy_1: webhook.${HOST}
-      caddy_1.rewrite: "* /api/product/webhook{uri}"
-      caddy_1.reverse_proxy: "{{upstreams 8000}}"
-      caddy_2: redirect.${HOST}
-      caddy_2.rewrite: "* /api/redirects{uri}"
-      caddy_2.reverse_proxy: "{{upstreams 8000}}"
-      caddy_3: admin.${HOST}
-      caddy_3.redir: "/ /admin-br"
-      caddy_3.reverse_proxy: "{{upstreams 8000}}"
-
-  portainer:
-    image: portainer/portainer-ce
-    restart: unless-stopped
-    environment:
-      - VIRTUAL_HOST=portainer.${HOST}
-    networks:
-      - caddy
-    volumes:
-      - portainer:/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      caddy: portainer.${HOST}
-      caddy.reverse_proxy: "{{upstreams 9000}}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`backend.${HOST}`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.http.routers.webhook.rule=Host(`webhook.${HOST}`)"
+      - "traefik.http.routers.webhook.entrypoints=websecure"
+      - "traefik.http.services.webhook.loadbalancer.server.port=8000"
+      - "traefik.http.routers.redirect.middlewares=webhook-rewrite"
+      - "traefik.http.middlewares.webhook-rewrite.redirectregex.regex=^/api/webhook(.*)"
+      - "traefik.http.middlewares.webhook-rewrite.redirectregex.replacement=/api/product/webhook$${1}"
+      - "traefik.http.middlewares.webhook-rewrite.redirectregex.permanent=true"
+      - "traefik.http.routers.redirect.rule=Host(`redirect.${HOST}`)"
+      - "traefik.http.routers.redirect.entrypoints=websecure"
+      - "traefik.http.services.redirect.loadbalancer.server.port=8000"
+      - "traefik.http.routes.redirect.middlewares=redirect-rewrite"
+      - "traefik.http.middlewares.redirect-rewrite.redirectregex.regex=^/api/redirects(.*)"
+      - "traefik.http.middlewares.redirect-rewrite.redirectregex.replacement=/api/redirects$${1}"
+      - "traefik.http.middlewares.redirect-rewrite.redirectregex.permanent=true"
+      - "traefik.http.routers.admin.rule=Host(`admin.${HOST}`)"
+      - "traefik.http.routers.admin.entrypoints=websecure"
+      - "traefik.http.services.admin.loadbalancer.server.port=8000"
+      - "traefik.http.routers.admin.middlewares=redirect-admin"
+      - "traefik.http.middlewares.redirect-admin.redirectregex.regex=^/admin(.*)"
+      - "traefik.http.middlewares.redirect-admin.redirectregex.replacement=/admin-br$${1}"
+      - "traefik.http.middlewares.redirect-admin.redirectregex.permanent=true"
 
   loki:
     image: grafana/loki
@@ -143,11 +191,13 @@ services:
     volumes:
       - grafana:/var/lib/grafana
     networks:
-      - caddy
+      - traefik
       - zapdiviser
     labels:
-      caddy: grafana.${HOST}
-      caddy.reverse_proxy: "{{upstreams 3000}}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.${HOST}`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
 
   backup:
     image: tiredofit/db-backup
@@ -175,19 +225,21 @@ services:
       - zapdiviser
 
   soketi:
-    labels:
-      caddy_0: soketi.${HOST}
-      caddy_0.reverse_proxy: "{{upstreams 6001}}"
     networks:
-      - caddy
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.soketi.rule=Host(`soketi.${HOST}`)"
+      - "traefik.http.routers.soketi.entrypoints=websecure"
+      - "traefik.http.services.soketi.loadbalancer.server.port=6001"
 
 networks:
-  caddy:
+  traefik:
     external: true
   zapdiviser:
     external: true
 
 volumes:
-  caddy_data:
+  traefik-public-certificates:
   portainer:
   grafana:
