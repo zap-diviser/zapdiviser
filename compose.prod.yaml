@@ -131,7 +131,7 @@ services:
       - "traefik.http.routers.backend.service=backend"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
 
-      - "traefik.http.routers.webhook.rule=Host(`webhook.${HOST}`) || Host(`webhook.vitordaniel.dev`)"
+      - "traefik.http.routers.webhook.rule=Host(`webhook.${HOST}`)"
       - "traefik.http.routers.webhook.entrypoints=websecure"
       - "traefik.http.routers.webhook.service=webhook"
       - "traefik.http.services.webhook.loadbalancer.server.port=8000"
