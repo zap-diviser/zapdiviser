@@ -40,13 +40,12 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
       wsPort: 8080,
       forceTLS: false,
       disableStats: true,
-      enabledTransports: ['ws']
+      enabledTransports: ['ws', 'xhr_polling']
     };
 
     if (window.location.protocol === 'https:') {
       options.forceTLS = true;
       options.wsPort = 443;
-      options.enabledTransports = ['wss'];
     }
 
     ;(async () => {
