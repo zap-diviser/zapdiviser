@@ -140,11 +140,8 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         NetworkMode: 'zapdiviser',
       },
       Env: [
-        `NODE_ENV=${this.configService.get('NODE_ENV')}`,
         `INSTANCE_ID=${id}`,
         `REDIS_PASSWORD=${this.configService.get('REDIS_PASSWORD')}`,
-        `MINIO_HOST=${this.configService.get('MINIO_HOST')}`,
-        `MINIO_PORT=${this.configService.get('MINIO_PORT')}`,
         `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
         `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
       ],

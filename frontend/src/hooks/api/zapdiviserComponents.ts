@@ -1320,6 +1320,51 @@ export const useChatControllerDeleteAll = (
   });
 };
 
+export type ChatControllerGetMediaQueryParams = {
+  id: string;
+};
+
+export type ChatControllerGetMediaError = Fetcher.ErrorWrapper<undefined>;
+
+export type ChatControllerGetMediaVariables = {
+  queryParams: ChatControllerGetMediaQueryParams;
+} & ZapdiviserContext["fetcherOptions"];
+
+export const fetchChatControllerGetMedia = (
+  variables: ChatControllerGetMediaVariables,
+  signal?: AbortSignal,
+) =>
+  zapdiviserFetch<
+    string,
+    ChatControllerGetMediaError,
+    undefined,
+    {},
+    ChatControllerGetMediaQueryParams,
+    {}
+  >({ url: "/api/chat/media", method: "get", ...variables, signal });
+
+export const useChatControllerGetMedia = <TData = string,>(
+  variables: ChatControllerGetMediaVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<string, ChatControllerGetMediaError, TData>,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } =
+    useZapdiviserContext(options);
+  return reactQuery.useQuery<string, ChatControllerGetMediaError, TData>({
+    queryKey: queryKeyFn({
+      path: "/api/chat/media",
+      operationId: "chatControllerGetMedia",
+      variables,
+    }),
+    queryFn: ({ signal }) =>
+      fetchChatControllerGetMedia({ ...fetcherOptions, ...variables }, signal),
+    ...options,
+    ...queryOptions,
+  });
+};
+
 export type UserControllerFindMeError = Fetcher.ErrorWrapper<undefined>;
 
 export type UserControllerFindMeVariables = ZapdiviserContext["fetcherOptions"];
@@ -2265,6 +2310,11 @@ export type QueryOperation =
       path: "/api/chat/chat/{id}/messages";
       operationId: "chatControllerGetMessages";
       variables: ChatControllerGetMessagesVariables;
+    }
+  | {
+      path: "/api/chat/media";
+      operationId: "chatControllerGetMedia";
+      variables: ChatControllerGetMediaVariables;
     }
   | {
       path: "/api/user";

@@ -17,7 +17,6 @@ import { useRedisAuthState } from "./auth"
 import { Client } from "minio"
 import { Readable } from "stream"
 import ServerClient from "../client"
-import redis from "../redis"
 
 function streamToBuffer(stream: Readable): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -33,9 +32,9 @@ function streamToBuffer(stream: Readable): Promise<Buffer> {
 }
 
 const minio = new Client({
-  endPoint: process.env.MINIO_HOST!,
-  port: Number(process.env.MINIO_PORT),
-  useSSL: process.env.NODE_ENV === "production",
+  endPoint: "minio",
+  port: 9000,
+  useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY!,
   secretKey: process.env.MINIO_SECRET_KEY!,
 })
@@ -261,6 +260,7 @@ class Whatsapp {
       const buffer = await streamToBuffer(stream)
 
       await this.sendMessageBase(msg(buffer), phone)
+      await minio.removeObject("zapdiviser", url)
     })
   }
 

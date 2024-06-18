@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserIsAuthenticated } from '@/common/decorators/userIsAuthenticated.decorator';
@@ -51,5 +51,10 @@ export class ChatController {
   @Post('delete-all')
   async deleteAll() {
     return await this.chatService.deleteAll();
+  }
+
+  @Get('media')
+  async getMedia(@Query('id') mediaId: string) {
+    return await this.chatService.createDownloadUrl(mediaId);
   }
 }

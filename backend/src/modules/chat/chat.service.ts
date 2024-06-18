@@ -175,4 +175,8 @@ export class ChatService {
       id,
     };
   }
+
+  async createDownloadUrl(id: string) {
+    return await this.minioClient.presignedGetObject('zapdiviser', id, 60 * 60);
+  }
 }

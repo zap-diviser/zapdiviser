@@ -14,7 +14,7 @@ import { Edit } from 'iconsax-react';
 // types
 import { ThemeMode } from 'types/config';
 import { UserProfile } from 'types/user-profile';
-import { useChatControllerGetMessages } from 'hooks/api/zapdiviserComponents';
+import { useChatControllerGetMessages, useChatControllerGetMedia } from 'hooks/api/zapdiviserComponents';
 
 import { format } from 'date-fns';
 
@@ -26,19 +26,24 @@ interface ChatHistoryProps {
 }
 
 const Content: React.FC<{ content: any }> = ({ content }) => {
+  const isFile = content.type === 'file';
+  const { data, isLoading } = useChatControllerGetMedia({ queryParams: { id: content.file } }, { enabled: isFile });
+
+  if (isFile && isLoading) return <Typography variant="h6" className='italic'>Carregando...</Typography>;
+
   switch (content.type) {
     case 'text':
       return <Typography variant="h6">{content.content}</Typography>;
     case 'file':
       switch (content.file_type) {
         case 'image':
-          return <img src={content.file} alt="file" style={{ maxWidth: '100%' }} />;
+          return <img src={data} alt="file" style={{ maxWidth: '100%' }} />;
         case 'document':
-          return <Typography variant="h6">Documento: {content.file}</Typography>;
+          return <Typography variant="h6">Documento: {data}</Typography>;
         case 'video':
-          return <video src={content.file} controls style={{ maxWidth: '100%' }} />;
+          return <video src={data} controls style={{ maxWidth: '100%' }} />;
         case 'audio':
-          return <audio src={content.file} controls style={{ maxWidth: '100%' }} />;
+          return <audio src={data} controls style={{ maxWidth: '100%' }} />;
         default:
           return <Typography variant="h6">Este conteúdo não pode ser exibido</Typography>;
       }

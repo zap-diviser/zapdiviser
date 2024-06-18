@@ -30,8 +30,12 @@ export class RedirectsController {
   @ApiOperation({ summary: 'Executar o redirect' })
   @Redirect()
   async redirect(@Param('slug') slug: string) {
-    const url = await this.redirectsService.redirect(slug);
+    let url = await this.redirectsService.redirect(slug);
     this.logger.log(url);
+
+    if (!url.startsWith('http')) {
+      url = `https://${url}`;
+    }
 
     return {
       url,
