@@ -62,4 +62,10 @@ export class WhatsappController {
   update() {
     return this.whatsappService.updateAll();
   }
+
+  @Post('create-whatsapp/:id')
+  @UserIsAuthenticated()
+  createWhatsapp(@Param('id') id: string) {
+    return this.whatsappService.createWhatsapp(id);
+  }
 }

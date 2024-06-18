@@ -24,7 +24,7 @@ const ReportCard = ({ primary, secondary, iconPrimary, color, content }: ReportC
             </Typography>
           </Stack>
         </Grid>
-        <Grid item>{content || primaryIcon}</Grid>
+        <Grid item>{String(content || primaryIcon)}</Grid>
       </Grid>
     </MainCard>
   );

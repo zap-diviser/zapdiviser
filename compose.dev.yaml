@@ -4,7 +4,26 @@ services:
     restart: always
     environment:
       - REDIS_HOSTS=local:redis:6379:0:${REDIS_PASSWORD}
+    depends_on:
+      - redis
     ports:
       - "8081:8081"
     networks:
       - zapdiviser
+
+  db:
+    ports:
+      - 5433:5432
+
+  redis:
+    ports:
+      - 6379:6379
+
+  minio:
+    ports:
+      - 9000:9000
+      - 9001:9001
+
+  soketi:
+    ports:
+      - 6001:6001

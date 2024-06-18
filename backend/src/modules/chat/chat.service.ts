@@ -110,6 +110,9 @@ export class ChatService {
         });
         break;
     }
+
+    chat.lastInteraction = new Date();
+    await chat.save();
   }
 
   async unlinkWhatsapp(userId: string, whatsappId: string) {

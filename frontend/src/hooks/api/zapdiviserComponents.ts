@@ -985,6 +985,60 @@ export const useWhatsappControllerUpdate = (
   });
 };
 
+export type WhatsappControllerCreateWhatsappPathParams = {
+  id: string;
+};
+
+export type WhatsappControllerCreateWhatsappError =
+  Fetcher.ErrorWrapper<undefined>;
+
+export type WhatsappControllerCreateWhatsappVariables = {
+  pathParams: WhatsappControllerCreateWhatsappPathParams;
+} & ZapdiviserContext["fetcherOptions"];
+
+export const fetchWhatsappControllerCreateWhatsapp = (
+  variables: WhatsappControllerCreateWhatsappVariables,
+  signal?: AbortSignal,
+) =>
+  zapdiviserFetch<
+    undefined,
+    WhatsappControllerCreateWhatsappError,
+    undefined,
+    {},
+    {},
+    WhatsappControllerCreateWhatsappPathParams
+  >({
+    url: "/api/whatsapp/create-whatsapp/{id}",
+    method: "post",
+    ...variables,
+    signal,
+  });
+
+export const useWhatsappControllerCreateWhatsapp = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      WhatsappControllerCreateWhatsappError,
+      WhatsappControllerCreateWhatsappVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<
+    undefined,
+    WhatsappControllerCreateWhatsappError,
+    WhatsappControllerCreateWhatsappVariables
+  >({
+    mutationFn: (variables: WhatsappControllerCreateWhatsappVariables) =>
+      fetchWhatsappControllerCreateWhatsapp({
+        ...fetcherOptions,
+        ...variables,
+      }),
+    ...options,
+  });
+};
+
 export type ChatControllerSetWhatsappError = Fetcher.ErrorWrapper<undefined>;
 
 export type ChatControllerSetWhatsappVariables =

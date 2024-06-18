@@ -229,7 +229,8 @@ export type CreateFlowEventDto = {
     | "card_declined"
     | "pix_generated"
     | "pix_approved"
-    | "cart_abandoned";
+    | "cart_abandoned"
+    | "form_submitted";
   product_id: string;
   metadata: {
     message?: string;

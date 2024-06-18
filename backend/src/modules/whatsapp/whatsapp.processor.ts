@@ -1,17 +1,16 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
-import { WhatsappGateway } from './whatsapp.gateway';
 import { WhatsappService } from './whatsapp.service';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status } from './entities/whatsapp.entity';
 import { ChatService } from '../chat/chat.service';
+import pusher from '../../pusher';
 
 type Event<T> = Job<{ instanceId: string; data: T }>;
 
 @Processor('FlowTriggers')
 export class WhatsappConsumer {
   constructor(
-    private readonly gateway: WhatsappGateway,
     private readonly whatsappService: WhatsappService,
     private readonly redisService: RedisService,
     private readonly chatService: ChatService,
@@ -21,13 +20,13 @@ export class WhatsappConsumer {
   async onQr({ data: { instanceId, data } }: Event<string>) {
     const redis = this.redisService.getClient();
     await redis.set(`whatsapp-${instanceId}-qr`, data, 'EX', 60);
-    this.gateway.io.to(instanceId).emit('qr', data);
+    pusher.trigger(`whatsapp-${instanceId}`, 'qr', data);
   }
 
   @Process('connecting')
   async onConnecting({ data: { instanceId } }: Event<void>) {
     await this.whatsappService.setStatus(instanceId, Status.CONNECTING);
-    this.gateway.io.to(instanceId).emit('whatsapp-connecting');
+    pusher.trigger(`whatsapp-${instanceId}`, 'whatsapp-connecting', {});
   }
 
   @Process('connected')
@@ -39,7 +38,11 @@ export class WhatsappConsumer {
 
     if (!updatedWhatsapp) return;
 
-    this.gateway.io.to(instanceId).emit('whatsapp-connected', updatedWhatsapp);
+    pusher.trigger(
+      `whatsapp-${instanceId}`,
+      'whatsapp-connected',
+      updatedWhatsapp,
+    );
 
     await this.whatsappService.stopOldWhatsapp(instanceId);
   }
@@ -103,6 +106,6 @@ export class WhatsappConsumer {
   @Process('error')
   async onError({ data: { instanceId, data } }: Event<{ error: string }>) {
     await this.whatsappService.setStatus(instanceId, Status.PAUSED);
-    this.gateway.io.to(instanceId).emit('whatsapp-error', data.error);
+    pusher.trigger(`whatsapp-${instanceId}`, 'whatsapp-error', data.error);
   }
 }

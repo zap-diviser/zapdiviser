@@ -1,6 +1,5 @@
 import { PopupTransition } from 'components/@extended/Transitions';
 import { Button, DialogActions, DialogContent, DialogTitle, Divider, Grid, LinearProgress, Stack, useTheme } from '@mui/material';
-
 import { Dialog } from '@mui/material';
 import { Typography } from '@mui/material';
 import MainCard from 'components/MainCard';
@@ -10,8 +9,8 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { queryKeyFn } from 'hooks/api/zapdiviserContext';
 import { queryClient } from 'utils/query-client';
 import { QRCodeSVG } from 'qrcode.react';
-import { io } from 'socket.io-client';
-import { useWhatsappControllerCreate } from 'hooks/api/zapdiviserComponents';
+import Pusher, { type Options } from 'pusher-js';
+import { useWhatsappControllerCreate, useWhatsappControllerCreateWhatsapp } from 'hooks/api/zapdiviserComponents';
 
 export interface Props {
   isOpen: boolean;
@@ -31,17 +30,31 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
   }, [data]);
 
   const { mutateAsync } = useWhatsappControllerCreate({});
+  const { mutateAsync: createWhatsapp } = useWhatsappControllerCreateWhatsapp({});
 
   useEffect(() => {
-    // @ts-ignore
-    const socket = io(`${window.location.origin}/api`);
+    const options: Options = {
+      cluster: 'us2',
+      wsHost: window.location.hostname,
+      wsPath: '/soketi',
+      wsPort: 8080,
+      forceTLS: false,
+      disableStats: true,
+      enabledTransports: ['ws']
+    };
+
+    if (window.location.protocol.startsWith('https')) {
+      options.forceTLS = true;
+      options.wsPort = 443;
+      options.enabledTransports = ['wss'];
+    }
 
     (async () => {
       if (data?.id) {
-        socket.emit('createWhatsapp', { instanceId: data.id });
+        await createWhatsapp({ pathParams: { id: data.id } });
       } else {
-        const data = await mutateAsync({});
-        socket.emit('createWhatsapp', { instanceId: data.id });
+        data = await mutateAsync({});
+        await createWhatsapp({ pathParams: { id: data.id } });
 
         const queryKey = queryKeyFn({ path: '/api/whatsapp', operationId: 'whatsappControllerFindAll', variables: {} });
 
@@ -53,49 +66,49 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
           return [...old, data];
         });
       }
-    })();
 
-    socket.on('qr', (data: string) => {
-      setQrCode(data);
-    });
+      // @ts-ignore
+      const client = new Pusher(import.meta.env.VITE_SOKETI_APP_KEY!, options);
+      const channel = client.subscribe(`whatsapp-${data.id}`);
 
-    socket.on('whatsapp-connecting', () => {
-      setQrCode(null);
-    });
-
-    socket.on('whatsapp-connected', (data) => {
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Whatsapp criado com sucesso',
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        })
-      );
-
-      const queryKey = queryKeyFn({ path: '/api/whatsapp', operationId: 'whatsappControllerFindAll', variables: {} });
-
-      queryClient.cancelQueries({
-        queryKey
+      channel.bind('qr', (data: string) => {
+        setQrCode(data);
       });
 
-      queryClient.setQueryData(queryKey, (old: any) => {
-        return old.map((item: any) => {
-          if (item.id === data.id) {
-            return data;
-          }
-          return item;
+      channel.bind('whatsapp-connecting', () => {
+        setQrCode(null);
+      });
+
+      channel.bind('whatsapp-connected', (data: any) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Whatsapp criado com sucesso',
+            variant: 'alert',
+            alert: {
+              color: 'success'
+            }
+          })
+        );
+
+        const queryKey = queryKeyFn({ path: '/api/whatsapp', operationId: 'whatsappControllerFindAll', variables: {} });
+
+        queryClient.cancelQueries({
+          queryKey
         });
+
+        queryClient.setQueryData(queryKey, (old: any) => {
+          return old.map((item: any) => {
+            if (item.id === data.id) {
+              return data;
+            }
+            return item;
+          });
+        });
+
+        onClose();
       });
-
-      onClose();
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    })();
   }, []);
 
   return (

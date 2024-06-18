@@ -183,7 +183,7 @@ const Chat = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [selectedWhatsapp, setSelectedWhatsapp] = useState<string>(whatsapps?.[0].id ?? "")
+  const [selectedWhatsapp, setSelectedWhatsapp] = useState<string>(!!whatsapps?.length ? whatsapps[0].id : '');
 
   if (loading) return <Loader />;
 
@@ -314,15 +314,19 @@ const Chat = () => {
                 >
                   {/* @ts-ignore */}
                   {!user.currentWhatsapp || user.currentWhatsapp.status !== "CONNECTED" ? (
-                    <div>
-                      <span>Whatsapp desconectado, selecione outro whatsapp caso deseje continuar a conversa.</span>
-                      <select value={selectedWhatsapp} onChange={(e) => setSelectedWhatsapp(e.currentTarget.value)}>
-                        {whatsapps?.filter(whatsapp => whatsapp.status === "CONNECTED").map((whatsapp) => (
-                          <option key={whatsapp.id} value={whatsapp.id}>{whatsapp.phone}</option>
-                        ))}
-                      </select>
-                      <button onClick={() => setWhatsapp({ body: { chatId: user.id, whatsappId: selectedWhatsapp } })}>Selecionar</button>
-                    </div>
+                    <>
+                      {whatsapps?.length === 0 ? <span>Nenhum whatsapp conectado, por favor conecte um whatsapp.</span> : (
+                        <div>
+                          <span>Whatsapp desconectado, selecione outro whatsapp caso deseje continuar a conversa.</span>
+                          <select value={selectedWhatsapp} onChange={(e) => setSelectedWhatsapp(e.currentTarget.value)}>
+                            {whatsapps?.filter(whatsapp => whatsapp.status === "CONNECTED").map((whatsapp) => (
+                              <option key={whatsapp.id} value={whatsapp.id}>{whatsapp.phone}</option>
+                            ))}
+                          </select>
+                          <button onClick={() => setWhatsapp({ body: { chatId: user.id, whatsappId: selectedWhatsapp } })}>Selecionar</button>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <Stack>
                       <TextField

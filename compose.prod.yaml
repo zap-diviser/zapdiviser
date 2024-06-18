@@ -222,14 +222,14 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.soketi.rule=Host(`soketi.${HOST}`)"
+      - "traefik.http.routers.soketi.rule=Host(`app.${HOST}`) && PathPrefix(`/soketi`)"
       - "traefik.http.routers.soketi.entrypoints=websecure"
       - "traefik.http.services.soketi.loadbalancer.server.port=6001"
+      - "traefik.http.routers.soketi.middlewares=soketi-rewrite"
+      - "traefik.http.middlewares.soketi-rewrite.stripprefix.prefixes=/soketi"
 
 networks:
   traefik:
-    external: true
-  zapdiviser:
     external: true
 
 volumes:

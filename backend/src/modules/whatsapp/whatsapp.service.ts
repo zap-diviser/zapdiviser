@@ -10,8 +10,12 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import crypto from 'crypto';
 import BluePromise from 'bluebird';
 import { ChatService } from '../chat/chat.service';
+import pusher from '@/pusher';
 
-const docker = new Docker();
+const docker = new Docker({
+  // @ts-expect-error as it is not in the types
+  Promise: BluePromise,
+});
 
 @Injectable()
 export class WhatsappService implements OnModuleInit, OnModuleDestroy {
@@ -59,7 +63,6 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    /*
     if (this.configService.get('NODE_ENV') !== 'production') {
       const containers = await docker.listContainers({ all: true });
       const containersToStop = containers.filter(
@@ -79,7 +82,6 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
         { concurrency: 10 },
       );
     }
-    */
   }
 
   async findAll(user_id: string) {
@@ -135,21 +137,26 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       Image: 'whatsapp',
       name: `zapdiviser-node-${id}`,
       HostConfig: {
-        NetworkMode:
-          this.configService.get('NODE_ENV') !== 'production'
-            ? 'default'
-            : 'zapdiviser',
+        NetworkMode: 'zapdiviser',
       },
       Env: [
         `NODE_ENV=${this.configService.get('NODE_ENV')}`,
         `INSTANCE_ID=${id}`,
-        `REDIS_URL=${this.configService.get('REDIS_URL')}`,
+        `REDIS_PASSWORD=${this.configService.get('REDIS_PASSWORD')}`,
         `MINIO_HOST=${this.configService.get('MINIO_HOST')}`,
         `MINIO_PORT=${this.configService.get('MINIO_PORT')}`,
         `MINIO_ACCESS_KEY=${this.configService.get('MINIO_ACCESS_KEY')}`,
         `MINIO_SECRET_KEY=${this.configService.get('MINIO_SECRET_KEY')}`,
       ],
     });
+
+    const logs = await container.attach({
+      stream: true,
+      stdout: true,
+      stderr: true,
+    });
+
+    logs.pipe(process.stdout);
 
     await container.start();
 
@@ -349,5 +356,19 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       Buffer.from(expectedSignature),
       Buffer.from(signatureHeader),
     );
+  }
+
+  async createWhatsapp(instanceId: string) {
+    const redis = this.redisService.getClient();
+    const hasQRCodeSaved = await redis.get(`whatsapp-${instanceId}-qr`);
+    if (!hasQRCodeSaved) return;
+
+    pusher.trigger(
+      `whatsapp-${instanceId}`,
+      'qr',
+      await redis.get(`whatsapp-${instanceId}-qr`),
+    );
+
+    return null;
   }
 }

@@ -12,7 +12,13 @@ export default (() => {
     strictPort: true,
     host: true,
     proxy: {
-      '/api': 'http://localhost:8000'
+      '/api': 'http://localhost:8000',
+      '/soketi': {
+        target: 'http://localhost:6001',
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/soketi/, '')
+      }
     },
   };
   return defineConfig({

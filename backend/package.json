@@ -76,6 +76,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.11.5",
+    "pusher": "^5.2.0",
     "react": "^16.14.0",
     "react-email": "^2.1.2",
     "reflect-metadata": "^0.1.14",

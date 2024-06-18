@@ -55,7 +55,7 @@ const EcommerceMetrix = ({ primary, secondary, content, iconPrimary, color }: Ec
         </Grid>
         <Stack spacing={1} direction="row" justifyContent="flex-end" sx={{ pt: 1.25 }}>
           <Typography variant="h5" color="common.white" sx={{ fontWeight: 400 }}>
-            {content}
+            {String(content)}
           </Typography>
         </Stack>
       </Box>
