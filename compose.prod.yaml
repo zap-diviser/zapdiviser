@@ -219,6 +219,7 @@ services:
 
   soketi:
     networks:
+      - zapdiviser
       - traefik
     labels:
       - "traefik.enable=true"

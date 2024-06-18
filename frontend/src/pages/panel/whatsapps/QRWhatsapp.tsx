@@ -43,7 +43,7 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
       enabledTransports: ['ws']
     };
 
-    if (window.location.protocol.startsWith('https')) {
+    if (window.location.protocol === 'https:') {
       options.forceTLS = true;
       options.wsPort = 443;
       options.enabledTransports = ['wss'];

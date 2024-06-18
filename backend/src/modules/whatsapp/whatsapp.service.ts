@@ -150,14 +150,6 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
       ],
     });
 
-    const logs = await container.attach({
-      stream: true,
-      stdout: true,
-      stderr: true,
-    });
-
-    logs.pipe(process.stdout);
-
     await container.start();
 
     return whatsapp;
