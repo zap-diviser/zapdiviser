@@ -83,6 +83,8 @@ services:
       - traefik
     depends_on:
       - backend
+    environment:
+      VITE_SOKETI_APP_KEY: ${VITE_SOKETI_APP_KEY}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`app.${HOST}`)"
