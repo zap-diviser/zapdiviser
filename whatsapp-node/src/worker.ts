@@ -29,7 +29,6 @@ export default class Worker {
   }
 
   async handle_sendMessage({ content, to }: { content: string, to: string }) {
-    console.log("Sending message to", to)
     await this.whatsapp.sendMessageTyping({ text: content }, to)
   }
 
