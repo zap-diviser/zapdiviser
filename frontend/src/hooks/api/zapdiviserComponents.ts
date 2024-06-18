@@ -1335,7 +1335,7 @@ export const fetchChatControllerGetMedia = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    string,
+    undefined,
     ChatControllerGetMediaError,
     undefined,
     {},
@@ -1343,16 +1343,16 @@ export const fetchChatControllerGetMedia = (
     {}
   >({ url: "/api/chat/media", method: "get", ...variables, signal });
 
-export const useChatControllerGetMedia = <TData = string,>(
+export const useChatControllerGetMedia = <TData = undefined,>(
   variables: ChatControllerGetMediaVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<string, ChatControllerGetMediaError, TData>,
+    reactQuery.UseQueryOptions<undefined, ChatControllerGetMediaError, TData>,
     "queryKey" | "queryFn" | "initialData"
   >,
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<string, ChatControllerGetMediaError, TData>({
+  return reactQuery.useQuery<undefined, ChatControllerGetMediaError, TData>({
     queryKey: queryKeyFn({
       path: "/api/chat/media",
       operationId: "chatControllerGetMedia",

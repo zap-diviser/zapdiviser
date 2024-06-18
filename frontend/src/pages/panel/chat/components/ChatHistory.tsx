@@ -37,13 +37,17 @@ const Content: React.FC<{ content: any }> = ({ content }) => {
     case 'file':
       switch (content.file_type) {
         case 'image':
-          return <img src={data} alt="file" style={{ maxWidth: '100%' }} />;
+          // @ts-ignore
+          return <img src={data?.download_url} alt="file" style={{ maxWidth: '100%' }} />;
         case 'document':
-          return <Typography variant="h6">Documento: {data}</Typography>;
+          // @ts-ignore
+          return <Typography variant="h6">Documento: {data?.download_url}</Typography>;
         case 'video':
-          return <video src={data} controls style={{ maxWidth: '100%' }} />;
+          // @ts-ignore
+          return <video src={data?.download_url} controls style={{ maxWidth: '100%' }} />;
         case 'audio':
-          return <audio src={data} controls style={{ maxWidth: '100%' }} />;
+          // @ts-ignore
+          return <audio src={data?.download_url} controls style={{ maxWidth: '100%' }} />;
         default:
           return <Typography variant="h6">Este conteúdo não pode ser exibido</Typography>;
       }
@@ -69,7 +73,7 @@ const ChatHistory = ({ theme, user }: ChatHistoryProps) => {
   return (
     <Grid container spacing={2.5} ref={wrapper}>
       {data?.map((history, index) => (
-        <Grid item xs={12} key={index}>
+        <Grid item xs={12} key={history.id}>
           {history.fromMe ? (
             <Stack spacing={1.25} direction="row">
               <Grid container spacing={1} justifyContent="flex-end">

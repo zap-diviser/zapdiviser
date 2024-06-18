@@ -19,7 +19,6 @@ import {
 
 // third-party
 import EmojiPicker, { SkinTones, EmojiClickData } from 'emoji-picker-react';
-import mimetypes from 'mime-types';
 
 // project-imports
 import ChatDrawer from './components/ChatDrawer';

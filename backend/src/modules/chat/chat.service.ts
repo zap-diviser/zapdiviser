@@ -141,7 +141,7 @@ export class ChatService {
   async getChats(userId: string) {
     return await this.chatRepository.find({
       where: { user: { id: userId } },
-      order: { lastInteraction: 'ASC' },
+      order: { lastInteraction: 'DESC' },
       relations: { currentWhatsapp: true },
     });
   }
@@ -177,6 +177,15 @@ export class ChatService {
   }
 
   async createDownloadUrl(id: string) {
-    return await this.minioClient.presignedGetObject('zapdiviser', id, 60 * 60);
+    const download_url = await this.minioClient.presignedGetObject(
+      'zapdiviser',
+      id,
+      60 * 60,
+    );
+
+    return {
+      download_url,
+      id,
+    };
   }
 }
