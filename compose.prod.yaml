@@ -121,6 +121,8 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       NODE_ENV: ${NODE_ENV}
+      VITE_SOKETI_APP_KEY: ${VITE_SOKETI_APP_KEY}
+      SOKETI_APP_SECRET: ${SOKETI_APP_SECRET}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
