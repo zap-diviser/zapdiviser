@@ -67,6 +67,8 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
         });
       }
 
+      console.log(options)
+
       // @ts-ignore
       const client = new Pusher(import.meta.env.VITE_SOKETI_APP_KEY!, options);
       const channel = client.subscribe(`whatsapp-${data.id}`);
