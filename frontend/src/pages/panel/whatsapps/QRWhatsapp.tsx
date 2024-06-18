@@ -49,7 +49,7 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
       options.enabledTransports = ['wss'];
     }
 
-    (async () => {
+    ;(async () => {
       if (data?.id) {
         await createWhatsapp({ pathParams: { id: data.id } });
       } else {
@@ -66,6 +66,9 @@ const QRWhatsapp = ({ isOpen, onClose, data }: Props) => {
           return [...old, data];
         });
       }
+
+      // @ts-ignore
+      console.log(import.meta.env.VITE_SOKETI_APP_KEY!);
 
       // @ts-ignore
       const client = new Pusher(import.meta.env.VITE_SOKETI_APP_KEY!, options);
