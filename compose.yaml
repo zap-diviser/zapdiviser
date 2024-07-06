@@ -30,7 +30,6 @@ services:
     networks:
       - zapdiviser
     command: server /data --console-address :9001
-    restart: unless-stopped
 
   setup-minio:
     image: minio/mc

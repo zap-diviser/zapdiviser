@@ -425,6 +425,22 @@ const handlers: Handler[] = [
       },
     ],
   },
+  {
+    name: 'elementor_advanced',
+    detect: (data) => {
+      return _.has(data, 'form.id');
+    },
+    eventPath: 'form.id',
+    namePath: 'fields.name',
+    phonePath: 'fields.phone',
+    eventMap: [
+      {
+        type: 'function',
+        fn: () => true,
+        mapTo: 'form_submitted',
+      },
+    ],
+  }
 ];
 
 type HandleResult = {

@@ -12,7 +12,6 @@ import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ProductModule } from './modules/product/product.module';
 import { BullManagerModule } from './modules/bull/bull.module';
-import { AdminJsModule } from './modules/admin/adminjs.module';
 import configuration from './config';
 import { WinstonModule } from 'nest-winston';
 import winston from 'winston';
@@ -61,7 +60,6 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
       },
       inject: [ConfigService],
     }),
-    AdminJsModule,
     UserModule,
     AuthModule,
     EmailModule,

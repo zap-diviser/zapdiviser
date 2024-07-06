@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -142,6 +143,7 @@ export class ProductController {
   }
 
   @Post('webhook/:id')
+  @HttpCode(200)
   @ApiBody({
     type: Object,
   })
