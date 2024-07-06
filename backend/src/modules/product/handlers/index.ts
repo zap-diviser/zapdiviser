@@ -431,8 +431,8 @@ const handlers: Handler[] = [
       return _.has(data, 'form.id');
     },
     eventPath: 'form.id',
-    namePath: 'fields.name',
-    phonePath: 'fields.phone',
+    namePath: 'fields.name.value',
+    phonePath: 'fields.phone.value',
     eventMap: [
       {
         type: 'function',
