@@ -5,20 +5,27 @@ import { UpdatePasswordWithOldPasswordDto } from './dto/update-password-with-old
 import { UpdatePasswordWithTokenDto } from './dto/update-password-with-token-dto';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ForgetPasswordWithCodeDto } from './dto/forget-password-with-code.dto';
-import { UserIsAuthenticated } from '../../common/decorators/userIsAuthenticated.decorator';
+import { UserIsAuthenticated, userIsAdmin } from '../../common/decorators/userIsAuthenticated.decorator';
 import { ValidationPipe } from '../../common/pipes/validation.pipe';
 import { UserEntity } from './entities/user.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CheckCodeDto } from './dto/check-code.dto';
+import CreateUserDto from './dto/create-user.dto';
 
 @Controller('user')
 @ApiTags('Usuário')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post()
+  @userIsAdmin()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create({ ...createUserDto, level: "user" });
+  }
+
   @Get()
   @UserIsAuthenticated()
-  findMe(@Req() req): Promise<Partial<UserEntity>> {
+  findMe(@Req() req: any): Promise<Partial<UserEntity>> {
     return this.userService.findOne(req.user.id);
   }
 

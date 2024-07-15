@@ -80,7 +80,7 @@ export class RedirectsController {
     };
   }
 
-  @Get(':id')
+  @Get('data/:id')
   @UserIsAuthenticated()
   @ApiOperation({ summary: 'Obter todos os dados de um redirect' })
   findOne(@Param('id') id: string, @Req() req: any) {

@@ -26,8 +26,9 @@ export class UserEntity extends DefaultEntity {
 
   @Column({
     default: 'user',
+    enum: ['user', 'admin'],
   })
-  level: string;
+  level: 'user' | 'admin';
 
   @OneToMany(() => ProductEntity, (funnel) => funnel.user)
   products: ProductEntity[];

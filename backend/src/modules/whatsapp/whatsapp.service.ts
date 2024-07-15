@@ -36,7 +36,7 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     );
 
     await BluePromise.map(
-      whatsapps,
+      whatsapps.filter((whatsapp) => whatsapp.status === Status.CONNECTED),
       async (whatsapp) => {
         try {
           if (

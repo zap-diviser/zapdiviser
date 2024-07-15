@@ -8,7 +8,10 @@ import './common/commands/create-database';
 import configBullBoard from './common/config/bull-board';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import Promise from 'bluebird';
-import * as bodyParser from 'body-parser';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 
 process.on('unhandledRejection', (e) => {
   console.log(e);
@@ -24,13 +27,15 @@ globalThis.Promise = Promise;
 global.Promise.config({ longStackTraces: true });
 
 export async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    bufferLogs: true,
-    rawBody: true,
-    bodyParser: true,
-  });
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+    {
+      bufferLogs: true,
+      rawBody: true,
+      bodyParser: true,
+    }
+  );
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 

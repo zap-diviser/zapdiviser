@@ -12,7 +12,7 @@ import type * as Schemas from "./zapdiviserSchemas";
 export type ProductControllerCreateError = Fetcher.ErrorWrapper<undefined>;
 
 export type ProductControllerCreateVariables = {
-  body: Schemas.CreateProductDto;
+  body?: Schemas.CreateProductDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchProductControllerCreate = (
@@ -20,7 +20,7 @@ export const fetchProductControllerCreate = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerCreateError,
     Schemas.CreateProductDto,
     {},
@@ -31,7 +31,7 @@ export const fetchProductControllerCreate = (
 export const useProductControllerCreate = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.ProductEntity,
+      undefined,
       ProductControllerCreateError,
       ProductControllerCreateVariables
     >,
@@ -40,7 +40,7 @@ export const useProductControllerCreate = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerCreateError,
     ProductControllerCreateVariables
   >({
@@ -52,8 +52,6 @@ export const useProductControllerCreate = (
 
 export type ProductControllerFindAllError = Fetcher.ErrorWrapper<undefined>;
 
-export type ProductControllerFindAllResponse = Schemas.ProductEntity[];
-
 export type ProductControllerFindAllVariables =
   ZapdiviserContext["fetcherOptions"];
 
@@ -62,7 +60,7 @@ export const fetchProductControllerFindAll = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    ProductControllerFindAllResponse,
+    undefined,
     ProductControllerFindAllError,
     undefined,
     {},
@@ -70,26 +68,16 @@ export const fetchProductControllerFindAll = (
     {}
   >({ url: "/api/product", method: "get", ...variables, signal });
 
-export const useProductControllerFindAll = <
-  TData = ProductControllerFindAllResponse,
->(
+export const useProductControllerFindAll = <TData = undefined,>(
   variables: ProductControllerFindAllVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<
-      ProductControllerFindAllResponse,
-      ProductControllerFindAllError,
-      TData
-    >,
+    reactQuery.UseQueryOptions<undefined, ProductControllerFindAllError, TData>,
     "queryKey" | "queryFn" | "initialData"
   >,
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<
-    ProductControllerFindAllResponse,
-    ProductControllerFindAllError,
-    TData
-  >({
+  return reactQuery.useQuery<undefined, ProductControllerFindAllError, TData>({
     queryKey: queryKeyFn({
       path: "/api/product",
       operationId: "productControllerFindAll",
@@ -168,7 +156,7 @@ export type ProductControllerUpdatePathParams = {
 export type ProductControllerUpdateError = Fetcher.ErrorWrapper<undefined>;
 
 export type ProductControllerUpdateVariables = {
-  body: Schemas.CreateProductDto;
+  body?: Schemas.CreateProductDto;
   pathParams: ProductControllerUpdatePathParams;
 } & ZapdiviserContext["fetcherOptions"];
 
@@ -177,7 +165,7 @@ export const fetchProductControllerUpdate = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     ProductControllerUpdateError,
     Schemas.CreateProductDto,
     {},
@@ -188,7 +176,7 @@ export const fetchProductControllerUpdate = (
 export const useProductControllerUpdate = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Record<string, any>,
+      undefined,
       ProductControllerUpdateError,
       ProductControllerUpdateVariables
     >,
@@ -197,7 +185,7 @@ export const useProductControllerUpdate = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Record<string, any>,
+    undefined,
     ProductControllerUpdateError,
     ProductControllerUpdateVariables
   >({
@@ -222,7 +210,7 @@ export const fetchProductControllerDelete = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerDeleteError,
     undefined,
     {},
@@ -233,7 +221,7 @@ export const fetchProductControllerDelete = (
 export const useProductControllerDelete = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.ProductEntity,
+      undefined,
       ProductControllerDeleteError,
       ProductControllerDeleteVariables
     >,
@@ -242,7 +230,7 @@ export const useProductControllerDelete = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerDeleteError,
     ProductControllerDeleteVariables
   >({
@@ -256,7 +244,7 @@ export type ProductControllerCreateFlowEventError =
   Fetcher.ErrorWrapper<undefined>;
 
 export type ProductControllerCreateFlowEventVariables = {
-  body: Schemas.CreateFlowEventDto;
+  body?: Schemas.CreateFlowEventDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchProductControllerCreateFlowEvent = (
@@ -264,7 +252,7 @@ export const fetchProductControllerCreateFlowEvent = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     ProductControllerCreateFlowEventError,
     Schemas.CreateFlowEventDto,
     {},
@@ -275,7 +263,7 @@ export const fetchProductControllerCreateFlowEvent = (
 export const useProductControllerCreateFlowEvent = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Record<string, any>,
+      undefined,
       ProductControllerCreateFlowEventError,
       ProductControllerCreateFlowEventVariables
     >,
@@ -284,7 +272,7 @@ export const useProductControllerCreateFlowEvent = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Record<string, any>,
+    undefined,
     ProductControllerCreateFlowEventError,
     ProductControllerCreateFlowEventVariables
   >({
@@ -368,7 +356,7 @@ export const fetchProductControllerCreateMediaDownloadUrl = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    string,
+    undefined,
     ProductControllerCreateMediaDownloadUrlError,
     undefined,
     {},
@@ -384,7 +372,7 @@ export const fetchProductControllerCreateMediaDownloadUrl = (
 export const useProductControllerCreateMediaDownloadUrl = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      string,
+      undefined,
       ProductControllerCreateMediaDownloadUrlError,
       ProductControllerCreateMediaDownloadUrlVariables
     >,
@@ -393,7 +381,7 @@ export const useProductControllerCreateMediaDownloadUrl = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    string,
+    undefined,
     ProductControllerCreateMediaDownloadUrlError,
     ProductControllerCreateMediaDownloadUrlVariables
   >({
@@ -414,7 +402,7 @@ export type ProductControllerUpdateFlowEventError =
   Fetcher.ErrorWrapper<undefined>;
 
 export type ProductControllerUpdateFlowEventVariables = {
-  body: Schemas.UpdateFlowEventDto;
+  body?: Schemas.UpdateFlowEventDto;
   pathParams: ProductControllerUpdateFlowEventPathParams;
 } & ZapdiviserContext["fetcherOptions"];
 
@@ -423,7 +411,7 @@ export const fetchProductControllerUpdateFlowEvent = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     ProductControllerUpdateFlowEventError,
     Schemas.UpdateFlowEventDto,
     {},
@@ -439,7 +427,7 @@ export const fetchProductControllerUpdateFlowEvent = (
 export const useProductControllerUpdateFlowEvent = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Record<string, any>,
+      undefined,
       ProductControllerUpdateFlowEventError,
       ProductControllerUpdateFlowEventVariables
     >,
@@ -448,7 +436,7 @@ export const useProductControllerUpdateFlowEvent = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Record<string, any>,
+    undefined,
     ProductControllerUpdateFlowEventError,
     ProductControllerUpdateFlowEventVariables
   >({
@@ -477,7 +465,7 @@ export const fetchProductControllerDeleteFlowEvent = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Schemas.FlowEventEntity,
+    undefined,
     ProductControllerDeleteFlowEventError,
     undefined,
     {},
@@ -493,7 +481,7 @@ export const fetchProductControllerDeleteFlowEvent = (
 export const useProductControllerDeleteFlowEvent = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.FlowEventEntity,
+      undefined,
       ProductControllerDeleteFlowEventError,
       ProductControllerDeleteFlowEventVariables
     >,
@@ -502,7 +490,7 @@ export const useProductControllerDeleteFlowEvent = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Schemas.FlowEventEntity,
+    undefined,
     ProductControllerDeleteFlowEventError,
     ProductControllerDeleteFlowEventVariables
   >({
@@ -522,7 +510,7 @@ export type ProductControllerSetWhatsappPathParams = {
 export type ProductControllerSetWhatsappError = Fetcher.ErrorWrapper<undefined>;
 
 export type ProductControllerSetWhatsappVariables = {
-  body: Schemas.SetWhatsappsDto;
+  body?: Schemas.SetWhatsappsDto;
   pathParams: ProductControllerSetWhatsappPathParams;
 } & ZapdiviserContext["fetcherOptions"];
 
@@ -531,7 +519,7 @@ export const fetchProductControllerSetWhatsapp = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerSetWhatsappError,
     Schemas.SetWhatsappsDto,
     {},
@@ -547,7 +535,7 @@ export const fetchProductControllerSetWhatsapp = (
 export const useProductControllerSetWhatsapp = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.ProductEntity,
+      undefined,
       ProductControllerSetWhatsappError,
       ProductControllerSetWhatsappVariables
     >,
@@ -556,7 +544,7 @@ export const useProductControllerSetWhatsapp = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerSetWhatsappError,
     ProductControllerSetWhatsappVariables
   >({
@@ -574,7 +562,7 @@ export type ProductControllerRemoveWhatsappFromProductError =
   Fetcher.ErrorWrapper<undefined>;
 
 export type ProductControllerRemoveWhatsappFromProductVariables = {
-  body: Schemas.SetWhatsappsDto;
+  body?: Schemas.SetWhatsappsDto;
   pathParams: ProductControllerRemoveWhatsappFromProductPathParams;
 } & ZapdiviserContext["fetcherOptions"];
 
@@ -583,7 +571,7 @@ export const fetchProductControllerRemoveWhatsappFromProduct = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerRemoveWhatsappFromProductError,
     Schemas.SetWhatsappsDto,
     {},
@@ -599,7 +587,7 @@ export const fetchProductControllerRemoveWhatsappFromProduct = (
 export const useProductControllerRemoveWhatsappFromProduct = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.ProductEntity,
+      undefined,
       ProductControllerRemoveWhatsappFromProductError,
       ProductControllerRemoveWhatsappFromProductVariables
     >,
@@ -608,7 +596,7 @@ export const useProductControllerRemoveWhatsappFromProduct = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Schemas.ProductEntity,
+    undefined,
     ProductControllerRemoveWhatsappFromProductError,
     ProductControllerRemoveWhatsappFromProductVariables
   >({
@@ -819,7 +807,7 @@ export const fetchWhatsappControllerFindOne = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     WhatsappControllerFindOneError,
     undefined,
     {},
@@ -827,11 +815,11 @@ export const fetchWhatsappControllerFindOne = (
     WhatsappControllerFindOnePathParams
   >({ url: "/api/whatsapp/{id}", method: "get", ...variables, signal });
 
-export const useWhatsappControllerFindOne = <TData = Record<string, any>,>(
+export const useWhatsappControllerFindOne = <TData = undefined,>(
   variables: WhatsappControllerFindOneVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<
-      Record<string, any>,
+      undefined,
       WhatsappControllerFindOneError,
       TData
     >,
@@ -840,11 +828,7 @@ export const useWhatsappControllerFindOne = <TData = Record<string, any>,>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<
-    Record<string, any>,
-    WhatsappControllerFindOneError,
-    TData
-  >({
+  return reactQuery.useQuery<undefined, WhatsappControllerFindOneError, TData>({
     queryKey: queryKeyFn({
       path: "/api/whatsapp/{id}",
       operationId: "whatsappControllerFindOne",
@@ -875,7 +859,7 @@ export const fetchWhatsappControllerRemove = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Schemas.WhatsappEntity,
+    undefined,
     WhatsappControllerRemoveError,
     undefined,
     {},
@@ -886,7 +870,7 @@ export const fetchWhatsappControllerRemove = (
 export const useWhatsappControllerRemove = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.WhatsappEntity,
+      undefined,
       WhatsappControllerRemoveError,
       WhatsappControllerRemoveVariables
     >,
@@ -895,7 +879,7 @@ export const useWhatsappControllerRemove = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Schemas.WhatsappEntity,
+    undefined,
     WhatsappControllerRemoveError,
     WhatsappControllerRemoveVariables
   >({
@@ -1165,8 +1149,6 @@ export const useChatControllerSendMessage = (
 
 export type ChatControllerGetChatsError = Fetcher.ErrorWrapper<undefined>;
 
-export type ChatControllerGetChatsResponse = Schemas.ChatEntity[];
-
 export type ChatControllerGetChatsVariables =
   ZapdiviserContext["fetcherOptions"];
 
@@ -1175,7 +1157,7 @@ export const fetchChatControllerGetChats = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    ChatControllerGetChatsResponse,
+    undefined,
     ChatControllerGetChatsError,
     undefined,
     {},
@@ -1183,26 +1165,16 @@ export const fetchChatControllerGetChats = (
     {}
   >({ url: "/api/chat/chats", method: "get", ...variables, signal });
 
-export const useChatControllerGetChats = <
-  TData = ChatControllerGetChatsResponse,
->(
+export const useChatControllerGetChats = <TData = undefined,>(
   variables: ChatControllerGetChatsVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<
-      ChatControllerGetChatsResponse,
-      ChatControllerGetChatsError,
-      TData
-    >,
+    reactQuery.UseQueryOptions<undefined, ChatControllerGetChatsError, TData>,
     "queryKey" | "queryFn" | "initialData"
   >,
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<
-    ChatControllerGetChatsResponse,
-    ChatControllerGetChatsError,
-    TData
-  >({
+  return reactQuery.useQuery<undefined, ChatControllerGetChatsError, TData>({
     queryKey: queryKeyFn({
       path: "/api/chat/chats",
       operationId: "chatControllerGetChats",
@@ -1221,8 +1193,6 @@ export type ChatControllerGetMessagesPathParams = {
 
 export type ChatControllerGetMessagesError = Fetcher.ErrorWrapper<undefined>;
 
-export type ChatControllerGetMessagesResponse = Schemas.MessageEntity[];
-
 export type ChatControllerGetMessagesVariables = {
   pathParams: ChatControllerGetMessagesPathParams;
 } & ZapdiviserContext["fetcherOptions"];
@@ -1232,7 +1202,7 @@ export const fetchChatControllerGetMessages = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    ChatControllerGetMessagesResponse,
+    undefined,
     ChatControllerGetMessagesError,
     undefined,
     {},
@@ -1245,13 +1215,11 @@ export const fetchChatControllerGetMessages = (
     signal,
   });
 
-export const useChatControllerGetMessages = <
-  TData = ChatControllerGetMessagesResponse,
->(
+export const useChatControllerGetMessages = <TData = undefined,>(
   variables: ChatControllerGetMessagesVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<
-      ChatControllerGetMessagesResponse,
+      undefined,
       ChatControllerGetMessagesError,
       TData
     >,
@@ -1260,11 +1228,7 @@ export const useChatControllerGetMessages = <
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<
-    ChatControllerGetMessagesResponse,
-    ChatControllerGetMessagesError,
-    TData
-  >({
+  return reactQuery.useQuery<undefined, ChatControllerGetMessagesError, TData>({
     queryKey: queryKeyFn({
       path: "/api/chat/chat/{id}/messages",
       operationId: "chatControllerGetMessages",
@@ -1365,6 +1329,47 @@ export const useChatControllerGetMedia = <TData = undefined,>(
   });
 };
 
+export type UserControllerCreateError = Fetcher.ErrorWrapper<undefined>;
+
+export type UserControllerCreateVariables = {
+  body?: Schemas.CreateUserDto;
+} & ZapdiviserContext["fetcherOptions"];
+
+export const fetchUserControllerCreate = (
+  variables: UserControllerCreateVariables,
+  signal?: AbortSignal,
+) =>
+  zapdiviserFetch<
+    undefined,
+    UserControllerCreateError,
+    Schemas.CreateUserDto,
+    {},
+    {},
+    {}
+  >({ url: "/api/user", method: "post", ...variables, signal });
+
+export const useUserControllerCreate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      UserControllerCreateError,
+      UserControllerCreateVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useZapdiviserContext();
+  return reactQuery.useMutation<
+    undefined,
+    UserControllerCreateError,
+    UserControllerCreateVariables
+  >({
+    mutationFn: (variables: UserControllerCreateVariables) =>
+      fetchUserControllerCreate({ ...fetcherOptions, ...variables }),
+    ...options,
+  });
+};
+
 export type UserControllerFindMeError = Fetcher.ErrorWrapper<undefined>;
 
 export type UserControllerFindMeVariables = ZapdiviserContext["fetcherOptions"];
@@ -1373,33 +1378,23 @@ export const fetchUserControllerFindMe = (
   variables: UserControllerFindMeVariables,
   signal?: AbortSignal,
 ) =>
-  zapdiviserFetch<
-    Record<string, any>,
-    UserControllerFindMeError,
-    undefined,
-    {},
-    {},
-    {}
-  >({ url: "/api/user", method: "get", ...variables, signal });
+  zapdiviserFetch<undefined, UserControllerFindMeError, undefined, {}, {}, {}>({
+    url: "/api/user",
+    method: "get",
+    ...variables,
+    signal,
+  });
 
-export const useUserControllerFindMe = <TData = Record<string, any>,>(
+export const useUserControllerFindMe = <TData = undefined,>(
   variables: UserControllerFindMeVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<
-      Record<string, any>,
-      UserControllerFindMeError,
-      TData
-    >,
+    reactQuery.UseQueryOptions<undefined, UserControllerFindMeError, TData>,
     "queryKey" | "queryFn" | "initialData"
   >,
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<
-    Record<string, any>,
-    UserControllerFindMeError,
-    TData
-  >({
+  return reactQuery.useQuery<undefined, UserControllerFindMeError, TData>({
     queryKey: queryKeyFn({
       path: "/api/user",
       operationId: "userControllerFindMe",
@@ -1415,7 +1410,7 @@ export const useUserControllerFindMe = <TData = Record<string, any>,>(
 export type UserControllerUpdateError = Fetcher.ErrorWrapper<undefined>;
 
 export type UserControllerUpdateVariables = {
-  body: Schemas.UpdateUserDto;
+  body?: Schemas.UpdateUserDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchUserControllerUpdate = (
@@ -1423,7 +1418,7 @@ export const fetchUserControllerUpdate = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     UserControllerUpdateError,
     Schemas.UpdateUserDto,
     {},
@@ -1434,7 +1429,7 @@ export const fetchUserControllerUpdate = (
 export const useUserControllerUpdate = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Record<string, any>,
+      undefined,
       UserControllerUpdateError,
       UserControllerUpdateVariables
     >,
@@ -1443,7 +1438,7 @@ export const useUserControllerUpdate = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Record<string, any>,
+    undefined,
     UserControllerUpdateError,
     UserControllerUpdateVariables
   >({
@@ -1457,7 +1452,7 @@ export type UserControllerCreateRecoveryCodeError =
   Fetcher.ErrorWrapper<undefined>;
 
 export type UserControllerCreateRecoveryCodeVariables = {
-  body: Schemas.ForgetPasswordDto;
+  body?: Schemas.ForgetPasswordDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchUserControllerCreateRecoveryCode = (
@@ -1501,7 +1496,7 @@ export const useUserControllerCreateRecoveryCode = (
 export type UserControllerCheckCodeError = Fetcher.ErrorWrapper<undefined>;
 
 export type UserControllerCheckCodeVariables = {
-  body: Schemas.CheckCodeDto;
+  body?: Schemas.CheckCodeDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchUserControllerCheckCode = (
@@ -1509,7 +1504,7 @@ export const fetchUserControllerCheckCode = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    boolean,
+    undefined,
     UserControllerCheckCodeError,
     Schemas.CheckCodeDto,
     {},
@@ -1525,7 +1520,7 @@ export const fetchUserControllerCheckCode = (
 export const useUserControllerCheckCode = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      boolean,
+      undefined,
       UserControllerCheckCodeError,
       UserControllerCheckCodeVariables
     >,
@@ -1534,7 +1529,7 @@ export const useUserControllerCheckCode = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    boolean,
+    undefined,
     UserControllerCheckCodeError,
     UserControllerCheckCodeVariables
   >({
@@ -1548,7 +1543,7 @@ export type UserControllerForgetPasswordWithCodeError =
   Fetcher.ErrorWrapper<undefined>;
 
 export type UserControllerForgetPasswordWithCodeVariables = {
-  body: Schemas.ForgetPasswordWithCodeDto;
+  body?: Schemas.ForgetPasswordWithCodeDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchUserControllerForgetPasswordWithCode = (
@@ -1693,7 +1688,7 @@ export const useUserControllerChangePasswordWithToken = (
 export type AuthControllerCreateError = Fetcher.ErrorWrapper<undefined>;
 
 export type AuthControllerCreateVariables = {
-  body: Schemas.CreateUserDto;
+  body?: Schemas.CreateUserDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchAuthControllerCreate = (
@@ -1701,7 +1696,7 @@ export const fetchAuthControllerCreate = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     AuthControllerCreateError,
     Schemas.CreateUserDto,
     {},
@@ -1712,7 +1707,7 @@ export const fetchAuthControllerCreate = (
 export const useAuthControllerCreate = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Record<string, any>,
+      undefined,
       AuthControllerCreateError,
       AuthControllerCreateVariables
     >,
@@ -1721,7 +1716,7 @@ export const useAuthControllerCreate = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Record<string, any>,
+    undefined,
     AuthControllerCreateError,
     AuthControllerCreateVariables
   >({
@@ -1827,7 +1822,7 @@ export const useRedirectsControllerRedirect = <TData = undefined,>(
 export type RedirectsControllerCreateError = Fetcher.ErrorWrapper<undefined>;
 
 export type RedirectsControllerCreateVariables = {
-  body: Schemas.CreateRedirectDto;
+  body?: Schemas.CreateRedirectDto;
 } & ZapdiviserContext["fetcherOptions"];
 
 export const fetchRedirectsControllerCreate = (
@@ -1867,8 +1862,6 @@ export const useRedirectsControllerCreate = (
 
 export type RedirectsControllerFindAllError = Fetcher.ErrorWrapper<undefined>;
 
-export type RedirectsControllerFindAllResponse = Schemas.RedirectEntity[];
-
 export type RedirectsControllerFindAllVariables =
   ZapdiviserContext["fetcherOptions"];
 
@@ -1877,7 +1870,7 @@ export const fetchRedirectsControllerFindAll = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    RedirectsControllerFindAllResponse,
+    undefined,
     RedirectsControllerFindAllError,
     undefined,
     {},
@@ -1885,13 +1878,11 @@ export const fetchRedirectsControllerFindAll = (
     {}
   >({ url: "/api/redirects", method: "get", ...variables, signal });
 
-export const useRedirectsControllerFindAll = <
-  TData = RedirectsControllerFindAllResponse,
->(
+export const useRedirectsControllerFindAll = <TData = undefined,>(
   variables: RedirectsControllerFindAllVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<
-      RedirectsControllerFindAllResponse,
+      undefined,
       RedirectsControllerFindAllError,
       TData
     >,
@@ -1900,24 +1891,22 @@ export const useRedirectsControllerFindAll = <
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<
-    RedirectsControllerFindAllResponse,
-    RedirectsControllerFindAllError,
-    TData
-  >({
-    queryKey: queryKeyFn({
-      path: "/api/redirects",
-      operationId: "redirectsControllerFindAll",
-      variables,
-    }),
-    queryFn: ({ signal }) =>
-      fetchRedirectsControllerFindAll(
-        { ...fetcherOptions, ...variables },
-        signal,
-      ),
-    ...options,
-    ...queryOptions,
-  });
+  return reactQuery.useQuery<undefined, RedirectsControllerFindAllError, TData>(
+    {
+      queryKey: queryKeyFn({
+        path: "/api/redirects",
+        operationId: "redirectsControllerFindAll",
+        variables,
+      }),
+      queryFn: ({ signal }) =>
+        fetchRedirectsControllerFindAll(
+          { ...fetcherOptions, ...variables },
+          signal,
+        ),
+      ...options,
+      ...queryOptions,
+    },
+  );
 };
 
 export type RedirectsControllerCreateLinkPathParams = {
@@ -1928,7 +1917,7 @@ export type RedirectsControllerCreateLinkError =
   Fetcher.ErrorWrapper<undefined>;
 
 export type RedirectsControllerCreateLinkVariables = {
-  body: Schemas.CreateRedirectLinkDto;
+  body?: Schemas.CreateRedirectLinkDto;
   pathParams: RedirectsControllerCreateLinkPathParams;
 } & ZapdiviserContext["fetcherOptions"];
 
@@ -2044,19 +2033,19 @@ export const fetchRedirectsControllerFindOne = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     RedirectsControllerFindOneError,
     undefined,
     {},
     {},
     RedirectsControllerFindOnePathParams
-  >({ url: "/api/redirects/{id}", method: "get", ...variables, signal });
+  >({ url: "/api/redirects/data/{id}", method: "get", ...variables, signal });
 
-export const useRedirectsControllerFindOne = <TData = Record<string, any>,>(
+export const useRedirectsControllerFindOne = <TData = undefined,>(
   variables: RedirectsControllerFindOneVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<
-      Record<string, any>,
+      undefined,
       RedirectsControllerFindOneError,
       TData
     >,
@@ -2065,24 +2054,22 @@ export const useRedirectsControllerFindOne = <TData = Record<string, any>,>(
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } =
     useZapdiviserContext(options);
-  return reactQuery.useQuery<
-    Record<string, any>,
-    RedirectsControllerFindOneError,
-    TData
-  >({
-    queryKey: queryKeyFn({
-      path: "/api/redirects/{id}",
-      operationId: "redirectsControllerFindOne",
-      variables,
-    }),
-    queryFn: ({ signal }) =>
-      fetchRedirectsControllerFindOne(
-        { ...fetcherOptions, ...variables },
-        signal,
-      ),
-    ...options,
-    ...queryOptions,
-  });
+  return reactQuery.useQuery<undefined, RedirectsControllerFindOneError, TData>(
+    {
+      queryKey: queryKeyFn({
+        path: "/api/redirects/data/{id}",
+        operationId: "redirectsControllerFindOne",
+        variables,
+      }),
+      queryFn: ({ signal }) =>
+        fetchRedirectsControllerFindOne(
+          { ...fetcherOptions, ...variables },
+          signal,
+        ),
+      ...options,
+      ...queryOptions,
+    },
+  );
 };
 
 export type RedirectsControllerUpdatePathParams = {
@@ -2101,7 +2088,7 @@ export const fetchRedirectsControllerUpdate = (
   signal?: AbortSignal,
 ) =>
   zapdiviserFetch<
-    Record<string, any>,
+    undefined,
     RedirectsControllerUpdateError,
     Schemas.UpdateRedirectDto,
     {},
@@ -2112,7 +2099,7 @@ export const fetchRedirectsControllerUpdate = (
 export const useRedirectsControllerUpdate = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Record<string, any>,
+      undefined,
       RedirectsControllerUpdateError,
       RedirectsControllerUpdateVariables
     >,
@@ -2121,7 +2108,7 @@ export const useRedirectsControllerUpdate = (
 ) => {
   const { fetcherOptions } = useZapdiviserContext();
   return reactQuery.useMutation<
-    Record<string, any>,
+    undefined,
     RedirectsControllerUpdateError,
     RedirectsControllerUpdateVariables
   >({
@@ -2337,7 +2324,7 @@ export type QueryOperation =
       variables: RedirectsControllerSlugAvailableVariables;
     }
   | {
-      path: "/api/redirects/{id}";
+      path: "/api/redirects/data/{id}";
       operationId: "redirectsControllerFindOne";
       variables: RedirectsControllerFindOneVariables;
     };

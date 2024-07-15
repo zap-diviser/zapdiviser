@@ -7,3 +7,8 @@ import { JwtAuthGuard } from '../../modules/auth/guards/jwt-auth.guard';
 export const UserIsAuthenticated = () => {
   return applyDecorators(UseGuards(JwtAuthGuard), ApiBearerAuth());
 };
+
+export const userIsAdmin = () => {
+  return applyDecorators(UseGuards(JwtAuthGuard), ApiBearerAuth());
+}
+
