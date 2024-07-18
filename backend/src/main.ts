@@ -34,10 +34,25 @@ export async function bootstrap() {
       bufferLogs: true,
       rawBody: true,
       bodyParser: true,
-    }
+    },
   );
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .addHook('preParsing', (request, reply, payload, done) => {
+      if (
+        ['POST', 'DELETE'].includes(request.method) &&
+        request.headers['content-type'] == 'application/json' &&
+        request.headers['content-length'] == '0'
+      ) {
+        delete request.headers['content-type'];
+      }
+
+      done();
+    });
 
   app.setGlobalPrefix('api');
 
