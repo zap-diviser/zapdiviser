@@ -63,8 +63,7 @@ export class RedirectsService {
         name: createRedirectDto.name,
         user: {
           id: userId,
-        },
-        links,
+        }
       }),
       this.redisService
         .getClient()
@@ -73,6 +72,13 @@ export class RedirectsService {
           ...links.map((link) => link.link),
         ),
     ]);
+
+    for (const link of links) {
+      await this.redirectLinkRepository.save({
+        ...link,
+        redirect,
+      });
+    }
 
     return {
       ...redirect,

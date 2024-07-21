@@ -124,6 +124,8 @@ const AddRedirect = ({ redirect, onCancel, onSucess }: Props) => {
   }, [redirect]);
 
   const initialValues = useMemo(() => {
+    console.log(redirect)
+    //@ts-ignore
     return getInitialValues(redirect);
   }, [redirect]);
 
