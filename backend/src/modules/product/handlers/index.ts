@@ -428,11 +428,11 @@ const handlers: Handler[] = [
   {
     name: 'elementor_advanced',
     detect: (data) => {
-      return _.has(data, 'form.id');
+      return _.has(data, 'form[id]');
     },
-    eventPath: 'form.id',
-    namePath: 'fields.name.value',
-    phonePath: 'fields.phone.value',
+    eventPath: 'form[id]',
+    namePath: 'fields[name][value]',
+    phonePath: 'fields[phone][value]',
     eventMap: [
       {
         type: 'function',
