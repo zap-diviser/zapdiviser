@@ -3,3 +3,4 @@ packages:
   - frontend
   - whatsapp-node
   - universal-types
+  - admin

@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@adminjs/express": "^6.1.0",
-    "@adminjs/nestjs": "^6.1.0",
     "@adminjs/passwords": "4.0.0",
     "@adminjs/typeorm": "^5.0.1",
     "@babel/plugin-syntax-import-assertions": "^7.24.1",
@@ -54,7 +53,6 @@
     "@nestjs/websockets": "^10.3.8",
     "@react-email/components": "^0.0.14",
     "@react-email/render": "0.0.12",
-    "adminjs": "^7.8.1",
     "bcrypt": "^5.1.1",
     "bluebird": "^3.7.2",
     "bull": "^4.12.3",

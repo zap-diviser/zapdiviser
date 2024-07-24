@@ -440,7 +440,23 @@ const handlers: Handler[] = [
         mapTo: 'form_submitted',
       },
     ],
-  }
+  },
+  {
+    name: 'basic',
+    detect: (data) => {
+      return _.has(data, 'nome') && _.has(data, 'telefone');
+    },
+    eventPath: 'evento',
+    namePath: 'nome',
+    phonePath: 'telefone',
+    eventMap: [
+      {
+        type: 'value',
+        value: 'formulario_enviado',
+        mapTo: 'form_submitted',
+      },
+    ],
+  },
 ];
 
 type HandleResult = {
