@@ -1,7 +1,7 @@
 import Message from "./message_types"
 import redis from "./redis"
 import { Worker as InternalWorker, type Job } from "bullmq"
-import type Whatsapp from "./whatsapp"
+import type Whatsapp from "./whatsapp/index"
 
 export default class Worker {
   whatsapp: Whatsapp
@@ -12,6 +12,7 @@ export default class Worker {
 
     this.worker = new InternalWorker<Message>(
       `MessagesSender:${process.env.INSTANCE_ID}`,
+      // @ts-ignore
       job => this[`handle_${job.name}`](job.data),
       { connection: redis }
     )
@@ -49,6 +50,10 @@ export default class Worker {
 
         break
 
+      default:
+        await this.whatsapp.sendDocument(file, to)
+
+        break
     }
   }
 }

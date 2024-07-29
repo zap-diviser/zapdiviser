@@ -41,7 +41,7 @@ const minio = new Client({
 
 class Whatsapp {
   instanceId: string
-  sock: ReturnType<typeof makeWASocket>
+  sock: ReturnType<typeof makeWASocket> | undefined
   logger = MAIN_LOGGER.child({})
   msgRetryCounterCache = new NodeCache()
   hasStarted = false
@@ -137,7 +137,7 @@ class Whatsapp {
                 await minio.putObject(
                   "zapdiviser",
                   url,
-                  await downloadMediaMessage(msg, "stream", {}, { logger: this.logger, reuploadRequest: this.sock.updateMediaMessage })
+                  await downloadMediaMessage(msg, "stream", {}, { logger: this.logger, reuploadRequest: this.sock!.updateMediaMessage })
                 )
 
                 content = {
@@ -213,11 +213,11 @@ class Whatsapp {
   }
 
   getSelfPhone() {
-    return "+" + this.sock.user?.id?.split(":")[0]
+    return "+" + this.sock!.user?.id?.split(":")[0]
   }
 
   async sendMessageTyping(msg: AnyMessageContent, phone: string) {
-    const result = await this.sock.onWhatsApp(phone).catch(() => null)
+    const result = await this.sock!.onWhatsApp(phone).catch(() => null)
 
     const text = (msg as { text: string }).text ?? (msg as { caption: string }).caption ?? ""
 
@@ -227,19 +227,19 @@ class Whatsapp {
 
     const jid = result[0].jid
 
-    await this.sock.presenceSubscribe(jid)
+    await this.sock!.presenceSubscribe(jid)
     await delay(100 * Math.random())
 
-    await this.sock.sendPresenceUpdate("composing", jid)
+    await this.sock!.sendPresenceUpdate("composing", jid)
     await delay(text.length * 10 * Math.random())
 
-    await this.sock.sendPresenceUpdate("paused", jid)
+    await this.sock!.sendPresenceUpdate("paused", jid)
 
-    await this.sock.sendMessage(jid, msg)
+    await this.sock!.sendMessage(jid, msg)
   }
 
   private async sendMessageBase(msg: AnyMessageContent, phone: string) {
-    const result = await this.sock.onWhatsApp(phone).catch(() => null)
+    const result = await this.sock!.onWhatsApp(phone).catch(() => null)
 
     if (result === null || result.length === 0 || !result[0].jid) {
       return
@@ -247,7 +247,7 @@ class Whatsapp {
 
     const jid = result[0].jid
 
-    await this.sock.sendMessage(jid, msg)
+    await this.sock!.sendMessage(jid, msg)
   }
 
   private async sendMediaMessageBase(url: string, msg: (buffer: Buffer) => AnyMessageContent, phone: string) {
@@ -277,7 +277,7 @@ class Whatsapp {
   }
 
   async sendDocument(url: string, phone: string) {
-    await this.sendMediaMessageBase(url, (buffer) => ({ document: buffer, fileName: "test.pdf", mimetype: "application/pdf" }), phone)
+    await this.sendMediaMessageBase(url, (buffer) => ({ document: buffer, fileName: "file.pdf", mimetype: "application/pdf" }), phone)
   }
 
   async getMessage(key: WAMessageKey): Promise<WAMessageContent | undefined> {

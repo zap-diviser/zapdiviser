@@ -1,4 +1,4 @@
-import Whatsapp from "./whatsapp"
+import Whatsapp from "./whatsapp/index"
 import Client from "./client"
 import Worker from "./worker"
 

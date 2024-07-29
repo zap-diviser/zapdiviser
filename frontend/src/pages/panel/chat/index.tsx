@@ -408,7 +408,7 @@ const Chat = () => {
                                 mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'audio' }, to: user.id! } })
                               } else if (fileType.includes('video')) {
                                 mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'video' }, to: user.id! } })
-                              } else if (fileType.includes('document')) {
+                              } else if (fileType.includes('application/pdf') || fileType.includes('application/msword') || fileType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
                                 mutateAsync({ body: { content: { type: "file", file: (url as any).id, file_type: 'document' }, to: user.id! } })
                               }
                               input.remove();

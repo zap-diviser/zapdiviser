@@ -1,5 +1,4 @@
-import { proto } from "@whiskeysockets/baileys"
-import { AuthenticationCreds, AuthenticationState, SignalDataTypeMap, initAuthCreds, BufferJSON } from "@whiskeysockets/baileys"
+import { proto, AuthenticationState, SignalDataTypeMap, initAuthCreds, BufferJSON, AuthenticationCreds } from "@whiskeysockets/baileys"
 import redis from "../redis"
 
 export const useRedisAuthState = async(instanceid: string): Promise<{ state: AuthenticationState, saveCreds: () => Promise<void>, clearData: () => Promise<void> }> => {
@@ -55,8 +54,8 @@ export const useRedisAuthState = async(instanceid: string): Promise<{ state: Aut
 				set: async(data) => {
 					const tasks: Promise<void>[] = []
 					for(const category in data) {
-						for(const id in data[category]) {
-							const value = data[category][id]
+						for(const id in data[category as keyof typeof data]) {
+							const value = data[category as keyof typeof data]?.[id]
 							const dataId = `${category}-${id}`
 							tasks.push(value ? writeData(value, dataId) : removeData(dataId))
 						}
