@@ -166,7 +166,7 @@ const Whatsapp = () => {
   return (
     <MainCard content={false}>
       <ScrollX>
-        <SimpleTable columns={columns} data={data || []} handleAdd={handleAdd} addTitle="Adicionar Whatsapp" />
+        <SimpleTable columns={columns || []} data={data || []} handleAdd={handleAdd} addTitle="Adicionar Whatsapp" />
       </ScrollX>
 
       {open.isOpen && <QRWhatsapp isOpen={open.isOpen} onClose={() => setOpen({ isOpen: false, data: null })} data={open.data} />}

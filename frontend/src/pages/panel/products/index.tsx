@@ -4,16 +4,13 @@ import { useMemo, useState, MouseEvent } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Button, Stack, Tooltip } from '@mui/material';
 
-// third-party
-import { Row } from 'react-table';
-
 // project-imports
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import IconButton from 'components/@extended/IconButton';
 
 // assets
-import { Add, Eye, Trash, Edit } from 'iconsax-react';
+import { Trash, Edit } from 'iconsax-react';
 
 // types
 import { ThemeMode } from 'types/config';
@@ -203,7 +200,7 @@ const Products = () => {
   return (
     <MainCard content={false}>
       <ScrollX>
-        <SimpleTable columns={columns} data={data || []} handleAdd={handleAdd} addTitle="Adicionar Produto" />
+        <SimpleTable columns={columns || []} data={data || []} handleAdd={handleAdd} addTitle="Adicionar Produto" />
       </ScrollX>
 
       <AddOrEditProduct product={open.data} isOpen={open.isOpen} onClose={() => setOpen({ isOpen: false, data: null })} />

@@ -147,7 +147,7 @@ export const RedirectsTable = () => {
   return (
     <MainCard content={false}>
       <ScrollX>
-        <SimpleTable addTitle="Adicionar Redirecionamento" columns={columns} data={data || []} handleAdd={handleAdd} />
+        <SimpleTable addTitle="Adicionar Redirecionamento" columns={columns || []} data={data || []} handleAdd={handleAdd} />
       </ScrollX>
       <Dialog
         maxWidth="sm"
