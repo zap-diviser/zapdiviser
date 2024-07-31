@@ -1,16 +1,11 @@
-import Chat, { useChat } from "./components/Chat"
-import Teste2 from "./components/Teste2"
+import Button from "./components/Button"
 
 function App() {
-  const { messages } = useChat()
-
-  console.log(messages)
-
   return (
     <div>
-      <h1>Teste</h1>
-      <Chat />
-      <Teste2 />
+      <h1>Admin</h1>
+      <p>Admin panel</p>
+      <Button>Editar eventos</Button>
     </div>
   )
 }

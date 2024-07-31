@@ -105,6 +105,16 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     return await this.repository.save(whatsapp);
   }
 
+  async getProductIdFromInstance(instanceId: string) {
+    const whatsapp = await this.repository.findOneOrFail({
+      where: { id: instanceId },
+    });
+
+    const products = whatsapp.products;
+
+    return products[products.length - 1].id;
+  }
+
   async isAvailable(id: string) {
     const whatsapp = await this.repository.findOne({
       where: { id },
@@ -342,8 +352,8 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
     const expectedSignature = `sha256=${hmac.digest('hex')}`;
 
     return crypto.timingSafeEqual(
-      Buffer.from(expectedSignature),
-      Buffer.from(signatureHeader),
+      new Uint8Array(Buffer.from(expectedSignature)),
+      new Uint8Array(Buffer.from(signatureHeader)),
     );
   }
 

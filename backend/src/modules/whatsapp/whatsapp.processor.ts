@@ -1,12 +1,41 @@
-import { Processor, Process } from '@nestjs/bull';
-import { Job } from 'bull';
+import { Processor, Process, InjectQueue } from '@nestjs/bull';
+import { Job, Queue as IQueue } from 'bull';
 import { WhatsappService } from './whatsapp.service';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Status } from './entities/whatsapp.entity';
 import { ChatService } from '../chat/chat.service';
 import pusher from '../../pusher';
+import { FlowEventEntity } from '@/modules/product/entities/flow-event.entity';
 
 type Event<T> = Job<{ instanceId: string; data: T }>;
+
+interface IFlowEvent {
+  id: string;
+  product_id: string;
+  events: Array<
+    FlowEventEntity & {
+      metadata: any;
+    }
+  >;
+  phone: string;
+  name: string;
+  instanceId: string;
+  created_at: Date;
+}
+
+interface IFlowEvent {
+  id: string;
+  product_id: string;
+  events: Array<
+    FlowEventEntity & {
+      metadata: any;
+    }
+  >;
+  phone: string;
+  name: string;
+  instanceId: string;
+  created_at: Date;
+}
 
 @Processor('FlowTriggers')
 export class WhatsappConsumer {
@@ -14,6 +43,8 @@ export class WhatsappConsumer {
     private readonly whatsappService: WhatsappService,
     private readonly redisService: RedisService,
     private readonly chatService: ChatService,
+    @InjectQueue('flow-event-queue')
+    private readonly reservaCotaQueue: IQueue<IFlowEvent>,
   ) {}
 
   @Process('qr')
@@ -87,6 +118,22 @@ export class WhatsappConsumer {
       name,
       fromMe,
     );
+
+    const productId =
+      await this.whatsappService.getProductIdFromInstance(instanceId);
+
+    const redis = this.redisService.getClient();
+
+    const data = await redis.get(`flow:${productId}:${to}`);
+
+    if (!data) return;
+
+    const events = JSON.parse(data);
+
+    this.reservaCotaQueue.add('data-event-process', {
+      ...events,
+      created_at: new Date(),
+    });
   }
 
   @Process('chat-last-interaction')

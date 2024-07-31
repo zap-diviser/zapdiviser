@@ -108,6 +108,16 @@ export class FlowEventConsumer {
 
         break;
       }
+      case 'wait_response': {
+        await redis.set(
+          `flow:${data.product_id}:${data.phone}`,
+          JSON.stringify({
+            ...data,
+            events: restQueue,
+          }),
+        );
+        break;
+      }
     }
 
     await this.flowEventRepository.query(

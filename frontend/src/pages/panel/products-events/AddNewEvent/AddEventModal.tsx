@@ -34,6 +34,7 @@ import defaultError from 'utils/defaultError';
 import MessageType from './MessageType';
 import DelayType from './DelayType';
 import FileType from './FileType';
+import WaitForMessageType from './WairForMessageType';
 
 const getInitialValues = (customer: FormikValues | null) => {
   const newCustomer = {
@@ -64,13 +65,18 @@ const CustomerSchema = Yup.object().shape({
   file: Yup.string().when('type', (type, schema) => {
     if (type[0] === 'file') return schema.required('É necessário informar o áudio');
     return schema;
+  }),
+  wait_for_message: Yup.string().when('type', (type, schema) => {
+    if (type[0] === 'file') return schema.required('É necessário informar a mensagem');
+    return schema;
   })
 });
 
 const allTypes = [
   { id: 1, type: 'message', label: 'Mensagem' },
   { id: 2, type: 'delay', label: 'Delay' },
-  { id: 3, type: 'file', label: 'Arquivo' }
+  { id: 3, type: 'file', label: 'Arquivo' },
+  { id: 4, type: 'wait_for_message', label: 'Arguardar resposta' }
 ];
 
 const AddEventModal = () => {
@@ -227,6 +233,9 @@ const AddEventModal = () => {
         case 'file':
           metadata = { file: pre_metadata.file, file_type: pre_metadata.file_type };
           break;
+        case 'wait_for_message':
+          metadata = {};
+          break;
         default:
           break;
       }
@@ -374,8 +383,10 @@ const AddEventModal = () => {
                   <MessageType getFieldProps={getFieldProps} touched={touched} errors={errors} />
                 ) : formik.values.type === 'delay' ? (
                   <DelayType getFieldProps={getFieldProps} touched={touched} errors={errors} />
-                ) : (
+                ) : formik.values.type === 'file' ? (
                   <FileType setFieldValue={setFieldValue} getFieldProps={getFieldProps} touched={touched} errors={errors} />
+                ) : (
+                  <WaitForMessageType />
                 )}
               </Grid>
             </DialogContent>
