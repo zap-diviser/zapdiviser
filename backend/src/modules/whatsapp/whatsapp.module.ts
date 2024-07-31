@@ -13,6 +13,9 @@ import { ChatModule } from '../chat/chat.module';
     BullModule.registerQueueAsync({
       name: 'FlowTriggers',
     }),
+    BullModule.registerQueue({
+      name: 'flow-event-queue',
+    }),
     ChatModule,
   ],
   exports: [WhatsappService],
