@@ -7,6 +7,6 @@ export class UpdateFlowEventDto {
   };
 
   @IsString()
-  @IsIn(['message', 'delay', 'file'])
+  @IsIn(['message', 'delay', 'file', 'wait_for_message'])
   type: string;
 }

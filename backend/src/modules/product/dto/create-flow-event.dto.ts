@@ -28,7 +28,7 @@ export class CreateFlowEventDto {
   };
 
   @IsString()
-  @IsIn(['message', 'delay', 'file'])
+  @IsIn(['message', 'delay', 'file', 'wait_for_message'])
   type: string;
 
   @IsNumber()
