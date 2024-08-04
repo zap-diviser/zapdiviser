@@ -451,8 +451,8 @@ const handlers: Handler[] = [
     phonePath: 'telefone',
     eventMap: [
       {
-        type: 'value',
-        value: 'formulario_enviado',
+        type: 'function',
+        fn: () => true,
         mapTo: 'form_submitted',
       },
     ],

@@ -106,9 +106,12 @@ export class WhatsappService implements OnModuleInit, OnModuleDestroy {
   }
 
   async getProductIdFromInstance(instanceId: string) {
-    const whatsapp = await this.repository.findOneOrFail({
+    const whatsapp = await this.repository.findOne({
       where: { id: instanceId },
+      relations: ['products'],
     });
+
+    if (!whatsapp) return null;
 
     const products = whatsapp.products;
 

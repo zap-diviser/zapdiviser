@@ -119,21 +119,25 @@ export class WhatsappConsumer {
       fromMe,
     );
 
-    const productId =
-      await this.whatsappService.getProductIdFromInstance(instanceId);
+    if (!fromMe) {
+      const productId =
+        await this.whatsappService.getProductIdFromInstance(instanceId);
 
-    const redis = this.redisService.getClient();
+      const redis = this.redisService.getClient();
 
-    const data = await redis.get(`flow:${productId}:${to}`);
+      const data = await redis.get(`flow:${productId}:${to}`);
 
-    if (!data) return;
+      if (!data) return;
 
-    const events = JSON.parse(data);
+      await redis.del(`flow:${productId}:${to}`);
 
-    this.reservaCotaQueue.add('data-event-process', {
-      ...events,
-      created_at: new Date(),
-    });
+      const events = JSON.parse(data);
+
+      this.reservaCotaQueue.add('data-event-process', {
+        ...events,
+        created_at: new Date(),
+      });
+    }
   }
 
   @Process('chat-last-interaction')

@@ -21,6 +21,22 @@ interface IFlowEvent {
   created_at: Date;
 }
 
+function formatPhoneNumber(phoneNumber: string) {
+  let cleanedNumber = phoneNumber.replace(/\D/g, '');
+
+  if (!cleanedNumber.startsWith('55')) {
+    cleanedNumber = '55' + cleanedNumber;
+  }
+
+  if (cleanedNumber.length === 13 && cleanedNumber.charAt(4) === '9') {
+    cleanedNumber = cleanedNumber.slice(0, 4) + cleanedNumber.slice(5);
+  } else if (cleanedNumber.length === 14 && cleanedNumber.charAt(4) === '9') {
+    cleanedNumber = cleanedNumber.slice(0, 4) + cleanedNumber.slice(5);
+  }
+
+  return `+${cleanedNumber}`;
+}
+
 @Processor('flow-event-queue')
 export class FlowEventConsumer {
   private readonly logger = new Logger(FlowEventConsumer.name);
@@ -108,9 +124,9 @@ export class FlowEventConsumer {
 
         break;
       }
-      case 'wait_response': {
+      case 'wait_for_message': {
         await redis.set(
-          `flow:${data.product_id}:${data.phone}`,
+          `flow:${data.product_id}:${formatPhoneNumber(data.phone)}`,
           JSON.stringify({
             ...data,
             events: restQueue,
