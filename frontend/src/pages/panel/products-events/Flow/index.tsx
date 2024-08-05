@@ -10,12 +10,14 @@ import addNewCard from './helpers/add-new-card';
 import addNewEdge from './helpers/add-new-edge';
 import { Delay } from './flow-types/delay';
 import { File } from './flow-types/file';
+import { WaitForMessage } from './flow-types/wait_for_message';
 
 const nodeTypes = {
   add_new: AddNew,
   message: Message,
   delay: Delay,
-  file: File
+  file: File,
+  wait_for_message: WaitForMessage
 };
 
 export default function Flow() {
