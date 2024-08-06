@@ -67,7 +67,6 @@ const CustomerSchema = Yup.object().shape({
     return schema;
   }),
   wait_for_message: Yup.string().when('type', (type, schema) => {
-    if (type[0] === 'file') return schema.required('É necessário informar a mensagem');
     return schema;
   })
 });
@@ -405,7 +404,7 @@ const AddEventModal = () => {
                     <Button color="error" onClick={onCancel}>
                       Cancelar
                     </Button>
-                    <Button type="submit" variant="contained" disabled={isSubmitting}>
+                    <Button type="submit" variant="contained" disabled={isSubmitting} onClick={() => console.log("Teste")}>
                       {funnelData ? 'Editar' : 'Adicionar'}
                     </Button>
                   </Stack>

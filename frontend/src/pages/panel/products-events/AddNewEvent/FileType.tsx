@@ -90,7 +90,7 @@ export default function FileType({
                   width: '100%'
                 }}
               >
-                <source src={`https://minio-api.zapdiviser.vitordaniel.com/zapdiviser/${fileValue}`} type="audio/mpeg" />
+                <source src={`https://minio-api.zapdiviser.com/zapdiviser/${fileValue}`} type="audio/mpeg" />
                 Your browser does not support the audio element.
               </audio>
             </Grid>
@@ -118,7 +118,7 @@ export default function FileType({
                   width: '300px',
                   marginBottom: '20px'
                 }}
-                src={`https://minio-api.zapdiviser.vitordaniel.com/zapdiviser/${fileValue}`}
+                src={`https://minio-api.zapdiviser.com/zapdiviser/${fileValue}`}
                 alt="image"
               />
 
@@ -137,7 +137,7 @@ export default function FileType({
               width: '100%'
             }}
           >
-            <source src={`https://minio-api.zapdiviser.vitordaniel.com/zapdiviser/${fileValue}`} type="video/mp4" />
+            <source src={`https://minio-api.zapdiviser.com/zapdiviser/${fileValue}`} type="video/mp4" />
             Your browser does not support the video element.
           </video>
         );
@@ -163,7 +163,7 @@ export default function FileType({
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
-                  href={`https://minio-api.zapdiviser.vitordaniel.com/zapdiviser/${fileValue}`}
+                  href={`https://minio-api.zapdiviser.com/zapdiviser/${fileValue}`}
                   target="_blank"
                   rel="noreferrer"
                 >
