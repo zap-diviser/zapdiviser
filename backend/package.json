@@ -12,9 +12,9 @@
   },
   "scripts": {
     "build": "nest build",
-    "start": "nest start -e 'node --experimental-require-module'",
-    "start:dev": "nest start --watch -e 'node --experimental-require-module'",
-    "start:debug": "nest start --debug --watch -e 'node --experimental-require-module'",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
     "start:prod": "node --experimental-require-module --max-old-space-size=4096 ./dist/main.js",
     "email:dev": "email dev --dir src/modules/email/emails",
     "migration:generate": "pnpm build &&ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:generate",
