@@ -1,4 +1,4 @@
-const Form: React.FC<FormProps> = ({ form, onSubmit }) => {
+const Form: React.FC<{ edit: boolean }> = ({ edit }) => {
   return (
     <div
       id="updateProductModal"
@@ -10,13 +10,13 @@ const Form: React.FC<FormProps> = ({ form, onSubmit }) => {
         <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
           <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Update Product
+              {edit ? "Editar" : "Adicionar"}
             </h3>
             <button
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
               data-modal-toggle="updateProductModal"
-            >
+          >
               <svg
                 aria-hidden="true"
                 className="w-5 h-5"

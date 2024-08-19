@@ -33,13 +33,13 @@ const data: Person[] = [
   { id: 8, name: "Jane Brown", age: 39 },
   { id: 9, name: "John White", age: 45 },
   { id: 10, name: "Jane White", age: 44 },
-  { id: 11, name: "John Black", age: 50 },
+  { id: 11, name: "John Black", age: 50 }
 ]
 
 const Home: React.FC = () => {
   return (
     <DefaultLayout>
-      <Crud data={data} columns={columns} />
+      <Crud data={data} columns={columns as any} />
     </DefaultLayout>
   )
 }
