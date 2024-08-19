@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
     }
   })
 
-  const onSubmit = ({ email, password, stayLogged }: FormData) => {
+  const onSubmit = ({ email, password }: FormData) => {
     setError(null)
     mutate({ body: { email, password } })
   }
