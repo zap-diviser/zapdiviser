@@ -30,6 +30,15 @@ export class UserEntity extends DefaultEntity {
   })
   level: 'user' | 'admin';
 
+  @Column({
+    default: 'active',
+    enum: ['active', 'inactive'],
+  })
+  status: 'active' | 'inactive';
+
+  @Column({ default: 10 })
+  instancesLimit: number;
+
   @OneToMany(() => ProductEntity, (funnel) => funnel.user)
   products: ProductEntity[];
 

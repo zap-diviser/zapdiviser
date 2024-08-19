@@ -1,4 +1,4 @@
-FROM node:20 AS base
+FROM node:22 AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -22,6 +22,9 @@ CMD [ "pnpm", "start:prod" ]
 
 FROM devforth/spa-to-http AS frontend
 COPY --from=build /usr/src/app/frontend/dist .
+
+FROM devforth/spa-to-http AS frontend-v2
+COPY --from=build /usr/src/app/frontend-v2/dist .
 
 FROM base AS whatsapp-node
 WORKDIR /code/

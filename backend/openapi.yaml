@@ -1,0 +1,848 @@
+openapi: 3.0.0
+paths:
+  /product:
+    post:
+      operationId: ProductController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductDto"
+      responses:
+        "201":
+          description: ""
+      tags: &a1
+        - Product
+      security:
+        - bearer: []
+    get:
+      operationId: ProductController_findAll
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+  /product/{id}:
+    get:
+      operationId: ProductController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductEntity"
+      tags: *a1
+      security:
+        - bearer: []
+    patch:
+      operationId: ProductController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductDto"
+      responses:
+        "200":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+    delete:
+      operationId: ProductController_delete
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+  /product/flow-event:
+    post:
+      operationId: ProductController_createFlowEvent
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFlowEventDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+  /product/flow-event/upload-file/{product_id}:
+    post:
+      operationId: ProductController_createMediaUploadUrl
+      parameters:
+        - name: product_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+  /product/flow-event/download-file/{product_id}/{file_id}:
+    post:
+      operationId: ProductController_createMediaDownloadUrl
+      parameters:
+        - name: product_id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: file_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+  /product/flow-event/{id}:
+    patch:
+      operationId: ProductController_updateFlowEvent
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFlowEventDto"
+      responses:
+        "200":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+    delete:
+      operationId: ProductController_deleteFlowEvent
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+  /product/{id}/whatsapp:
+    post:
+      operationId: ProductController_setWhatsapp
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setWhatsappsDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+    delete:
+      operationId: ProductController_removeWhatsappFromProduct
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setWhatsappsDto"
+      responses:
+        "200":
+          description: ""
+      tags: *a1
+      security:
+        - bearer: []
+  /product/webhook/{id}:
+    post:
+      operationId: ProductController_webhook
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Object"
+      responses:
+        "200":
+          description: ""
+      tags: *a1
+  /whatsapp:
+    get:
+      operationId: WhatsappController_findAll
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WhatsappEntity"
+      tags: &a2
+        - Whatsapp
+      security:
+        - bearer: []
+    post:
+      operationId: WhatsappController_create
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhatsappEntity"
+      tags: *a2
+      security:
+        - bearer: []
+  /whatsapp/update-code:
+    post:
+      operationId: WhatsappController_updateCode
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a2
+  /whatsapp/{id}:
+    get:
+      operationId: WhatsappController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a2
+      security:
+        - bearer: []
+    delete:
+      operationId: WhatsappController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a2
+      security:
+        - bearer: []
+  /whatsapp/webhook:
+    post:
+      operationId: WhatsappController_webhook
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a2
+  /whatsapp/update:
+    post:
+      operationId: WhatsappController_update
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a2
+  /whatsapp/create-whatsapp/{id}:
+    post:
+      operationId: WhatsappController_createWhatsapp
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
+      tags: *a2
+      security:
+        - bearer: []
+  /chat/set-whatsapp:
+    post:
+      operationId: ChatController_setWhatsapp
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: &a3
+        - Chat
+      security:
+        - bearer: []
+  /chat/upload-file:
+    post:
+      operationId: ChatController_createMediaUploadUrl
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a3
+      security:
+        - bearer: []
+  /chat/send-message:
+    post:
+      operationId: ChatController_sendMessage
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a3
+      security:
+        - bearer: []
+  /chat/chats:
+    get:
+      operationId: ChatController_getChats
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      tags: *a3
+      security:
+        - bearer: []
+  /chat/chat/{id}/messages:
+    get:
+      operationId: ChatController_getMessages
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a3
+      security:
+        - bearer: []
+  /chat/delete-all:
+    post:
+      operationId: ChatController_deleteAll
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a3
+  /chat/media:
+    get:
+      operationId: ChatController_getMedia
+      parameters:
+        - name: id
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a3
+  /user:
+    get:
+      operationId: UserController_findAll
+      summary: Listar todos os usuários
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      tags: &a4
+        - Usuário
+      security:
+        - bearer: []
+    post:
+      operationId: UserController_create
+      summary: Criar um novo usuário
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+      security:
+        - bearer: []
+    patch:
+      operationId: UserController_update
+      summary: Atualizar informações do usuário
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: ""
+      tags: *a4
+      security:
+        - bearer: []
+  /user/me:
+    get:
+      operationId: UserController_findMe
+      summary: Buscar informações do usuário logado
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      tags: *a4
+      security:
+        - bearer: []
+  /user/forget-password:
+    post:
+      operationId: UserController_createRecoveryCode
+      summary: Rota para gerar código de recuperação de senha
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgetPasswordDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+  /user/forget-password/check-code:
+    post:
+      operationId: UserController_checkCode
+      summary: Rota para gerar código de recuperação de senha
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckCodeDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+  /user/forget-password/code:
+    post:
+      operationId: UserController_forgetPasswordWithCode
+      summary: Rota para gerar código de recuperação de senha
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgetPasswordWithCodeDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+  /user/change-password/old-password:
+    post:
+      operationId: UserController_changePassword
+      summary: Alterar senha (com senha antiga)
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePasswordWithOldPasswordDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+      security:
+        - bearer: []
+  /user/change-password/token:
+    post:
+      operationId: UserController_changePasswordWithToken
+      summary: Alterar senha (com token)
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePasswordWithTokenDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a4
+  /auth/register:
+    post:
+      operationId: AuthController_create
+      summary: Rota para criar um novo usuário
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+      responses:
+        "201":
+          description: ""
+      tags: &a5
+        - Auth
+  /auth/login:
+    post:
+      operationId: AuthController_login
+      summary: Rota para realizar o login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUserDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a5
+  /redirects/{slug}:
+    get:
+      operationId: RedirectsController_redirect
+      summary: Executar o redirect
+      parameters:
+        - name: slug
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: &a6
+        - Redirects
+  /redirects:
+    post:
+      operationId: RedirectsController_create
+      summary: Criar redirect
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRedirectDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+    get:
+      operationId: RedirectsController_findAll
+      summary: Listar todos os redirects do usuário
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+  /redirects/{id}/link:
+    post:
+      operationId: RedirectsController_createLink
+      summary: Adicionar um link a um redirect
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRedirectLinkDto"
+      responses:
+        "201":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+  /redirects/slug-available/{slug}:
+    get:
+      operationId: RedirectsController_slugAvailable
+      summary: Verificar se um slug está disponível
+      parameters:
+        - name: slug
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+  /redirects/data/{id}:
+    get:
+      operationId: RedirectsController_findOne
+      summary: Obter todos os dados de um redirect
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+  /redirects/{id}:
+    patch:
+      operationId: RedirectsController_update
+      summary: Modificar um redirect
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRedirectDto"
+      responses:
+        "200":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+    delete:
+      operationId: RedirectsController_remove
+      summary: Remover um redirect
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+  /redirects/{id}/link/{linkId}:
+    patch:
+      operationId: RedirectsController_updateLink
+      summary: Modificar um link de um redirect
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: linkId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRedirectLinkDto"
+      responses:
+        "200":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+  /redirects/link/{linkId}:
+    delete:
+      operationId: RedirectsController_removeLink
+      summary: Remover um link de um redirect
+      parameters:
+        - name: linkId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a6
+      security:
+        - bearer: []
+info:
+  title: Zapdiviser
+  description: API para o Zapdiviser
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    CreateProductDto:
+      type: object
+      properties: {}
+    WhatsappEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        deleted_at:
+          format: date-time
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        phone:
+          type: string
+          nullable: true
+      required:
+        - id
+        - deleted_at
+        - created_at
+        - updated_at
+        - phone
+    ProductEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        deleted_at:
+          format: date-time
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        whatsapps:
+          type: array
+          items:
+            $ref: "#/components/schemas/WhatsappEntity"
+      required:
+        - id
+        - deleted_at
+        - created_at
+        - updated_at
+        - whatsapps
+    CreateFlowEventDto:
+      type: object
+      properties: {}
+    UpdateFlowEventDto:
+      type: object
+      properties: {}
+    setWhatsappsDto:
+      type: object
+      properties: {}
+    Object:
+      type: object
+      properties: {}
+    CreateUserDto:
+      type: object
+      properties: {}
+    ForgetPasswordDto:
+      type: object
+      properties: {}
+    CheckCodeDto:
+      type: object
+      properties: {}
+    ForgetPasswordWithCodeDto:
+      type: object
+      properties: {}
+    UpdateUserDto:
+      type: object
+      properties: {}
+    UpdatePasswordWithOldPasswordDto:
+      type: object
+      properties: {}
+    UpdatePasswordWithTokenDto:
+      type: object
+      properties: {}
+    LoginUserDto:
+      type: object
+      properties: {}
+    CreateRedirectDto:
+      type: object
+      properties: {}
+    CreateRedirectLinkDto:
+      type: object
+      properties: {}
+    UpdateRedirectDto:
+      type: object
+      properties: {}
+    UpdateRedirectLinkDto:
+      type: object
+      properties: {}

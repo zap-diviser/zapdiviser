@@ -91,6 +91,24 @@ services:
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.services.app.loadbalancer.server.port=8080"
 
+  frontend-v2:
+    build:
+      context: .
+      target: frontend
+    command: --brotli
+    networks:
+      - zapdiviser
+      - traefik
+    depends_on:
+      - backend
+    environment:
+      VITE_SOKETI_APP_KEY: ${VITE_SOKETI_APP_KEY}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`app.${HOST}`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.services.app.loadbalancer.server.port=8080"
+
   backend:
     build:
       context: .
@@ -132,6 +150,11 @@ services:
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.service=backend"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
+
+      - "traefik.http.routers.backend-v2.rule=Host(`v2.${HOST}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend-v2.entrypoints=websecure"
+      - "traefik.http.routers.backend-v2.service=backend"
+      - "traefik.http.services.backend-v2.loadbalancer.server.port=8000"
 
       - "traefik.http.routers.webhook.rule=Host(`webhook.${HOST}`)"
       - "traefik.http.routers.webhook.entrypoints=websecure"

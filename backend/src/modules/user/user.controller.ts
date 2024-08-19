@@ -5,7 +5,10 @@ import { UpdatePasswordWithOldPasswordDto } from './dto/update-password-with-old
 import { UpdatePasswordWithTokenDto } from './dto/update-password-with-token-dto';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ForgetPasswordWithCodeDto } from './dto/forget-password-with-code.dto';
-import { UserIsAuthenticated, userIsAdmin } from '../../common/decorators/userIsAuthenticated.decorator';
+import {
+  UserIsAuthenticated,
+  userIsAdmin,
+} from '../../common/decorators/userIsAuthenticated.decorator';
 import { ValidationPipe } from '../../common/pipes/validation.pipe';
 import { UserEntity } from './entities/user.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -17,13 +20,22 @@ import CreateUserDto from './dto/create-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiOperation({ summary: 'Listar todos os usuários' })
+  @Get()
+  @userIsAdmin()
+  findAll() {
+    return this.userService.findAll();
+  }
+
+  @ApiOperation({ summary: 'Criar um novo usuário' })
   @Post()
   @userIsAdmin()
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create({ ...createUserDto, level: "user" });
+    return this.userService.create({ ...createUserDto, level: 'user' });
   }
 
-  @Get()
+  @ApiOperation({ summary: 'Buscar informações do usuário logado' })
+  @Get('me')
   @UserIsAuthenticated()
   findMe(@Req() req: any): Promise<Partial<UserEntity>> {
     return this.userService.findOne(req.user.id);

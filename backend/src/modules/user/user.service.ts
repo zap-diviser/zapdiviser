@@ -23,6 +23,12 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
+  async findAll() {
+    const users = await this.repository.find();
+
+    return users.map((user) => this.removePrivateFields(user));
+  }
+
   async findOne(id: string): Promise<Partial<UserEntity>> {
     const user = await this.repository.findOne({
       where: {

@@ -12,6 +12,9 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import yaml from 'yaml';
+import { writeFile } from 'fs/promises';
 
 process.on('unhandledRejection', (e) => {
   console.log(e);
@@ -36,6 +39,18 @@ export async function bootstrap() {
       bodyParser: true,
     },
   );
+
+  const apiConfig = new DocumentBuilder()
+    .setTitle("Zapdiviser")
+    .setDescription("API para o Zapdiviser")
+    .setVersion("1.0")
+    .build();
+
+  let document = SwaggerModule.createDocument(app, apiConfig);
+
+  const yamlDocument = yaml.stringify(document);
+
+  await writeFile('openapi.yaml', yamlDocument);
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
@@ -64,4 +79,5 @@ export async function bootstrap() {
 
   await app.listen(8000, '0.0.0.0');
 }
+
 bootstrap();

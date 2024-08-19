@@ -1,6 +1,6 @@
 packages:
   - backend
   - frontend
+  - frontend-v2
   - whatsapp-node
   - universal-types
-  - admin

@@ -10,5 +10,4 @@ export const UserIsAuthenticated = () => {
 
 export const userIsAdmin = () => {
   return applyDecorators(UseGuards(JwtAuthGuard), ApiBearerAuth());
-}
-
+};
