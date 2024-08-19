@@ -1,3 +1,4 @@
+import { useStore } from "../../store";
 import { ZapdiviserContext } from "./zapdiviserContext";
 
 const baseUrl = ""; // TODO add your baseUrl
@@ -44,8 +45,9 @@ export async function zapdiviserFetch<
 >): Promise<TData> {
   try {
     const requestHeaders: HeadersInit = {
-      "Content-Type": "application/json",
-      ...headers,
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + useStore.getState().token,
+      ...headers
     };
 
     /**

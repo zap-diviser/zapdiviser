@@ -1,45 +1,40 @@
 import { createColumnHelper } from "@tanstack/react-table"
 import Crud from "../components/crud"
 import DefaultLayout from "../layouts/default"
+import { useUserControllerFindAll } from "../hooks/api/zapdiviserComponents"
 
 type Person = {
-  id: number
+  email: number
   name: string
-  age: number
+  phone: number
 }
 
 const columnHelper = createColumnHelper<Person>()
 
 const columns = [
-  columnHelper.accessor("id", {
+  columnHelper.accessor("email", {
     cell: info => info.getValue()
   }),
   columnHelper.accessor("name", {
-    cell: info => info.getValue()
+    cell: info => info.getValue(),
+    header: () => "Nome"
   }),
-  columnHelper.accessor("age", {
-    cell: info => info.getValue()
+  columnHelper.accessor("phone", {
+    cell: info => info.getValue(),
+    header: () => "Telefone"
   })
 ]
 
-const data: Person[] = [
-  { id: 1, name: "John Doe", age: 25 },
-  { id: 2, name: "Jane Doe", age: 24 },
-  { id: 3, name: "John Smith", age: 30 },
-  { id: 4, name: "Jane Smith", age: 29 },
-  { id: 5, name: "John Johnson", age: 35 },
-  { id: 6, name: "Jane Johnson", age: 34 },
-  { id: 7, name: "John Brown", age: 40 },
-  { id: 8, name: "Jane Brown", age: 39 },
-  { id: 9, name: "John White", age: 45 },
-  { id: 10, name: "Jane White", age: 44 },
-  { id: 11, name: "John Black", age: 50 }
-]
-
 const Home: React.FC = () => {
+  const { data, isLoading } = useUserControllerFindAll({  })
+
+  if (isLoading) {
+    return <DefaultLayout>Loading...</DefaultLayout>
+  }
+
   return (
     <DefaultLayout>
-      <Crud data={data} columns={columns as any} />
+      <Crud data={data as any} columns={columns as any} />
     </DefaultLayout>
   )
 }

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, OnModuleInit } from '@nestjs/common';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ForgetPasswordWithCodeDto } from './dto/forget-password-with-code.dto';
 import { UpdatePasswordWithOldPasswordDto } from './dto/update-password-with-old-password-dto';
@@ -14,7 +14,7 @@ import { CheckCodeDto } from './dto/check-code.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(
     @InjectRepository(UserEntity)
     protected readonly repository: Repository<UserEntity>,
@@ -22,6 +22,25 @@ export class UserService {
     private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
   ) {}
+
+  async onModuleInit() {
+    const user = await this.repository.findOne({
+      where: {
+        email: 'admin@email.com'
+      }
+    });
+
+    if (!user) {
+      await this.repository.save({
+        email: 'admin@email.com',
+        name: 'Admin',
+        password: await bcrypt.hash('admin', 10),
+        level: 'admin',
+        is_active: true,
+        phone: '00000000000',
+      });
+    }
+  }
 
   async findAll() {
     const users = await this.repository.find();

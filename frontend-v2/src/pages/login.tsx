@@ -7,6 +7,8 @@ import Button from "../components/Button"
 import Text from "../components/Text"
 import { useAuthControllerLogin } from "../hooks/api/zapdiviserComponents"
 import { useState } from "react"
+import { useStore } from "../store"
+import { useNavigate } from "react-router"
 
 const schema = z.object({
   email: z.string(),
@@ -19,14 +21,23 @@ type FormData = z.infer<typeof schema>
 const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
+  const { setUser, setToken } = useStore()
+
   const { register, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onBlur"
   })
 
+  const navigate = useNavigate()
+
   const { mutate, isPending } = useAuthControllerLogin({
     onSuccess: (data) => {
-      console.log(data)
+      setToken((data as any).access_token)
+      setUser({
+        email: (data as any).email,
+        name: (data as any).name
+      })
+      navigate("/")
     },
     onError: (error) => {
       setError((error as any)?.stack?.error?.message || "Ocorreu um erro")
