@@ -105,9 +105,9 @@ services:
       VITE_SOKETI_APP_KEY: ${VITE_SOKETI_APP_KEY}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`v2.${HOST}`)"
-      - "traefik.http.routers.app.entrypoints=websecure"
-      - "traefik.http.services.app.loadbalancer.server.port=8080"
+      - "traefik.http.routers.app-v2.rule=Host(`v2.${HOST}`)"
+      - "traefik.http.routers.app-v2.entrypoints=websecure"
+      - "traefik.http.services.app-v2.loadbalancer.server.port=8080"
 
   backend:
     build:
