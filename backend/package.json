@@ -15,7 +15,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node --experimental-require-module --max-old-space-size=4096 ./dist/main.js",
+    "start:prod": "node --max-old-space-size=4096 ./dist/main.js",
     "email:dev": "email dev --dir src/modules/email/emails",
     "migration:generate": "pnpm build &&ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:generate",
     "migration:run": "pnpm build && ts-node ./node_modules/typeorm/cli -d ./src/ormconfig.ts migration:run",
