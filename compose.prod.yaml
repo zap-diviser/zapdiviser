@@ -94,7 +94,7 @@ services:
   frontend-v2:
     build:
       context: .
-      target: frontend
+      target: frontend-v2
     command: --brotli
     networks:
       - zapdiviser
@@ -105,7 +105,7 @@ services:
       VITE_SOKETI_APP_KEY: ${VITE_SOKETI_APP_KEY}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`app.${HOST}`)"
+      - "traefik.http.routers.app.rule=Host(`v2.${HOST}`)"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.services.app.loadbalancer.server.port=8080"
 
