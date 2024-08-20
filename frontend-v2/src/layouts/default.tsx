@@ -1,11 +1,13 @@
-import{ Navigate } from "react-router"
-import { useStore } from "../store"
+import { Navigate } from "react-router";
+import { useStore } from "../store";
 
-const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const user = useStore(state => state.user)
+const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const user = useStore((state) => state.user);
 
   if (!user) {
-    return <Navigate to="/login" />
+    return <Navigate to="/login" />;
   }
 
   return (
@@ -320,8 +322,8 @@ const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                       <span className="font-semibold text-gray-900 dark:text-white">
                         Robert Brown
                       </span>
-                      posted a new video: Glassmorphism - learn how to implement the
-                      new design trend.
+                      posted a new video: Glassmorphism - learn how to implement
+                      the new design trend.
                     </div>
                     <div className="text-xs font-medium text-primary-600 dark:text-primary-500">
                       3 hours ago
@@ -392,7 +394,9 @@ const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                       clip-rule="evenodd"
                     ></path>
                   </svg>
-                  <div className="text-sm text-gray-900 dark:text-white">Sales</div>
+                  <div className="text-sm text-gray-900 dark:text-white">
+                    Sales
+                  </div>
                 </a>
                 <a
                   href="#"
@@ -407,7 +411,9 @@ const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                   >
                     <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
                   </svg>
-                  <div className="text-sm text-gray-900 dark:text-white">Users</div>
+                  <div className="text-sm text-gray-900 dark:text-white">
+                    Users
+                  </div>
                 </a>
                 <a
                   href="#"
@@ -426,7 +432,9 @@ const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                       clip-rule="evenodd"
                     ></path>
                   </svg>
-                  <div className="text-sm text-gray-900 dark:text-white">Inbox</div>
+                  <div className="text-sm text-gray-900 dark:text-white">
+                    Inbox
+                  </div>
                 </a>
                 <a
                   href="#"
@@ -941,7 +949,10 @@ const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                   ></path>
                 </svg>
               </button>
-              <ul id="dropdown-authentication" className="hidden py-2 space-y-2">
+              <ul
+                id="dropdown-authentication"
+                className="hidden py-2 space-y-2"
+              >
                 <li>
                   <a
                     href="#"
@@ -1033,11 +1044,9 @@ const DefaultLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           </ul>
         </div>
       </aside>
-      <main className="p-4 md:ml-64 pt-20 h-screen">
-        {children}
-      </main>
+      <main className="p-4 md:ml-64 pt-20 h-screen">{children}</main>
     </div>
-  )
-}
+  );
+};
 
-export default DefaultLayout
+export default DefaultLayout;

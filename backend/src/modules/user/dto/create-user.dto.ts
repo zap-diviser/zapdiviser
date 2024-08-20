@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Type } from 'class-transformer';
-import {
-  IsEmail,
-  IsNumberString,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsEmail, IsNumberString, IsString } from 'class-validator';
 
-class Costumer {
+export default class CreateUserDto {
   @IsString()
   name: string;
 
@@ -19,10 +13,4 @@ class Costumer {
 
   @IsString()
   password: string;
-}
-
-export default class CreateUserDto {
-  @Type(() => Costumer)
-  @ValidateNested()
-  readonly costumer: Costumer;
 }
