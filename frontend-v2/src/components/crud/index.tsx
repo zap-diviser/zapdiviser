@@ -1,11 +1,17 @@
 import { ColumnDef } from "@tanstack/react-table";
 import Table from "./Table";
 import Form from "./Form";
+import { useEffect } from "react";
+import { initModals } from "flowbite";
 
 const Crud: React.FC<{
   data: unknown[];
   columns: ColumnDef<unknown, never>[];
 }> = ({ data, columns }) => {
+  useEffect(() => {
+    initModals();
+  }, []);
+
   return (
     <>
       <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
