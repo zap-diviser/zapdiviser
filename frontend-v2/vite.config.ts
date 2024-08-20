@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react-swc";
 import Pages from "vite-plugin-pages";
 
 export default defineConfig({
-  plugins: [react(), Pages({ importMode: "sync" })],
+  plugins: [MillionLint.vite(), react(), Pages({ importMode: "sync" })],
   server: {
     host: true,
     proxy: {
