@@ -68,10 +68,10 @@ export class AuthService {
     }
   > {
     const userNameOrEmailExists =
-      await this.userService.getUserWithPasswordByEmail(user.costumer.email);
+      await this.userService.getUserWithPasswordByEmail(user.email);
 
     if (userNameOrEmailExists) {
-      if (userNameOrEmailExists.email === user.costumer.email) {
+      if (userNameOrEmailExists.email === user.email) {
         throw new HttpException(
           'Este email já está cadastrado',
           HttpStatus.BAD_REQUEST,

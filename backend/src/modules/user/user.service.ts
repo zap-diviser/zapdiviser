@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ForgetPasswordWithCodeDto } from './dto/forget-password-with-code.dto';
 import { UpdatePasswordWithOldPasswordDto } from './dto/update-password-with-old-password-dto';
@@ -26,8 +31,8 @@ export class UserService implements OnModuleInit {
   async onModuleInit() {
     const user = await this.repository.findOne({
       where: {
-        email: 'admin@email.com'
-      }
+        email: 'admin@email.com',
+      },
     });
 
     if (!user) {
@@ -332,6 +337,7 @@ export class UserService implements OnModuleInit {
     const user = this.repository.create({
       ...createUserDto,
       is_active: true,
+      password: await bcrypt.hash(createUserDto.password, 10),
     });
 
     const data = await this.repository.save(user);
