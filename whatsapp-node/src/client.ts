@@ -25,7 +25,6 @@ class Client {
   }
 
   async sendQrCode(qr: string) {
-    console.log("QR Code:", qr)
     await this.queue.add("qr", { instanceId, data: qr })
   }
 
