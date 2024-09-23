@@ -106,7 +106,10 @@ const handlers: Handler[] = [
       {
         type: 'function',
         fn: (value) => {
-          return value.sale_status_enum === 2 && value.payment_type_enum === 7;
+          return (
+            (value.sale_status_enum === 8 || value.sale_status_enum === 2) &&
+            value.payment_type_enum === 7
+          );
         },
         mapTo: 'pix_approved',
       },
